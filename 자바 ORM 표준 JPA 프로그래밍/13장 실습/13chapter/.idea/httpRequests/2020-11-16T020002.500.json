@@ -1,0 +1,1 @@
+{"timestamp":"2020-11-16T05:00:02.458+0000","status":500,"error":"Internal Server Error","message":"could not extract ResultSet; SQL [n/a]; nested exception is org.hibernate.exception.SQLGrammarException: could not extract ResultSet","path":"/example1"}

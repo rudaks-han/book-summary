@@ -1,0 +1,227 @@
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-18T070610.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-18T065527.500.json
+
+###
+
+GET http://localhost:8080/example1/fetchTest
+Content-Type: application/json
+
+<> 2020-11-18T065518.500.json
+
+###
+
+GET http://localhost:8080/example1/fetchTest
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-17T025256.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-17T024555.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T020002.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T015736.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T015456.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T015059.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T014917.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T014501.500.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+{
+  "orderId": 123
+}
+
+<> 2020-11-16T014221.404.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+{
+  "orderId": 123
+}
+
+<> 2020-11-16T014135.404.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+{
+  "orderId": "test"
+}
+
+<> 2020-11-16T014106.404.json
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+{:
+  "orderId": "test"
+}:
+
+<> 2020-11-16T014049.400.html
+
+###
+
+GET http://localhost:8080/example1
+Content-Type: application/json
+
+<> 2020-11-16T013949.404.json
+
+###
+

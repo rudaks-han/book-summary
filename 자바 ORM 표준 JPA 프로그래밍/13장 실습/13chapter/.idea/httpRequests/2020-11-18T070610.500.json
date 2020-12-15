@@ -1,0 +1,1 @@
+{"timestamp":"2020-11-17T22:06:10.235+0000","status":500,"error":"Internal Server Error","message":"could not initialize proxy [spectra.jpa.Member1#shjeon] - no Session","path":"/example1"}

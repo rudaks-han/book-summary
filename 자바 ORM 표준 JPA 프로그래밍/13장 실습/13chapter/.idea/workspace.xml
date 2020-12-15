@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="28a290ce-4875-40f3-904d-97d202a40093" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1kLvMe0GcRV3UKDl9OvSiROKPSN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/example1/src/main/resources" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="spectra.jpa" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\_LOCAL\13chapter\example1\src\main\resources" />
+    </key>
+  </component>
+  <component name="RestClientSettings">
+    <option name="REQUEST_HISTORY">
+      <list>
+        <RestClientRequest>
+          <option name="httpMethod" value="GET" />
+          <option name="urlBase" value="http://localhost:8080/example1" />
+          <option name="urlPath" value="" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="textToSend" value="" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="GET" />
+          <option name="urlBase" value="http://localhost:8080/example1/fetchTest" />
+          <option name="urlPath" value="" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="textToSend" value="" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="GET" />
+          <option name="urlBase" value="http://localhost:8080/example1" />
+          <option name="urlPath" value="" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&#10;  &quot;orderId&quot;: 123&#10;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="GET" />
+          <option name="urlBase" value="http://localhost:8080/example1" />
+          <option name="urlPath" value="" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&#10;  &quot;orderId&quot;: &quot;test&quot;&#10;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="GET" />
+          <option name="urlBase" value="http://localhost:8080/example1" />
+          <option name="urlPath" value="" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="{" />
+                <option name="value" value="" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="  &quot;orderId&quot;" />
+                <option name="value" value="&quot;test&quot;" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="}" />
+                <option name="value" value="" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="textToSend" value="" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="HTTP Request.test#1">
+    <configuration name="All in test" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/example1/src/main/java/spectra/jpa/test.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="test#1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/example1/src/main/java/spectra/jpa/test.http" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="test#2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/example1/src/main/java/spectra/jpa/test.http" index="2" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="Example1Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="example1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="spectra.jpa.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="spectra.jpa.Example1Main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.test#1" />
+        <item itemvalue="Spring Boot.Example1Main" />
+        <item itemvalue="HTTP Request.test#2" />
+        <item itemvalue="HTTP Request.All in test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+            </expand>
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="28a290ce-4875-40f3-904d-97d202a40093" name="Default Changelist" comment="" />
+      <created>1605492639572</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1605492639572</updated>
+      <workItem from="1605492641955" duration="9094000" />
+      <workItem from="1605589418636" duration="12088000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="796" y="249" key="#com.intellij.ide.util.MemberChooser" timestamp="1605499390757">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state x="796" y="249" key="#com.intellij.ide.util.MemberChooser/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605499390757" />
+    <state x="782" y="398" width="417" height="292" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1605500268165">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state x="782" y="398" width="417" height="292" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605500268165" />
+    <state x="602" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1605590293573">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state x="602" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605590293573" />
+    <state x="721" y="286" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1605500190106">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state x="721" y="286" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605500190106" />
+    <state width="1815" height="341" key="GridCell.Tab.0.bottom" timestamp="1605651081700">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="341" key="GridCell.Tab.0.bottom/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651081700" />
+    <state width="1815" height="341" key="GridCell.Tab.0.center" timestamp="1605651081700">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="341" key="GridCell.Tab.0.center/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651081700" />
+    <state width="1815" height="341" key="GridCell.Tab.0.left" timestamp="1605651081699">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="341" key="GridCell.Tab.0.left/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651081699" />
+    <state width="1815" height="341" key="GridCell.Tab.0.right" timestamp="1605651081700">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="341" key="GridCell.Tab.0.right/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651081700" />
+    <state width="1815" height="362" key="GridCell.Tab.1.bottom" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.1.bottom/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.1.center" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.1.center/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.1.left" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.1.left/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.1.right" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.1.right/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.2.bottom" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.2.bottom/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.2.center" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.2.center/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.2.left" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.2.left/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state width="1815" height="362" key="GridCell.Tab.2.right" timestamp="1605651079146">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state width="1815" height="362" key="GridCell.Tab.2.right/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605651079146" />
+    <state x="370" y="235" key="new project wizard" timestamp="1605492687482">
+      <screen x="62" y="0" width="1858" height="1080" />
+    </state>
+    <state x="370" y="235" key="new project wizard/62.0.1858.1080/-1858.0.1858.1080@62.0.1858.1080" timestamp="1605492687482" />
+  </component>
+</project>

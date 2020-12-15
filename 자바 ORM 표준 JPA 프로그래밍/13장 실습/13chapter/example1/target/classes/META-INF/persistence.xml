@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             version="2.1">
+    <persistence-unit name="simple-jpa-application">
+        <properties>
+            <!-- 필수 속성 -->
+            <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+            <property name="javax.persistence.jdbc.user" value="shjeon"/>
+            <property name="javax.persistence.jdbc.password" value="shjeon"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@developerdb.spectra.co.kr:1521:orcl"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle12cDialect"/>
+        </properties>
+    </persistence-unit>
+</persistence>

@@ -1,0 +1,7 @@
+GET http://localhost:8080/example1
+Content-Type: application/json
+###
+
+GET http://localhost:8080/example1/fetchTest
+Content-Type: application/json
+###
