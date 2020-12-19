@@ -27,7 +27,7 @@ public class CombineFile {
             }
         }
 
-        FileUtils.writeStringToFile(new File(path + "/" + outputFileName), result, "UTF-8");
-        System.out.println("file created : " + (path + "/" + outputFileName));
+        FileUtils.writeStringToFile(new File(userDir + "/" + outputFileName), result, "UTF-8");
+        System.out.println("file created : " + (userDir + "/" + outputFileName));
     }
 }
