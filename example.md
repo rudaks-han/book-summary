@@ -39,7 +39,7 @@
 
 
 
-<img src="chapter-13.assets/image-20201218072418788.png" alt="image-20201218072418788" style="zoom:67%;" />
+<img src="Clean%20Architecture/chapter-13.assets/image-20201218072418788.png" alt="image-20201218072418788" style="zoom:67%;" />
 
 
 
