@@ -21,7 +21,7 @@ public class CombineFile {
 
         List<File> files = Arrays.asList(new File(path).listFiles());
         Collections.sort(files);
-
+        
         for (File file: files) {
             String absolutePath = file.getAbsolutePath();
             String fileName = file.getName();
