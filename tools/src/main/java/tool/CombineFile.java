@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class CombineFile {
     public static void main(String[] args) throws IOException {
@@ -16,10 +19,13 @@ public class CombineFile {
         String path = userDir + "/" + bookName;
         String result = "";
 
-        File[] files = new File(path).listFiles();
+        List<File> files = Arrays.asList(new File(path).listFiles());
+        Collections.sort(files);
+
         for (File file: files) {
             String absolutePath = file.getAbsolutePath();
-            if (absolutePath.endsWith(".md")) {
+            String fileName = file.getName();
+            if (absolutePath.endsWith(".md") && !fileName.equals(bookName+".md")) {
                 System.out.println(absolutePath);
 
                 String data = FileUtils.readFileToString(new File(absolutePath), "UTF-8");
@@ -27,7 +33,7 @@ public class CombineFile {
             }
         }
 
-        FileUtils.writeStringToFile(new File(userDir + "/" + outputFileName), result, "UTF-8");
-        System.out.println("file created : " + (userDir + "/" + outputFileName));
+        FileUtils.writeStringToFile(new File(path + "/" + outputFileName), result, "UTF-8");
+        System.out.println("file created : " + (path + "/" + outputFileName));
     }
 }
