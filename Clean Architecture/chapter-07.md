@@ -34,7 +34,7 @@ SRP의 최종 버전은 아래와 같다.
 
 
 
-<img src="chapter-07.assets/image-20201217081919685.png" alt="image-20201217081919685" style="zoom:50%;" />
+<img src="chapter-07.assets/image-20201217081919685.png" alt="image-20201217081919685" style="zoom: 67%;" />
 
 
 
@@ -51,7 +51,7 @@ SRP의 최종 버전은 아래와 같다.
 
 
 
-<img src="chapter-07.assets/image-20201217081909994.png" alt="image-20201217081909994" style="zoom:50%;" />
+<img src="chapter-07.assets/image-20201217081909994.png" alt="image-20201217081909994" style="zoom: 67%;" />
 
 
 
