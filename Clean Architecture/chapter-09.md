@@ -28,6 +28,8 @@
 
 LSP를 위반하는 전형적인 문제로는 유명한 정사각형/직사각형 문제가 있다.
 
+
+
 <img src="chapter-09.assets/image-20201217175801134.png" alt="image-20201217175801134" style="zoom:67%;" />
 
 
