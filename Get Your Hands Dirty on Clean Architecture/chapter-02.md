@@ -1,4 +1,4 @@
-# 2 Inverting Dependencies
+# 2 의존성 역전
 
 이전 장에서 계층형 아키텍처의 문제점을 이야기했고 이번 장에서 선택적인 접근방법을 논의할 거라고 기대할 지도 모르겠다. 단일 책임 원칙과 의존성 역전 원칙 부터 논의해 볼 것이다. 이것은 Robert C Martin의 도서 "Clean Architecture"에서 읽어 봤을지도 모를 SOLID 원칙 중에 "S"와 "D"에 해당된다.
 
