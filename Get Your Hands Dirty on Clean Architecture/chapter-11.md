@@ -1,4 +1,4 @@
-# 11 <u>Taking Shortcuts Consciously</u>
+# 11. <u>Taking Shortcuts Consciously</u>
 
 이 책 서문에서, 개선될 가능성이 없는 많은 기술 부채가 생길 위험이 있는 <u>shortcut으로</u> 작업하는 것을 불평해왔다.
 
