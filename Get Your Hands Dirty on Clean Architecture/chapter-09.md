@@ -85,9 +85,7 @@ class Application {
 
 ## Spring Classpath Scanning으로 조합하기
 
-> > > ㅇㅕ기
-
-애플리케이션 조합에 Spring 프레임워크를 사용한다면 이를 application context라고 부른다. application context는 애플리케이션을 구성하는 모든 객체를 포함한다.
+우리가 애플리케이션을 조합하는데 Spring 프레임워크를 사용하려고 한다면 그 결과는 application context라고 부른다. application context는 애플리케이션을 구성하는 모든 객체를 포함한다.
 
 Spring은 각기 장단점을 가지고 있는 application context를 조합하는 여러가지 접근 방법을 제공한다. 가장 인기있는(그리고 가장 편리한) 접근방법을 알아보자: classpath scanning
 
@@ -124,7 +122,7 @@ Spring은 이 생성자를 찾을 것이고 필요한 인자타입의 **@Compone
 
 classpath scanning은 애플리케이션을 조합하는데 매우 편리한 방식이다. 코드에서 **@Component** 어노테이션을 표시해야 하고 적절한 생성자를 제공해야 한다.
 
-또한 Spring이 사용할 수 있게 우리가 만든 정형화된 유형의 어노테이션도 만들 수 있다. 예를 들면 **@PersistenceAdapter** 어노테이션을 만들 수 있다.
+또한 Spring이 사용할 수 있게 우리가 만든 정형화된 유형의 어노테이션도 만들 수 있다. 예를 들면 **@PersistenceAdapter** 어노테이션을 직접 만들 수도 있다.
 
 ```java
 @Target({ElementType.TYPE})
@@ -139,27 +137,27 @@ public @interface PersistenceAdapter {
 }
 ```
 
-이 어노테이션은 classpath scanning하는 동안 Spring이 알 수 있는 **@Component**로 표시된 메타(meta) 어노테이션이다. 영속성 어댑터 클래스에서 애플리케이션의 일부분임을 표시하기 위해서 **@Component** 대신 **@PersistenceAdpater**를 사용할 수 있다. 이러한 어노테이션의 도움으로 아키텍처 상에서 코드를 좀 더 쉽게 읽을 수 있게 한다.
+이 어노테이션은 classpath scanning하는 동안 Spring이 알 수 있는 **@Component**로 표시된 메타(meta) 어노테이션이다. 영속성 어댑터 클래스에서 애플리케이션의 일부분임을 표시하기 위해서 **@Component** 대신 **@PersistenceAdpater**를 사용할 수 있다. 이러한 어노테이션의 도움으로 아키텍처 상에서 코드를 좀 더 쉽게 읽을 수 있다.
 
-그러나 classpath scanning 접근법의 단점도 있다. 첫 번째로 클래스에 프레임워크의 특정 어노테이션을 넣어야 해서 침투성(invasive)이 높다. 만일 클린 아키텍처를 추구하는 사람이라면 프레임워크 전용 코드를 넣는 것은 금기사항이라고 말할 것이다.
+그러나 classpath scanning 접근법의 단점도 있다. 첫 번째로 클래스에 프레임워크의 특정 어노테이션을 넣어야 해서 침투성(invasive)이 높다. 만일 클린 아키텍처를 추구하는 사람이라면 프레임워크 전용 코드를 넣는 것은 금기사항이라고 말할 수 있다.
 
-나는 일반적인 애플리케이션 개발에서, 단일 어노테이션을 클래스에 붙이는 것은 큰 문제는 아니며 필요 시 쉽게 리팩토링 될 수 있다고 생각한다.
+나는 일반적인 애플리케이션 개발에서 단일 어노테이션을 클래스에 붙이는 것은 큰 문제는 아니며 필요 시 쉽게 리팩토링 될 수 있다고 생각한다.
 
-하지만, 다른 개발자가 사용할 라이브러리 혹은 프레임워크를 만들 때와 같이, 다른 의미에서는 Spring 프레임워크 의존성으로 사람들에게 영향을 주고 싶지 않기 때문에 그렇게 해서는 안될 지도 모르겠다.
+하지만 다른 개발자가 사용할 용도의 라이브러리 혹은 프레임워크는 경우와 같이, Spring에 대한 프레임워크 의존성으로 사람들이 Spring의 영향을 받게 하고 싶지는 않기 때문에 해서는 안될 수도 있다.
 
-classpath scanning의 다른 잠재적인 단점은 마법과 같은 일이 발생하지도 모른다는 것이다. "마법"이라는 단어는 나쁜 의미를 뜻한다. Spring 전문가가 아니어서 설명에 몇일 걸릴지 모르는 많은 일들이 발생할 수 있다는 것을 의미한다.
+classpath scanning의 다른 단점은 우리가 알지 못하는 마법과 같은 일이 벌어질지도 모른다는 것이다. "마법"이라는 단어는 나쁜 의미를 뜻한다. Spring 전문가가 아니어서 설명에 몇일이나 걸릴지 모르는 많은 일들이 발생할 수 있다는 것을 의미한다.
 
 애플리케이션 조합에 classpath scanning은 매우 위협적인 무기와 같아서 마법과 같은 일이 발생한다. 우리는 단순하게 애플리케이션 상위 패키지에 Spring을 지정하고 **@Component** 어노테이션이 있는 클래스를 찾으라고 말한다.
 
-애플리케이션 내에 존재하는 모든 단일 클래스를 머리 속에 기억하고 있는가? 아마 그렇지 않을 것이다. 애플리케이션 context에 두고 싶지 않는 클래스는 있기 마련이다. 아마도 이 클래스는 잘못된 방법으로 application context를 사용할 것이고 추적하기 힘든 에러를 유발할 것이다.
+애플리케이션 내에 존재하는 모든 단일 클래스를 머리 속에 기억하고 있는가? 아마 그렇지 않을 것이다. 애플리케이션 context에 두고 싶지 않는 클래스는 있기 마련이다. 아마도 이 클래스는 application context에서 잘못 사용될 수도 있고 추적하기 힘든 에러를 유발할 수도 있다.
 
-우리가 조금 더 직접 제어할 수 있는 방법을 한번 보자.
+우리가 직접적으로 제어할 수 있는 방법을 좀 더 알아보자.
 
 
 
 ## Spring Java Config로 조합
 
-classpath scanning 방식이 애플리케이션을 조합하는데 곤봉(cudgel)이라면 Spring Java Config는 수술용 칼(scalpel)이다. 이 접근법은 이 장의 처음에 소개했던 단순한 코드로 모으는 방법과 유사하다. 하지만 단순하고 프레임워크를 통해 적용할 수 있어서 모든 것을 수작업으로 할 필요가 없다.
+classpath scanning 방식이 애플리케이션을 조합하는데 곤봉(cudgel)이라면 Spring Java Config는 수술용 칼(scalpel)이다. 이 접근법은 이 장의 처음에 소개했던 단순한 코드로 모으는 방법과 유사하다. 하지만 단순히 프레임워크를 통해 적용할 수 있어서 모든 것을 직접할 필요는 없다.
 
 이 접근법에서는 application context에 추가되어야 하는 beans 생성 책임이 있는 구성 클래스를 만든다.
 
@@ -188,31 +186,31 @@ class PersistenceAdapterConfiguration {
 }
 ```
 
-**@Configuration** 어노테이션으로 Spring이 해당 클래스를 classpath scanning을 할 수 있도록 configuration 클래스로 표시한다. 그래서 이 경우에는, 여전히 classpath scanning을 사용하지만 모두 단일 bean을 사용하는 대신 구성 클래스에서 선택한 것만 사용한다. 이는 악마와 같은 매직이 발생할 가능성을 줄여준다.
+**@Configuration** 어노테이션으로 Spring이 해당 클래스를 classpath scanning을 할 수 있도록 configuration 클래스로 표시한다. 그래서 여전히 classpath scanning을 사용하지만 모두 단일 bean 대신 구성 클래스에서 선택한 것만 사용한다. 이는 악마와 같은 매직이 발생할 가능성을 줄여준다.
 
 Beans는 구성 클래스의 **@Bean** 어노테이션 팩토리 메서드 내에서 생성된다. 이전 경우에서는 영속성 어댑터를 application context에 추가한다. 두 개의 리포지토리가 필요하고 생성자를 매핑한다. Spring 자동적으로 팩토리 메서드의 입력값으로 이 객체들을 제공한다.
 
 그러나 Spring은 리포지토리 객체를 어디에서 가져오는 것일까? 다른 configuration 클래스의 팩토리 메서드에서 수동으로 생성했다면 Spring은 자동으로 입력 파라미터로 제공할 것이다. 하지만 이 경우에는 **@EnableJpaRepositories** 어노테이션으로 Spring이 생성했다. Spring Boot가 이 어노테이션을 찾는다면 자동으로 Spring Data 리포지토리 인터페이스의 구현체를 제공할 것이다.
 
-Spring Boot에 익숙하다면 class configuration 대신에 **@EnableJpaRepositories** 어노테이션을 메인 클래스에 추가했다는 것을 알 것이다. 그렇다. 이렇게 할 수도 있지만 애플리케이션이 기동될 때마다 Java Persistence API (JPA) 리포지토리를 활성화할 것이다. - 심지어 영속성을 필요로 하지 않는 테스트로 시작하더라도. 그래서 "feature annotations"을 개별 구성 "module"로 옮김으로써, 더욱 유연해지고 항상 전체를 시작하지 않고 부분적으로 시작할 수 있다.
+Spring Boot에 익숙하다면 class configuration 대신에 **@EnableJpaRepositories** 어노테이션을 메인 클래스에 추가했다는 것을 알 것이다. 그렇다. 이렇게 하는 것이 가능한 일이긴 하지만 애플리케이션이 기동될 때마다 Java Persistence API (JPA) 리포지토리를 활성화할 것이다. - 심지어 영속성을 필요로 하지 않는 테스트로 시작하더라도. 그래서 "feature annotations"을 개별 구성 "module"로 옮김으로써, 더욱 유연해지고 항상 전체를 시작하지 않고 부분적으로 시작할 수 있다.
 
 **PersistenceAdapterConfiguration** 클래스로, 우리는 영속성 계층에 필요한 모든 객체를 생성하는 강하게 엮여있는 영속성 모듈을 만들었다. 이는 Spring classpath scanning에 의해 자동으로 선택될 것이며 application context에 추가된 beans에 대한 제어를 가질 것이다.
 
 비슷하게 웹 어댑터에 대한 구성 클래스 혹은 애플리케이션 계층 내에 특정 모듈을 만들 수 있다. 그리고 나서 특정 모듈을 포함하지만 테스트할 때 유연함을 제공하는 다른 모듈의 beans을 목객체로 제공하는 application context를 만들 수 있다. 우리 코드에서 그러한 모듈에 대한 코드를 사용할 수도 있거나 Java Archive(JAR) 파일을 사용할 수도 있다.
 
-또한 classpath scanning방식에서 했던 것처럼, 이런 접근법은 **@Component** 어노테이션을 코드상에 흩어지지 않게 한다. Spring 의존성 없이 애플리케이션 계층을 깨끗하게 유지할 수 있다.
+또한 이런 접근법은 classpath scanning방식에서 했던 것과 같이 **@Component** 어노테이션을 코드 여러 곳에 붙이지 않아도 된다. Spring 의존성 없이 애플리케이션 계층을 깨끗하게 유지할 수 있다.
 
-그러나 이런 해결책에는 문제가 있다. 구성 클래스가 생성한 bean의 클래스와 동일한 패키지 내에 있지 않는다면 클래스 파일이 public이어야만 한다. 가시성을 제한하기 위해 모듈 경계로서 패키지를 사용할 수 있고 전용 구성 클래스를 각각 패키지로 사용할 수 있다. 하지만, 이런 방식으로는 *10장(Enforcing Architecture Boundaries)*에 논의될 하위 패키지를 사용할 수 없다.
+그러나 이런 해결책에는 문제가 있다. 구성 클래스가 생성한 bean의 클래스와 동일한 패키지 내에 있지 않는다면 클래스 파일이 public이어야만 한다. 가시성을 제한하기 위해 모듈 경계로서 패키지를 사용할 수 있고 전용 구성 클래스를 각각 패키지로 사용할 수 있다. 하지만, 이런 방식으로는 *10장(Enforcing Architecture Boundaries)*에 살펴보겠지만 하위 패키지를 사용할 수 없다.
 
 
 
 ## How Does This Help Me Build Maintainable Software?
 
-Spring과 Spring Boot는 편리한 많은 기능을 제공한다. 주요 특징 중 하나는 개발자가 직접 하는 것처럼 애플리케이션을 모아주는 것이다.
+Spring과 Spring Boot는 많은 편리한 기능을 제공한다. 주요 특징 중 하나는 개발자가 직접 하는 것처럼 애플리케이션을 모아주는 것이다.
 
-classpath scanning은 매우 편리한 기능이다. Spring으로 하여금 패키지를 지정하고 클래스로부터 모으게 한다. 이것으로 인해 애플리케이션에 대해 생각할 필요가 없는 빠른 개발를 하게 해준다. 
+classpath scanning은 매우 편리한 기능이다. 특정 패키지에 Spring을 지정하기만 하면 찾아야 하는 클래스를 애플리케이션으로 주입한다. 덕분에 애플리케이션에 대해 고민하지 않고 빠른 개발이 가능하게 해준다.
 
-코드라인이 점점 많아짐에 따라 이것은 투명성이 부족할 수 있다. 어느 bean이 application context에 로드되었는지 모른다. 또한 테스트에서 사용될 applicaiton context부분을 분리하여 쉽게 시작할 수도 없다.
+하지만 코드라인 수가 점점 많아짐에 따라 이로 인해 투명성이 부족현상이 발생할 수 있다. 어떤 bean이 application context에 로드되었는지 알 수 없다. 또한 테스트에서 사용될 applicaiton context 부분을 분리하여 간단히 시작하기도 어렵다.
 
 애플리케이션을 조합하는데 책임이 있는 전용 구성 컴포넌트를 만듦으로써 애플리케이션 코드에서 이런 책임을 분리할 수 있다. (변경의 이유) - SOLID의 S를 기억하라. 서로 격리되어 시작할 수 있으면 매우 응집된 모듈의 가치가 있고 쉽게 코드 내에서 옮길 수 있다. 일반적으로 구성 컴포넌트를 유지하는데는 더 많은 시간이 필요하다.
 
