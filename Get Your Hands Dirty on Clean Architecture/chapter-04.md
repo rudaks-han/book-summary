@@ -401,7 +401,7 @@ query service는 유스케이스와 동일하게 동작한다. **GetAccountBalan
 
 
 
-## How Does This Help Me Build Maintainable Software?
+## 유지보수하기 좋은 소프트웨어 개발에 어떤 도움이 되는가?
 
 우리 아키텍처는 우리에게 맞는 도메인 로직을 구현할 수 있게 한다. 하지만 유스케이스의 입/출력 모델을 개별적으로 모델링한다면 예상치 못한 부작용을 피할 수 있다.
 

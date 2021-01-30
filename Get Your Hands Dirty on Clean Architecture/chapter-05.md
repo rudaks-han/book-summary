@@ -189,7 +189,7 @@ class SendMoneyController {
 
 
 
-## How Does This Help Me Build Maintainable Software?
+## 유지보수하기 좋은 소프트웨어 개발에 어떤 도움이 되는가?
 
 애플리케이션에 웹 어댑터를 만들 때 우리는 HTTP를 애플리케이션 유스케이스 메서드 호출로 변환하고 그 결과를 HTTP로 변환하며 어떠한 도메인 로직도 수행하지 않는 어댑터를 만들고 있다는 것을 명심해야 한다.
 

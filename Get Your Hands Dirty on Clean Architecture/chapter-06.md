@@ -376,7 +376,7 @@ public class SendMoneyService implements SendMoneyUseCase {
 
 
 
-## How Does This Help Me Build Maintainable Software?
+## 유지보수하기 좋은 소프트웨어 개발에 어떤 도움이 되는가?
 
 도메인 코드에 플러그인처럼 동작하는 영속성 어댑터를 만드는 것은 도메인 코드를 영속성의 세부사항으로부터 자유롭게 하여 우리는 풍부한 도메인 모델을 만들 수 있다.
 

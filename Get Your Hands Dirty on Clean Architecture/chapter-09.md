@@ -159,7 +159,7 @@ classpath scanning이 가지는 다른 단점은 우리가 알지 못하는 마�
 
 classpath scanning 방식이 애플리케이션을 조합하는데 곤봉(cudgel)이라면 Spring Java Config는 수술용 칼(scalpel)이다. 이 접근법은 이 장의 처음에 소개했던 순수 Java 코드로 모으는 방법과 유사하다. 하지만 단순히 프레임워크를 통해 적용할 수 있어서 모든 것을 직접할 필요는 없다.
 
-이 접근법에서는 application context에 추가되어야 하는 beans 생성 책임이 있는 구성 클래스를 만든다.
+이 접근법에서는 application context에 추가되어야 하는 beans 생성 책임이 있는 configuration 클래스를 만든다.
 
 예를 들어 영속성 어댑터의 객체를 생성하는 configuration 클래스를 만들 수 있다.
 
@@ -186,9 +186,9 @@ class PersistenceAdapterConfiguration {
 }
 ```
 
-Spring이 해당 클래스를 classpath scanning을 할 수 있도록 **@Configuration** 어노테이션을 이용하여 configuration 클래스로 표시한다. 이 경우에는 여전히 classpath scanning을 사용하지만 모두 단일 bean을 사용하지 않고 구성 클래스에서 선택한 것만 사용하며 이는 악마와 같은 매직이 발생할 가능성을 줄여준다.
+Spring이 해당 클래스를 classpath scanning을 할 수 있도록 **@Configuration** 어노테이션을 이용하여 configuration 클래스로 표시한다. 이 경우에는 여전히 classpath scanning을 사용하지만 모두 단일 bean을 사용하지 않고 configuration 클래스에서 선택한 것만 사용하며 이는 악마와 같은 매직이 발생할 가능성을 줄여준다.
 
-Beans는 구성 클래스의 **@Bean** 어노테이션 팩토리 메서드 내에서 생성된다. 이전 경우에서는 영속성 어댑터를 application context에 추가한다. 두 개의 리포지토리가 필요하고 생성자를 매핑한다. Spring 자동적으로 팩토리 메서드의 입력값으로 이 객체들을 제공한다.
+Beans는 configuration 클래스의 **@Bean** 어노테이션 팩토리 메서드 내에서 생성된다. 이전 경우에서는 영속성 어댑터를 application context에 추가한다. 두 개의 리포지토리가 필요하고 생성자를 매핑한다. Spring 자동적으로 팩토리 메서드의 입력값으로 이 객체들을 제공한다.
 
 그러나 Spring은 리포지토리 객체를 어디에서 가져오는 것일까? 다른 configuration 클래스의 팩토리 메서드에서 수동으로 생성했다면 Spring은 자동으로 입력 파라미터로 제공할 것이다. 하지만 이 경우에는 **@EnableJpaRepositories** 어노테이션을 이용하여 Spring이 직접 생성했다. Spring Boot가 이 어노테이션을 찾는다면 자동으로 Spring Data 리포지토리 인터페이스의 구현체를 제공할 것이다.
 
@@ -200,11 +200,11 @@ Spring Boot에 익숙하다면 class configuration을 사용하지 않고 **@Ena
 
 또한 이런 접근법은 classpath scanning방식에서 했던 것과 같이 **@Component** 어노테이션을 코드에다가 붙이지 않아도 된다. 그래서 Spring 의존성 없이 애플리케이션 계층을 깨끗하게 유지할 수 있다.
 
-그러나 이런 해결책에도 문제는 있다. 구성 클래스는 생성한 bean 클래스와 동일 패키지 내에 있지 않다면 클래스 파일은 public이어야만 한다. 가시성을 제한하기 위해서, 모듈간의 경계를 표시하는데 패키지를 사용할 수도 있고 각각 패키지에서 전용 configuration 클래스를 사용할 수 있다. 하지만, 이런 방식으로는 *10장(Enforcing Architecture Boundaries)*에 살펴보겠지만 하위 패키지를 사용할 수는 없다.
+그러나 이런 해결책에도 문제는 있다. configuration 클래스는 생성한 bean 클래스와 동일 패키지 내에 있지 않다면 클래스 파일은 public이어야만 한다. 가시성을 제한하기 위해서, 모듈간의 경계를 표시하는데 패키지를 사용할 수도 있고 각각 패키지에서 전용 configuration 클래스를 사용할 수 있다. 하지만, 이런 방식으로는 *10장(Enforcing Architecture Boundaries)*에 살펴보겠지만 하위 패키지를 사용할 수는 없다.
 
 
 
-## How Does This Help Me Build Maintainable Software?
+## 유지보수하기 좋은 소프트웨어 개발에 어떤 도움이 되는가?
 
 Spring과 Spring Boot는 편리한 많은 기능을 제공한다. 주요 특징 중 하나는 개발자가 직접 하는 것처럼 애플리케이션을 모아주는 것이다.
 
