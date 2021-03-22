@@ -15,12 +15,10 @@ public class Test {
 
 
         //System.out.println(results);
-        List<Trader> results = Transaction.getTransactionList().stream()
-                .map(Transaction::getTrader)
-                .filter(trader -> trader.getCity().equals("Cambridge"))
-                .sorted(Comparator.comparing(Trader::getName))
-                .distinct()
-                .collect(Collectors.toList());
-        System.out.println(results);
+        Optional<Integer> sum = Transaction.getTransactionList().stream()
+            .map(Transaction::getValue)
+            .reduce(Integer::min);
+
+        System.out.println(sum);
     }
 }
