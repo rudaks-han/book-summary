@@ -1,6 +1,12 @@
 
 
+# 2장. 동작 파라미터
+
+
+
 #### Q. 녹색 사과만 필터링 하라. (filterGreenApples)
+
+For-loop 이용
 
 ```java
 public class Example01 {
