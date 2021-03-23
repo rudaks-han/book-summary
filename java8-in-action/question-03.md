@@ -2,7 +2,7 @@
 
 
 
-#### Q. 아래 코드에서 filter 함수를 구현하라. (java.util.function.Predicate 이용)
+#### Q1. 아래 코드에서 filter 함수를 구현하라. (java.util.function.Predicate 이용)
 
 Apple에서 green만 필터링
 
@@ -27,7 +27,7 @@ public static void main(String[] args) {
 
 
 
-#### Q. 아래 코드에서 forEach 메소드를 구현하라. (java.util.function.Consumer 이용)
+#### Q2. 아래 코드에서 forEach 메소드를 구현하라. (java.util.function.Consumer 이용)
 
 1~5까지 입력받아서 System.out.println한다.
 
@@ -47,7 +47,7 @@ public static void main(String[] args) {
 
 
 
-#### Q. 아래 코드에서 map 메소드를 구현하라. (java.util.function.Function 이용)
+#### Q3. 아래 코드에서 map 메소드를 구현하라. (java.util.function.Function 이용)
 
 Java In Action 문자를 받아서 글자 길이를 리턴하는 배열
 

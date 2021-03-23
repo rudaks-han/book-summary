@@ -1,15 +1,19 @@
 package rudaks;
 
-import java.util.stream.Stream;
+import rudaks.ch08.Task;
 
 public class Test {
 
-    public static void main(String[] args) {
+    public static void something(Runnable r) {
+        r.run();
+    }
 
-        Stream.iterate(new int[]{0, 1}, t -> new int[]{t[1], t[0] + t[1]})
-            .limit(10)
-            .map(t -> t[0])
-            .forEach(System.out::println);
+    public static void something(Task task) {
+        task.execute();
+    }
+
+    public static void main(String[] args) {
+        something((Task) () -> System.out.println("task"));
     }
 }
 
