@@ -156,9 +156,37 @@ public static void main(String[] args) {
 
 
 
+#### Q. 칼로리의 합계를 sum을 이용하여 출력하라.
+
+```java
+List<Dish> dishes = Dish.getMenuList();
+int calories = dishes.stream()
+    	// add code
+```
 
 
 
+#### Q. 다음 문자를 Stream.of를 이용하여 대문자로 변환한 후 출력하라.
+
+```java
+// "Java 8", "Lamdbas", "In", "Action"
+```
+
+
+
+#### Q. Stream.iterate를 이용하여 짝수를 5개 출력하라.
+
+```java
+// 0, 2, 4, 6, 8
+```
+
+
+
+#### Q. Stream.iterate를 이용하여 피보나치수열을 10개 출력하라.
+
+```java
+// 0, 1, 1, 2, 3, 5, 8, 13, 21, 34
+```
 
 
 

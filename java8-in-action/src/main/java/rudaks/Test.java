@@ -1,24 +1,15 @@
 package rudaks;
 
-import rudaks.ch04.Dish;
-import rudaks.ch05.Trader;
-import rudaks.ch05.Transaction;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Test {
 
     public static void main(String[] args) {
 
-
-        //System.out.println(results);
-        Optional<Integer> sum = Transaction.getTransactionList().stream()
-            .map(Transaction::getValue)
-            .reduce(Integer::min);
-
-        System.out.println(sum);
+        Stream.iterate(new int[]{0, 1}, t -> new int[]{t[1], t[0] + t[1]})
+            .limit(10)
+            .map(t -> t[0])
+            .forEach(System.out::println);
     }
 }
+
