@@ -1,10 +1,20 @@
 package rudaks.ch11;
 
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class Shop {
+
+    private String name;
+
+    public Shop(String name) {
+        this.name = name;
+    }
+
+
     public double getPrice(String product) {
         return calculatePrice(product);
     }
@@ -34,8 +44,12 @@ public class Shop {
         return random.nextDouble() * product.charAt(0) + product.charAt(1);
     }
 
+
+
     public static void main(String[] args) {
-        Shop shop = new Shop();
+
+
+        Shop shop = new Shop("");
 
         /*long start = System.nanoTime();
         double result = shop.getPrice("car");
@@ -43,7 +57,7 @@ public class Shop {
 
         System.out.println(result + ": " + end);*/
 
-        long start = System.nanoTime();
+        /*long start = System.nanoTime();
         Future<Double> futurePrice = shop.getPriceAsync("my favorite product");
         long invocationTime = ((System.nanoTime() - start));
         System.out.println(invocationTime);
@@ -56,6 +70,7 @@ public class Shop {
         }
 
         long retrievalTime = ((System.nanoTime() - start) / 1_000_000);
-        System.out.println("price returned after " + retrievalTime + "msecs");
+        System.out.println("price returned after " + retrievalTime + "msecs");*/
+
     }
 }
