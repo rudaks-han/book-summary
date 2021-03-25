@@ -4,7 +4,7 @@
 
 
 
-#### Q. 녹색 사과만 필터링 하라. (filterGreenApples)
+#### Q1. 녹색 사과만 필터링 하라. (filterGreenApples)
 
 For-loop 이용
 
@@ -33,7 +33,7 @@ public class Example01 {
 
 
 
-#### Q. Predicate를 이용하여 녹색 사과를 필터링 하라.
+#### Q2. Predicate를 이용하여 녹색 사과를 필터링 하라.
 
 ```java
 public class Test {

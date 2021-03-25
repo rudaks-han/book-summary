@@ -1,26 +1,27 @@
 package rudaks;
 
-import rudaks.ch04.Dish;
-import rudaks.ch05.Trader;
-import rudaks.ch05.Transaction;
-
-import java.util.Comparator;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
+
+import rudaks.ch02.example1.Apple;
+import rudaks.ch08.Task;
 
 public class Test {
 
+    public static void something(Runnable r) {
+        r.run();
+    }
+
+    public static void something(Task task) {
+        task.execute();
+    }
+
     public static void main(String[] args) {
 
+        Apple apple = null;
+        Optional<Apple> optionalApple = Optional.ofNullable(apple);
 
-        //System.out.println(results);
-        List<Trader> results = Transaction.getTransactionList().stream()
-                .map(Transaction::getTrader)
-                .filter(trader -> trader.getCity().equals("Cambridge"))
-                .sorted(Comparator.comparing(Trader::getName))
-                .distinct()
-                .collect(Collectors.toList());
-        System.out.println(results);
+        System.out.println(optionalApple);
     }
 }
+
