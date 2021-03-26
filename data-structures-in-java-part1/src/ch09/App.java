@@ -1,8 +1,22 @@
 package ch09;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class App {
 
     public static void main(String[] args) {
+
+        // ArrayList
+        List<String> names = new ArrayList<>();
+        names.add("Kevin");
+        names.add("Daniel");
+        names.add("Adam");
+        names.add("Ana");
+
+        names.remove(0); // O(N)
+        System.out.println(names.get(0));
+
 
         int[] nums = new int[10];
 
