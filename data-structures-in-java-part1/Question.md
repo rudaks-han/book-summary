@@ -27,3 +27,21 @@ Q4-2 Anagram problem
 > The problem is that we want to find duplicates in a **T[]** one-dimensional array of integers in **O(N)** running time where **the integer values are smaller than the length of the array** - and we can not use negative values!
 >
 > Good luck!
+
+
+
+
+
+## Section8: LinkedList
+
+> Suppose we have a standard `linked list`. Construct an in-place (without extra memory) algorithm thats able to find the middle node !
+>
+> Good luck!
+
+
+
+> Construct an in-place algorithm (without the need for extra memory) to reverse a `linked list`!
+>
+> **For example**: `1 -> 2 -> 3 -> 4` should be transformed into `4 -> 3 -> 2 -> 1`
+>
+> Good luck!

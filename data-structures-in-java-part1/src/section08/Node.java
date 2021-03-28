@@ -1,8 +1,7 @@
-package ch09.linkedlist;
+package section08;
 
-import java.util.Comparator;
+public class Node<T extends Comparable> {
 
-public class Node<T extends Comparator<T>> {
     private T data;
 
     private Node<T> nextNode;
@@ -12,18 +11,23 @@ public class Node<T extends Comparator<T>> {
     }
 
     public T getData() {
-        return this.data;
+        return data;
     }
 
     public void setData(T data) {
         this.data = data;
     }
 
+    public void setNextNode(Node<T> node) {
+        this.nextNode = node;
+    }
+
     public Node<T> getNextNode() {
         return this.nextNode;
     }
 
-    public void setNextNode(Node<T> node) {
-        this.nextNode = node;
+    @Override
+    public String toString() {
+        return data + "";
     }
 }
