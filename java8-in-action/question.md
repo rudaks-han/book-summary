@@ -234,7 +234,7 @@ public static void main(String[] args) {
 
 ```java
 public static void main(String[] args) {
-        List<Integer> words = Arrays.asList(1, 2, 3, 4, 5);
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
   
   	// add code
 }
@@ -270,11 +270,6 @@ public static void main(String[] args) {
 ```java
 public static void main(String[] args) {
     List<Dish> dishes = Dish.getMenuList();
-
-    int sum = 0;
-    for (Dish dish: dishes) {
-      	sum += dish.getCalories();
-    }
   
   // add code
 }
@@ -295,6 +290,41 @@ public static void main(String[] args) {
 
 
 다음 코드는 Transaction.getTransactionList()를 stream으로 조작하는 문제이다.
+
+```java
+@AllArgsConstructor
+@Getter
+@ToString
+public class Trader {
+  p2rivate final String name;
+
+  private final String city;
+}
+```
+
+
+
+```java
+public static List<Transaction> getTransactionList() {
+  Trader raoul = new Trader("Raoul", "Cambridge");
+  Trader mario = new Trader("Mario", "Milan");
+  Trader alan = new Trader("Alan", "Cambridge");
+  Trader brian = new Trader("Brian", "Cambridge");
+
+  List<Transaction> transactions = Arrays.asList(
+    new Transaction(brian, 2011, 300),
+    new Transaction(raoul, 2012, 1000),
+    new Transaction(raoul, 2011, 400),
+    new Transaction(mario, 2012, 710),
+    new Transaction(mario, 2012, 700),
+    new Transaction(alan, 2012, 950)
+  );
+
+  return transactions;
+}
+```
+
+
 
 #### Q5-10. 2011년에 일어난 모든 트랜잭션을 찾아 값을 오름차순으로 정리하시오.
 
@@ -320,11 +350,11 @@ public static void main(String[] args) {
 
 
 
-#### Q5-16. 전체 트랜잭션 중 최댓값은 얼마인가?
+#### Q5-16. 전체 트랜잭션 중 최댓값은 얼마인가? (reduce 이용)
 
 
 
-#### Q5-17. 전체 트랜잭션 중 최솟값은 얼마인가?
+#### Q5-17. 전체 트랜잭션 중 최솟값은 얼마인가? (reduce 이용)
 
 
 
@@ -354,7 +384,7 @@ int calories = dishes.stream()
 
 
 
-#### Q5-21. Stream.iterate를 이용하여 피보나치수열을 10개 출력하라.
+#### Q5-21. Stream.iterate를 이용하여 피보나치수열을 10개 출력하라. 
 
 ```java
 // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34
