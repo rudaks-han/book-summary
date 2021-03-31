@@ -14,7 +14,7 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> {
     }
 
     private void insert(T data, Node<T> node) {
-        if (node.getData().compareTo(data) < 0) {
+        if (node.getData().compareTo(data) > 0) {
             if (node.getLeftChild() != null) {
                 insert(data, node.getLeftChild());
             } else {
@@ -36,16 +36,54 @@ public class BinarySearchTree<T extends Comparable<T>> implements Tree<T> {
 
     @Override
     public void traversal() {
+        if (root == null) return;
 
+        traversal(root);
+    }
+
+    private void traversal(Node<T> node) {
+        if (node.getLeftChild() != null) {
+            traversal(node.getLeftChild());
+        }
+
+        System.out.print(node + " - ");
+
+        if (node.getRightChild() != null) {
+            traversal(node.getRightChild());
+        }
     }
 
     @Override
     public T getMax() {
-        return null;
+        if (root == null) {
+            return null;
+        }
+
+        return getMax(root);
+    }
+
+    private T getMax(Node<T> node) {
+        if (node.getRightChild() != null) {
+            return getMax(node.getRightChild());
+        } else {
+            return node.getData();
+        }
     }
 
     @Override
     public T getMin() {
-        return null;
+        if (root == null) {
+            return null;
+        }
+
+        return getMin(root);
+    }
+
+    private T getMin(Node<T> node) {
+        if (node.getLeftChild() != null) {
+            return getMin(node.getLeftChild());
+        } else {
+            return node.getData();
+        }
     }
 }

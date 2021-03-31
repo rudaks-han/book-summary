@@ -11,6 +11,9 @@ public class App {
         bst.insert(16);
         bst.insert(-1);
 
-        System.out.println(bst);
+        /*System.out.println(bst.getMax());
+        System.out.println(bst.getMin());*/
+
+        bst.traversal();
     }
 }
