@@ -483,6 +483,257 @@ List<Integer> l = map(
 
 
 
+#### 기본형 특화
+
+* 박싱(boxing) : 기본형을 참조형으로 변환
+
+* 언박싱(unboxing): 참조형을 기본형으로 변환
+
+* 오토박싱(auto boxing): 기본형을 참조형 변환이 자동으로 이뤄지는 것
+
+    
+
+```java
+public interface IntPredicate {
+  boolean test(int t);
+}
+
+IntPredicate evenNumbers = (int i) -> i % 2 == 0; // 박싱 없음
+eventNumbers.test(1000);
+
+Predicate<Integer> evenNumbers = (Integer i) -> i % 2 == 0; // 박싱 있음
+evenNumbers.test(1000);
+```
+
+
+
+## 3.5 형식 검사, 형식 추론, 제약
+
+### 3.5.1 형식 검사
+
+람다가 사용되는 콘텍스트를 이용해서 람다의 형식을 추론할 수 있다. 어떤 콘텍스트에서 기대되는 람다 표현식의 형식을 대상 형식이라고 부른다. 람다 표현식을 사용할 때 실제 어떤 일이 일어나는지 보여주는 예제를 확인하자.
+
+```java
+List<Apple> heavierThan150g = filter(inventory, (Apple a) -> a.getWeight() >. 150);
+```
+
+
+
+하나의 람다 표현식을 다양한 함수형 인터페이스에 사용할 수 있다.
+
+```java
+Comparator<Apple> c1 = (Apple o1, Apple o2) -> o1.getColor().compareTo(o2.getColor());
+
+ToIntBiFunction<Apple, Apple> c2 = (Apple o1, Apple o2) -> o1.getColor().compareTo(o2.getColor();
+                                                                                   
+BiFunction<Apple, Apple, Integer> c3 = (Apple o1, Apple o2) -> o1.getColor().compareTo(o2.getColor();
+```
+
+
+
+### 3.5.3 형식 추론
+
+람다 표현식이 사용된 콘텍스트를 이용하여 람다 표현식과 관련된 함수형 인터페이스를 추론한다. 대상 형식을 이용해서 함수 드스크립터를 알 수 있으므로 컴파일러는 람다의 시그너처도 추론할 수 있다. 결과적으로 컴파일러는 람다 표현식의 파라미터 형식에 접근할 수 있으므로 람다 문법에서 이를 생략할 수 있다.
+
+```java
+List<Apple> greenApples = filter(inventory, a -> "green".equals(a.getColor())); //a의 형식을 지정하지 않았다.
+```
+
+
+
+### 3.5.4 지역 변수 사용
+
+람다 표현식에서는 익명 함수가 하는 것처럼 자유 변수를 활용할 수 있다. 이와 같은 동작을 람다 캡처링이라고 부른다.
+
+```java
+int portNumber = 1337;
+Runnable r = () -> System.out.println(portNumber);
+```
+
+
+
+지역 변수는 명식적으로 final로 선언되어 있어야 하거나 실질적으로 final로 선언된 변수와 똑같이 사용되어야 한다.
+
+```java
+int portNumber = 1337;
+Runnable r = () -> System.out.println(portNumber);
+portNumber = 31337; // 컴파일 에러
+```
+
+
+
+## 3.6 메서드 레퍼런스
+
+메서드 레퍼런스는 특정 람다 표현식을 축약한 것이라고 생각하면 된다.
+
+```java
+inventory.sort((Apple a1, Apple a2) -> a1.getWeight().compareTo(a2.getWeight()));
+
+inventory.sort(comparing(Apple::getWeight());
+```
+
+
+
+### 3.6.1 요약
+
+메서드 레퍼런스는 특정 메서드만을 호출하는 람다의 축약형이라고 생각할 수 있다.
+
+Apple::getWeight는 Apple클래스에 정의된 getWeight의 메서드 레퍼런스이다.
+
+
+
+```java
+(Apple a) -> a.getWeight();
+Apple::getWeight
+  
+() -> Thead.currentThread().dumpStack()
+Thread.currentThread::dumpStack
+  
+(str, i) -> str.substring
+String:substring
+  
+(String s) -> System.out.println(s)
+System.out::println
+  
+```
+
+
+
+다음의 람다 표현식과 일치하는 메서드 레퍼런스를 작성하시오.
+
+```java
+1)
+Function<String, Integer> stringToInteger = (String s) -> Integer.parseInt(s);
+>
+Function<String, Integer> stringToInteger = Integer::parseInt;
+
+2) 
+BiPredicate<List<String>, String> contains = (list, element) -> list.contains(element);
+>
+BiPredicate<List<String>, String> contains = List:contains;
+```
+
+
+
+### 3.6.2 생성자 레퍼런스
+
+```java
+Supplier<Apple> c1 = Apple::new;
+Apple a = c1.get();
+
+// 위의 예제는 다음 코드와 같다.
+Supplier<Apple> c1 = () -> new Apple();
+Apple a = c1.get();
+```
+
+
+
+## 3.7 람다, 메서드 레퍼런스 활용하기!
+
+### 3.7.1 1단계: 코드 전달
+
+```java
+void sort(Comparator<? super E> c)
+  
+public class AppleComparator implements Comparator<Apple> {
+  public int compare(Apple a1, Apple a2) {
+    return a.getWeight().compareTo(a2.getWeight());
+  }
+}
+
+inventory.sort(new AppleComparator());
+```
+
+
+
+### 3.7.2 2단계: 익명 클래스 사용
+
+```java
+inventory.sort(new Comparator() {
+   public int compare(Apple a1, Apple a2) {
+    return a.getWeight().compareTo(a2.getWeight());
+  }
+})
+```
+
+
+
+### 3.7.3 3단계: 람다 표현식 사용
+
+```java
+inventory.sort((Apple a1, Apple a2) -> a.getWeight().compareTo(a2.getWeight()));
+```
+
+
+
+### 3.7.4 4단계: 메서드 레퍼런스 사용
+
+```java
+inventory.sort(Comparator.comparing(Apple::getWeight));
+```
+
+
+
+## 3.8 람다 표현식을 조합할 수 있는 유용한 메서드
+
+### 3.8.1 Comparator 조합
+
+```java
+Comparator<Apple> c = Comparator.comparing(Apple::getWeight);
+```
+
+역정렬
+
+```java
+inventory.sort(comparing(Apple::getWeight).reverse());
+```
+
+
+
+**Comparator 연결**
+
+```java
+inventory.sort(comparing(Apple:getWeight))
+  .reversed()
+  .thenComparing(Apple::getCountry));
+```
+
+
+
+### 3.8.2 Pedicate 조합
+
+Predicate 인터페이스는 복잡한 프레디케이트를 만들 수 있도록 negate, and, or 세가지 메서드를 제공한다. 예를 들어 '빨간 색이 아닌 사과' 처럼 특정 프레디케이트를 반전시킬 때 negate 메서드를 사용할 수 있다.
+
+```java
+Predicate<Apple> notRedApple = redApple.negate(); // redApple의 결과를 반전시킨 객체를 만든다.
+
+Predicate<Apple> redAndHeavyApple = redApple.and(a -> a.getWeight() > 150); // and 메서드를 이용해서 빨간색이면서 무거운 사과를 선택
+
+Predicate<Apple> readAndHeavyAppleOrGreen = redApple.and(a -> a.getWeight() > 150)
+  .or(a -> "green".equals(a.getColor()));
+```
+
+
+
+### 3.8.3 Function 조합
+
+andThen 메서드는 주어진 함수를 먼저 적용한 결과를 다른 함수의 입력으로 전달하는 함수를 반환한다.
+
+```java
+Function<Integer, Integer> f = x -> x + 1;
+Function<Integer, Integer> g = x -> x * 2;
+Function<Integer, Integer> h = f.andThen(g);
+int result = f.apply(1); // 4를 반환
+```
+
+compse 메서드는 인수로 주어진 함수를 먼저 실행한 다음에 그 결과를 외부 함수의 인수로 제공한다.
+
+```java
+Function<Integer, Integer> f = x -> x + 1;
+Function<Integer, Integer> g = x -> x * 2;
+Function<Integer, Integer> h = f.compose(g);
+int result = f.apply(1); // 3을 반환
+```
 
 
 
@@ -490,8 +741,13 @@ List<Integer> l = map(
 
 
 
+# Chapter 4 스트림 소개
 
+## 4.1 스트림이란 무엇인가?
 
+스트림을 이용하면 선언형으로 컬렉션 데이터를 처리할 수 있다.
+
+스트림을 이용하면 멀티 스레드 코드를 구현하지 않아도 데이터를 투명하게 병렬로 처리할 수 있다.
 
 
 

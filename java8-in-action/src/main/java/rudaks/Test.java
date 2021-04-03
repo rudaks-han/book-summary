@@ -1,27 +1,22 @@
 package rudaks;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-
 import rudaks.ch02.example1.Apple;
-import rudaks.ch08.Task;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class Test {
 
-    public static void something(Runnable r) {
-        r.run();
-    }
-
-    public static void something(Task task) {
-        task.execute();
-    }
-
     public static void main(String[] args) {
 
-        Apple apple = null;
-        Optional<Apple> optionalApple = Optional.ofNullable(apple);
+        List<Apple> inventory = null;
 
-        System.out.println(optionalApple);
+        inventory.sort((Apple a1, Apple a2) -> a1.getColor().compareTo(a2.getColor()));
+
+        inventory.sort(Comparator.comparing(Apple::getColor));
+
+
+
     }
 }
 
