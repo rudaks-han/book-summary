@@ -747,7 +747,91 @@ int result = f.apply(1); // 3을 반환
 
 스트림을 이용하면 선언형으로 컬렉션 데이터를 처리할 수 있다.
 
-스트림을 이용하면 멀티 스레드 코드를 구현하지 않아도 데이터를 투명하게 병렬로 처리할 수 있다.
+스트림을 이용하면 멀티 스레드 코드를 구현하지 않아도 데이터를 **투명하게** 병렬로 처리할 수 있다.
+
+
+
+다음은 기존 코드다(자바 7)
+
+```java
+List<Dish> lowCaloriesDishes = new ArrayList<>();
+for (Dish dish: Dish.getMenuList()) {
+  if (dish.getCalories() < 400) {
+    lowCaloriesDishes.add(dish);
+  }
+}
+
+Collections.sort(lowCaloriesDishes, new Comparator<Dish>() {
+  @Override
+  public int compare(Dish o1, Dish o2) {
+    return Integer.compare(o1.getCalories(), o2.getCalories());
+  }
+});
+
+for (Dish dish: lowCaloriesDishes) {
+  System.out.println(dish.toString());
+}
+```
+
+
+
+다음은 최신 코드다(자바 8)
+
+```java
+List<Dish> lowCaloriesDishes = Dish.getMenuList().stream()
+  .filter(dish -> dish.getCalories() < 400)
+  .sorted(Comparator.comparing(Dish::getCalories))
+  .collect(Collectors.toList());
+
+lowCaloriesDishes.stream().forEach(System.out::println);
+```
+
+Stream()을 parallelStream()으로 바꾸면 이 코드를 멀티코어 아키텍처에서 병렬로 실행할 수 있다.
+
+```java
+List<Dish> lowCaloriesDishes = Dish.getMenuList().parallelStream()
+  .filter(dish -> dish.getCalories() < 400)
+  .sorted(Comparator.comparing(Dish::getCalories))
+  .collect(Collectors.toList());
+```
+
+* 선언형으로 코드를 구현할 수 있다. 루프오 if 조건문 등의 제어 블록을 사용할 필요 없다.
+* filter, sorted, map, collect 같은 연산을 연결해서 복잡한 데이터 처리 파이프라인을 만들 수 있다.
+
+
+
+자바 8의 스트림 API의 특징을 다음처럼 요약할 수 있다.
+
+* 선언형
+    * 더 간결하고 가독성이 좋아진다.
+* 조립할 수 있음
+    * 유연성이 좋아진다.
+* 병렬화
+    * 성능이 좋아진다.
+
+
+
+## 4.2 스트림 시작하기
+
+**스트림**이란 정확히 뭘까? 스트림이란 '데이터 처리 연산을 지원하도록 소스에서 추출된 연속된 요소'로 정의할 수 있다.
+
+
+
+## 4.3 스트림과 컬렉션
+
+자바의 기존 컬렉션과 새로운 스트림 모두 연속된 요소 형식의 값을 저장하는 자료구조의 인터페이스를 제공한다. 
+
+DVD에 전체 자료구조가 저장되어 있으므로  DVD도 컬렉션이다.
+
+인터넷 스트리밍은 몇 프레임으로부터 재생할 수 있다.
+
+컬렉션은 현재 자료구조가 포함하는 모든 값을 메모리에 저장하는 자료구조다.
+
+반면 스트림은 요청할 때만 요소를 계산하는 고정된 자료구조다. (스트림에 요소를 추가하거나 스트림에서 요소를 제거할 수 없다).
+
+
+
+
 
 
 

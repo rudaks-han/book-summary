@@ -1,0 +1,12 @@
+rudaks/RewardsApp.class
+rudaks/serde/AppSerdes$PosInvoiceSerde.class
+rudaks/serde/AppSerdes$NotificationSerde.class
+rudaks/serde/AppSerdes.class
+rudaks/serde/JsonSerializer.class
+rudaks/types/LineItem.class
+rudaks/types/PosInvoice.class
+rudaks/types/DeliveryAddress.class
+rudaks/RewardsTransformer.class
+rudaks/AppConfigs.class
+rudaks/types/Notification.class
+rudaks/serde/JsonDeserializer.class

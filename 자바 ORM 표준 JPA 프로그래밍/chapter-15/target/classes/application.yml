@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/test;AUTO_SERVER=TRUE
+    username: sa
+    password:
+  jpa:
+    show-sql: true
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: true
+        ddl-auto: create

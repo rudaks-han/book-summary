@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "javaType": "rudaks.types.Notification",
+  "properties": {
+    "InvoiceNumber": {
+      "type": "string"
+    },
+    "CustomerCardNo": {
+      "type": "string"
+    },
+    "TotalAmount": {
+      "type": "number"
+    },
+    "EarnedLoyaltyPoints": {
+      "type": "number"
+    },
+    "TotalLoyaltyPoints": {
+      "type": "number"
+    }
+  }
+}
