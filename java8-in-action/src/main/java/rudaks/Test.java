@@ -1,21 +1,15 @@
 package rudaks;
 
-import rudaks.ch02.example1.Apple;
-
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Test {
 
     public static void main(String[] args) {
 
-        List<Apple> inventory = null;
-
-        inventory.sort((Apple a1, Apple a2) -> a1.getColor().compareTo(a2.getColor()));
-
-        inventory.sort(Comparator.comparing(Apple::getColor));
-
-
+        List<Integer> numbers = Arrays.asList(1, 2);
+        Optional<Integer> max = numbers.stream().reduce(Integer::max);
 
     }
 }
