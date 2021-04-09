@@ -1073,6 +1073,57 @@ Optional<Integer> max = numbers.stream().reduce(Integer::max);
 
 
 
+## 7.1 병렬 스트림
+
+숫자 n을 인수로 받아 1부터 n까지 모든 숫자의 합계를 반환하는 함수
+
+```java
+public static long sequentialSum(long n) {
+  return Stream.iterate(1L, i -> i + 1)
+   						.limit(n)
+    					.reduce(0L, Long::sum);
+}
+```
+
+
+
+전통적인 자바
+
+```java
+public static long iterativeSum(long n) {
+  long result = 0;
+  for (long i=1L; i<=n; i++) {
+    result += i;
+  }
+  
+  return result;
+}
+```
+
+병렬 실행
+
+```java
+public static long sequentialSum(long n) {
+  return Stream.iterate(1L, i -> i + 1)
+   						.limit(n)
+    					.parallel()
+    					.reduce(0L, Long::sum);
+}
+```
+
+
+
+위의 3개를 실행하면 병렬버전이 가장 느리다.
+
+그 이유는
+
+* iterate가 박싱된 객체를 생성하므로 이를 언방식하는 과정이 필요했다.
+* iterate는 병렬로 실행될 수 있도록 독립적인 청크로 분할하기가 어렵다.
+
+
+
+**더 특화된 메서드 사용**
+
 
 
 
