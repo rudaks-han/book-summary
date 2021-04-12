@@ -1,5 +1,6 @@
 package rudaks.ch07;
 
+import java.util.function.Function;
 import java.util.stream.*;
 
 public class ParallelStreams {
@@ -17,7 +18,7 @@ public class ParallelStreams {
     }
 
     public static long parallelSum(long n) {
-        return Stream.iterate(1L, i -> i + 1).limit(n).parallel().reduce(Long::sum).get();
+        return Stream.iterate(1L, i -> i + 1).limit(n).parallel().reduce(0L, Long::sum);
     }
 
     public static long rangedSum(long n) {
@@ -25,7 +26,7 @@ public class ParallelStreams {
     }
 
     public static long parallelRangedSum(long n) {
-        return LongStream.rangeClosed(1, n).parallel().reduce(Long::sum).getAsLong();
+        return LongStream.rangeClosed(1, n).parallel().reduce(0L, Long::sum);
     }
 
     public static long sideEffectSum(long n) {
@@ -38,6 +39,18 @@ public class ParallelStreams {
         Accumulator accumulator = new Accumulator();
         LongStream.rangeClosed(1, n).parallel().forEach(accumulator::add);
         return accumulator.total;
+    }
+
+    public static long measureSumPerf(Function<Long, Long> adder, long n) {
+        long fastest = Long.MAX_VALUE;
+        for (int i=0; i<10; i++) {
+            long start = System.nanoTime();
+            long sum = adder.apply(n);
+            long duration = (System.nanoTime() - start) / 1_000_000;
+            if (duration < fastest) fastest = duration;
+        }
+
+        return fastest;
     }
 
     public static class Accumulator {
