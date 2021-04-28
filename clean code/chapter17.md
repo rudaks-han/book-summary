@@ -144,6 +144,366 @@ Day day = DayDate.StringToDay(String dayName);
 
 ###### G6: 추상화 수준이 올바르지 못하다
 
+###### G7: 기초 클래스가 파생 클래스에 의존한다
+
+###### G8: 과도한 정보
+
+우수한 소프트웨어 개발자는 클래스나 모듈 인터페이스에 노출할 함수를 제한할 줄 알아야 한다. 클래스가 제공하는 메서드 수는 작을수록 좋다. 함수가 아는 변수 수도 작을수도 좋다.
+
+
+
+###### G9: 죽은 코드
+
+죽은 코드는 실행되지 않는 코드를 가리킨다.
+
+
+
+###### G10: 수직 분리
+
+변수와 함수는 사용되는 위치에 가깝게 정의한다. 지역변수는 처음으로 사용하기 직전에 선언
+
+
+
+###### G11: 일관성 부족
+
+표기법은 신중하게 선택하며, 일단 선택한 표기법은 신중하게 따른다.
+
+
+
+###### G12: 잡동사니
+
+비어있는 기본 생성자가 왜 필요한가? 쓸데없이 코드만 복잡하게 만든다.
+
+아무도 사용하지 않는 변수, 아무도 호출하지 않는 함수, 정보를 제공하지 못하는 주석 ==> 모두 제거되야한다.
+
+
+
+###### G13: 인위적 결합
+
+
+
+###### G14: 기능 욕심
+
+클래스 메서드는 자기 클래스의 변수오 ㅏ함수에 관심을 가져야지 다른 클래스의 변수와 함수에 관심을 가져서는 안된다.
+
+
+
+###### G15: 선택자 인수
+
+선택자 인수는 큰 함수를 작은 함수 여럽으로 쪼개지 않으려는 게으름의 소산이다.
+
+
+
+###### G16: 모호한 의도
+
+
+
+###### G17: 잘못 지운 책임
+
+
+
+###### G18: 부적절한 static 함수
+
+간혹 우리는 static으로 정의하면 안 되는 함수를 static으로 정의한다.
+
+```java
+HourlyPayCalculator.calculatePay(employee, overtimeRate);
+```
+
+함수를 재정의할 가능성이 존재한다.
+
+
+
+###### G19: 서술적 변수
+
+```java
+Matcher match = headerPattern.matcher(line);
+if (match.find()) {
+    String key = match.group(1);
+    String value = match.group(2);
+    headers.put(key.toLowerCase(), value);
+}
+```
+
+서술적인 변수 이름을 사용한 탓에 첫 번째로 일치하는 그룹이 키(key)이고 두 번째로 일치하는 그룹이 값(value)이라는 사실이 명확하게 드러난다.
+
+서술적인 변수 이름은 많이 써도 괜찮다.
+
+
+
+###### G20: 이름과 기능이 일치하는 함수
+
+```java
+Date newDate = date.add(5);
+```
+
+5일을 더하는 함수인가? 아니면 5주? 5시간?
+
+5일을 더하는 함수라면 addDaysTo 혹은 increaseByDays라는 이름이 좋다.
+
+
+
+###### G21: 알고리즘을 이해하라
+
+구현이 끝났다고 선언하기 전에 함수가 돌아가는 방식을 확실히 이해하는지 확인하라. 테스트 케이스를 모두 통과한다는 사실만으로 부족하다. 작성자가 알고리즘이 올바르다는 사실을 알아야 한다.
+
+
+
+###### G22: 논리적 의존성은 물리적으로 드러내라
+
+한 모듈이 다른 모듈에 의존한다면 물리적인 의존성도 있어야 한다.
+
+
+
+###### G23: If/Else 혹은 Switch/Case 문보다는 다형성을 사용하라
+
+* 대다수 개발자가 switch문을 사용하는 이유는 그 상황에서 가장 올바른 선택이기보다는 당장 손쉬운 선택이기 때문이다. 그러므로 switch를 선택하기 전에 다형성을 먼저 고려하라는 의미다.
+* 유형보다 함수가 더 쉽게 변하는 경우는 드물다. 그러므로 모든 switch문을 의심해야 한다.
+
+
+
+###### G24: 표준 표기법을 따르라
+
+팀은 업계 표준에 기반한 구현 표준을 따라야 한다. 구현 표준은 인스턴스 변수 이름을 선언하는 위치, 클래스/메서드/변수 이름을 정하는 방법, 괄호를 넣는 위치 등을 명시해야 한다. 표준을 설명하는 문서는 코드 자체로 충분해야 하며 별도 문서를 만들 필요는 없어야 한다.
+
+팀이 정한 표준은 팀원들 모두가 따라야 한다. 실제 괄호를 넣는 위치는 중요하지 않다.모두가 동의한 위치에 넣는다는 사실이 중요하다.
+
+
+
+###### G25: 매직 숫자는 명명된 상수로 교체하라
+
+
+
+###### G26: 정확하라
+
+List로 선언할 변수를 ArrayList로 선언하는 행동은 지나친 제약이다.
+
+모든 변수를 protected로 선언한 코드는 무절제하다.
+
+
+
+###### G27: 관례보다 구조를 사용하라
+
+
+
+###### G28: 조건을 캡슐화하라
+
+```java
+if (shouldBeDeleted(timer))
+// 라는 코드는 다음 코드보다 좋다
+if (time.hasExpired() && !timer.isReccurent())
+```
+
+
+
+###### G29: 부정 조건은 피하라
+
+부정 조건은 긍정 조건보다 이해하기 어렵다. 가능하면 긍정 조건으로 표현한다.
+
+```java
+if (buffer.shouldCompact())
+//라는 코드가 아래 코드보다 좋다.
+if (!buffer.shouldCompact())
+```
+
+
+
+###### G30: 함수는 한 가지만 해야 한다
+
+```java
+public void pay() {
+    for (Employee e: employees) {
+        if (e.isPayday()) {
+            Money pay = e.calculatePay();
+            e.deliverPay(pay);
+        }
+    }
+}
+```
+
+위 함수는 다음 함수 셋으로 나누는 편이 좋다.
+
+```java
+public void pay() {
+    for (Employee e: employees) {
+        payIfNeccesary(e);
+}
+    
+private void payIfNeccesary(Employee e) {
+    if (e.isPayday(()) {
+        calculateAndDeliverPay(e);
+    }
+}
+        
+private void calculateAndDeliverPay(Employee e) {
+    Money pay = e.calculatePay();
+    e.deliverPay();
+}
+```
+
+
+
+###### G31: 숨겨진 시간적인 결합
+
+```java
+public class MoogDiver() {
+    Gradient gradient;
+    List<Spline> splines;
+    
+    public void dive(String reason) {
+        saturateGradient();
+        reticulateSpines();
+        diveForMoog(reason);
+    }
+}
+```
+
+세 함수가 시행되는 순서가 중요하다.
+
+다음 코드가 더 좋다.
+
+```java
+public class MoogDiver() {
+    Gradient gradient;
+    List<Spline> splines;
+    
+    public void dive(String reason) {
+        Gradient gradient = saturateGradient();
+        List<Spline> splines = reticulateSplines(gradient);
+        diveForMoog(splines, reason);
+    }
+}
+```
+
+
+
+###### G32: 일관성을 유지하라
+
+
+
+###### G33: 경계 조건을 캡슐화하라
+
+```java
+if (level + 1 < tags.length) {
+    parts = new Parse(body, tags, level + 1, offset + endTag);
+    body = null;
+}
+```
+
+level + 1이 두 번 나온다. 이런 경계 조건은 변수로 캡슐화하는 편이 좋다.
+
+```java
+int nextLevel = level + 1;
+if (nextLevel < tags.length) {
+    parts = new Parse(body, tags, nextLevel, offset + endTag);
+    body = null;
+}
+```
+
+
+
+###### G34: 함수는 추상화 수준을 한 단계만 내려간다
+
+
+
+###### G35: 설정 정보는 최상위 단계에 둬라
+
+
+
+###### G36: 추이적 탐색을 피하라
+
+A가 B를 사용하고 B가 C를 사용한다 하더라도 A가 C를 알아야 할 필요는 없다는 뜻이다. (예를 들어 a.getB().getC().doSomething();은 바람직하지 않다)
+
+
+
+##### 자바
+
+###### J1: 긴 import 목록을 피하고 와일드카드를 사용하라
+
+
+
+###### J2: 상수는 상속하지 않는다
+
+
+
+###### J3: 상수 대 Enum
+
+Enum을 마음껏 활용하라.
+
+
+
+##### 이름
+
+###### N1: 서술적인 이름을 사용하라
+
+소프트웨어 가독성의 90%는 이름이 결정한다.
+
+
+
+###### N2: 적절한 추상화 수준에서 이름을 선택하라
+
+
+
+###### N3: 가능하면 표준 명명법을 사용하라
+
+
+
+###### N4: 명확한 이름
+
+
+
+###### N5: 긴 범위는 긴 이름을 사용하라
+
+
+
+###### N6: 인코딩을 피하라
+
+
+
+###### N7: 이름으로 부수 효과를 설명하라
+
+
+
+##### 테스트
+
+###### T1: 불충분한 테스트
+
+테스트 케이스는 몇 개나 만들어야 충분할까?
+
+
+
+###### T2: 커버리지 도구를 사용하라!
+
+
+
+###### T3: 사소한 테스트를 건너뛰지 마라
+
+
+
+###### T4: 무시한 테스트는 모호함을 뜻한다
+
+
+
+###### T5: 경계 조건을 테스트하라
+
+
+
+###### T6: 버그 주변은 철저히 테스트하라
+
+
+
+###### T7: 실패 패턴을 살펴라
+
+
+
+###### T8: 테스트 커버리지 패턴을 살펴라
+
+
+
+###### T9ㅖ 테스트는 빨라야 한다
+
+
+
 
 
 
