@@ -110,7 +110,7 @@ lastIdUsed 필드를 42로 설정한 다음, 두 스레드가 해당 인스턴�
 
 ###### 스레드 환경에 안전한 컬렉션
 
-Java.util.concorrent 패키지가 제공하는 클래스는 다중 스레드 환경에서 사용해도 안전하며, 성능도 좋다.
+Java.util.concurrent 패키지가 제공하는 클래스는 다중 스레드 환경에서 사용해도 안전하며, 성능도 좋다.
 
 실제로 ConcurrentHashMap은 거의 모든 상황에서 HashMap보다 빠르다.
 

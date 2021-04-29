@@ -4,11 +4,22 @@
 
 함수를 만드는 첫째 규칙은 '작게!'다. 둘째 규칙은 '더 작게'다.
 
+얼마나 짧아야 하느냐고?
+
+```java
+public static String renderPageWithSetupsAndTeardowns(PageData pageData, boolean isSuite) {
+    if (isTestPage(pageData)) 
+        includeSetupAndTeardownPages(pageData, isSuite);
+    return pageData.getHtml();
+)
+```
+
 
 
 ###### 블록과 들여쓰기
 
-if문/else문/while 문 등에 들어가는 블록은 한 줄이어야 한다는 의미다. 
+* if문/else문/while 문 등에 들어가는 블록은 한 줄이어야 한다는 의미다. 
+* 함수에서 들여쓰기 수준은 1단이나 2단을 넘어서면 안된다.
 
 
 
@@ -16,7 +27,9 @@ if문/else문/while 문 등에 들어가는 블록은 한 줄이어야 한다는
 
 > 함수는 한 가지를 해야 한다. 그 한 가지를 잘 해야 한다. 그 한 가지만을 해야 한다.
 
-함수가 '한 가지'만 하는지 판단하는 방법이 하나 더 있다. 의미 잇는 이름으로 다른 함수를 추출할 수 있다면 그 함수는 여러 작업을 하는 셈이다.
+지정된 함수 이름 아래에서 추상화 수준이 하나인 단계만 수행한다면 그 함수는 한가지 작업만 한다. 우리가 함수를 만드는 이유는 큰 개념을 다음 추상화 수준에서 여러 단계로 나눠 수행하기 위해서가 아니던가.
+
+함수가 '한 가지'만 하는지 판단하는 방법이 하나 더 있다. <u>의미 있는 이름으로 다른 함수를 추출할 수 있다면 그 함수는 여러 작업을 하는 셈이다</u>.
 
 
 
@@ -24,7 +37,7 @@ if문/else문/while 문 등에 들어가는 블록은 한 줄이어야 한다는
 
 함수가 '한 가지' 작업만 하려면 함수 내 모든 문장의 추상화 수준이 동일해야 한다.
 
-한 함수 내에 추상화 수준을 섞으면 코드를 읽는 사람이 헷갈린다. 
+한 함수 내에 추상화 수준을 섞으면 코드를 읽는 사람이 헷갈린다. 근본 개념을 뒤섞기 시작하면, 깨어진 창문처럼 사람들이 함수에 세부사항을 점점 더 추가한다.
 
 
 
@@ -36,9 +49,7 @@ if문/else문/while 문 등에 들어가는 블록은 한 줄이어야 한다는
 
 ##### Switch 문
 
-switch 문은 작게 만들기 어렵다.
-
-본질적으로 switch 문은 N가지를 처리한다.
+switch 문은 작게 만들기 어렵다. 본질적으로 switch 문은 N가지를 처리한다.
 
 ```java
 public Money calculatePay(Employee e) throws InvalidEmployeeType {
@@ -63,7 +74,7 @@ public Money calculatePay(Employee e) throws InvalidEmployeeType {
 
 세째, SRP를 위반한다. 코드를 변경할 이유가 여럿이기 때문이다.
 
-네째, OCP를 위반한다. 새 직원 유형을 추갛ㄹ 때마다 코드를 변경하기 때문이다.
+네째, OCP를 위반한다. 새 직원 유형을 추가할 때마다 코드를 변경하기 때문이다.
 
 
 
@@ -83,25 +94,39 @@ public Money calculatePay(Employee e) throws InvalidEmployeeType {
 
 ###### 많이 쓰는 단항 형식
 
+이벤트 함수는 조심해서 사용한다. 이벤트라는 사실이 코드에 명확히 드러나야 한다.
+
+StringBuffer transform(StringBuffer in)이 void transform(StringBuffer out)보다 좋다.
+변환 함수 형식을 따르는 편이 좋다.
+
 
 
 ###### 플래그 인수
 
-플래그 인수는 추하다.함수로 부울 값을 넘기는 관례는 정말로 끔찍하다. 함수가 한꺼번에 여러 가지를 처리한다고 대놓고 공표하는 셈이니까!
+* 플래그 인수는 추하다.
+* 함수로 부울 값을 넘기는 관례는 정말로 끔찍하다. 
+* 함수가 한꺼번에 여러 가지를 처리한다고 대놓고 공표하는 셈이니까!
+
+render(true) 라는 코드는 헷갈리기 십상이다.
+--> renderForSuite()와 renderForSingleTest()라는 함수로 나눠야 마땅하다.
 
 
 
 ###### 이항 함수
 
 writeField(name)는 writeField(outputStream, name)보다 이해하기 쉽다.
+==> outputStream.write(FieldName)으로 호출한다.
 
-assertEquals(expected, actual)은 expected 다음에 actual이 온다는 순서를 기억해야 한다.
+assertEquals(expected, actual)의 문제는 expected 다음에 actual이 온다는 순서를 기억해야 한다는 것이다.
 
 
 
 ###### 삼항 함수
 
 인수가 3개인 함수는 인수가 2개인 함수보다 훨씬 더 이해하기 어렵다.
+
+assertEquals(message, expected, actual)이라는 함수를 살펴보자. 
+첫 인수가 expected라고 예상하지 않았는가?
 
 
 
@@ -130,6 +155,8 @@ String.format("%s worked %.2f hours.", name, hours);
 
 write(name)은 '이름'이 무엇이든 '쓴다'는 뜻이다. 좀 나은 이름은 writeField(name)이다.
 
+assertEquals보다 assertExpectedEqualsActual이 더 좋다. 그러면 인수 순서를 기억할 필요가 없다.
+
 
 
 ###### 부수 효과를 일으키지 마라!
@@ -155,6 +182,8 @@ report.appendFooter()
 ```
 
 
+
+> > > 여기
 
 ###### 명령과 조회를 분리하라!
 
