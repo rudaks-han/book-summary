@@ -174,7 +174,6 @@ appendFooter(s);
 ```
 
 이 함수는 무언가에 s를 바닥글로 첨부할까? 아니면 s에 바닥글을 첨부할까?
-
 appendFooter는 다음과 같이 호출하는 방식이 좋다.
 
 ```java
@@ -182,8 +181,6 @@ report.appendFooter()
 ```
 
 
-
-> > > 여기
 
 ###### 명령과 조회를 분리하라!
 
@@ -199,6 +196,15 @@ if (set("username", "unclebob")) ...
 
 username이 unclebob으로 설정되어 있는지 확인하는 코드인가? 아니면 username을 unclebob으로 설정하는 코드인가?
 
+진짜 해결책은 명령과 조회를 분리해 혼란을 애초에 뿌리뽑는 방법이다.
+
+```java
+if (attributeExists("username")) {
+  setAttribute("username", "unclebob");
+  ...
+}
+```
+
 
 
 ###### 오류 코드보다 예외를 사용하라!
@@ -208,14 +214,69 @@ if (deletePage(page) == E_OK)
 ```
 
 위 코드는 여러 단계로 중첩되는 코드를 야기한다. 오류 코드를 반환하면 오류 코드를 곧바로 처리해야 한다는 문제에 부딪힌다.
-
 오류 코드 대신 예외를 사용하면 오류 처리 코드가 원래 코드에서 분리되므로 코드가 깔끔해진다.
+
+```java
+if (deletePage(page) == E_OK) {
+  if (registry.deleteReference(page.name) == E_OK) {
+    if (configKeys.deleteKey(page.name.makeKey()) == E_OK) {
+      logger.log("page deleted");
+    } else {
+      logger.log("configKey not deleted");
+    }
+  } else {
+    logger.log("deleteReference from registry failed");
+  }
+} else {
+  logger.log("delete failed");
+  return E_ERROR;
+}
+```
+
+반면 오류 코드 대신 예외를 사용하면 오류 처리 코드가 원래 코드에서 분리되므로 코드가 깔끔해진다.
+
+```java
+try {
+  deletePage(page);
+  registry.deleteKey(page.name.makeKey());
+  configKeys.deleteKey(page.name.makeKey());
+} catch (Exception e) {
+  logger.log(e.getMessage());
+}
+```
 
 
 
 ###### Try/Catch 블록 뽑아내기
 
 try/catch 블록은 원래 추하다. 코드 구조에 혼란을 일으키며, 정상 동작과 오류 처리 동작을 뒤섞는다. 그러므로 try/catch 블록을 별도 함수로 뽑아내는 편이 좋다.
+
+```java
+public void delete(Page page) {
+  try {
+    deletePageAndAllReferences(page);
+  } catch (Exception e) {
+    logError(e);
+  }
+}
+```
+
+```java
+private void deletePageAndAllReferences(Page page) throws Exception {
+  deletePage(page);
+  registry.deleteReference(page.name);
+  configKeys.deleteKey(page.name.makeKey());
+}
+
+private void logError(Exception e) {
+  logger.log(e.getMessage());
+}
+```
+
+위에서 delete함수는 모든 오류 를 처리한다.
+실제로 페이지를 제거하는 함수는 deletePageAndAllReferences다.
+
+이렇게 정상 동작과 오류 처리 동작을 분리하면 코드를 이해하고 수정하기 쉬워진다.
 
 
 
@@ -249,11 +310,9 @@ public enum Error {
 
 중복은 소프트웨어에서 모든 악의 근원이다. 많은 원칙과 기법이 중복을 없애거나 제어할 목적으로 나왔다. 
 
-관계형 데이터베이스: 정규화
-
-객체지향 프로그래밍: 부모 클래스로 몰아 중복을 없앤다.
-
-구조적 프로그래밍, AOP, COP 모두 중복 제거 전략이다.
+* 관계형 데이터베이스: 정규화
+* 객체지향 프로그래밍: 부모 클래스로 몰아 중복을 없앤다.
+* 구조적 프로그래밍, AOP, COP 모두 중복 제거 전략이다.
 
 
 
@@ -261,17 +320,18 @@ public enum Error {
 
 함수는 return문이 하나여야 한다.
 
+하지만 함수를 작게 만든다면 간혹 return, break, continue를 여러 차례 사용해도 괜찮다.
+
 
 
 ##### 함수를 어떻게 짜죠?
 
 소프트웨어를 짜는 행위는 여느 글짓기와 비슷하다.
-
-처음에는 길고 복잡하다. 들여쓰기도 많고 중복된 루프도 많다. 인수목록도 길다.
+처음에는 길고 복잡하다. 들여쓰기도 많고 중복된 루프도 많다. 인수목록도 길다. 이름은 즉흥적이고 코드는 중복된다. 하지만 나는 그 서투른 코드를 빠짐없이 테스트하는 단위 테스트 케이스도 만든다.
 
 그런 다음 코드를 다듬고, 함수를 만들고, 이름도 바꾸고, 중복을 제거한다. 메서드를 줄이고 순서를 바꾼다. 전체 클래스를 쪼개기도 한다. 이 와중에도 코드는 항상 단위 테스트를 통과한다.
 
-최종적으로는 이장에서 설명한 규칙을 따르는 함수가 얻어진다. 처음부터 탁 짜내지 않는다. 그게 가능한 사람은 없으리라.
+최종적으로는 이장에서 설명한 규칙을 따르는 함수가 얻어진다. <u>처음부터 탁 짜내지 않는다. 그게 가능한 사람은 없으리라.</u>
 
 
 
