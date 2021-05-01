@@ -1,4 +1,4 @@
-# 8 경계
+# 8장 경계
 
 ```java
 Map sensors = new HashMap();

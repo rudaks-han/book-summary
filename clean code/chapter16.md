@@ -1,4 +1,4 @@
-# 16 SerialDate 리팩터링
+# 16장 SerialDate 리팩터링
 
 
 
