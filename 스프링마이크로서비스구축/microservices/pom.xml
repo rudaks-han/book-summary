@@ -13,6 +13,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>product-service</module>
+        <module>review-service</module>
+        <module>recommendation-service</module>
+        <module>product-composite-service</module>
     </modules>
 
 
