@@ -16,6 +16,7 @@ logging:
   level:
     root: INFO
     se.magnus: DEBUG
+
 ---
 spring.profiles: docker
 
@@ -31,4 +32,3 @@ app:
   review-service:
     host: review
     port: 8080
-
