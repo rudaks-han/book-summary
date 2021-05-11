@@ -31,7 +31,7 @@ int fileAgeInDays;
 
 의도가 드러나는 이름을 사용하면 코드 이해와 변경이 쉬워진다.
 
-다음 코든는 무엇을 할까?
+다음 코드는 무엇을 할까?
 
 ```java
 public List<int []) getThem() {
