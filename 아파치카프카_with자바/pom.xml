@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>simple-kafka-producer</module>
+        <module>spring-kafka-producer</module>
     </modules>
 
     <properties>
