@@ -2,11 +2,15 @@
 
 ## 3.1 카프카 브로커, 클러스터, 주키퍼
 
-하나의 서버에는 한 개의 카프카 브로커 프로세스가 실행된다. 카프카 브로커 서버 1대로도 기본 기능이 실행되지만 데이터를 안전하게 보관하고 처리하기 위해 3대 애상의 브로커 서버를 1개의 클러스터로 묶어서 운영한다. 카프카 클러스터로 묶인 브로커들은 프로듀서가 보낸 데이터를 안전하게 분산 저장하고 복제하는 역할을 수행한다.
+* 하나의 서버에는 한 개의 카프카 브로커 프로세스가 실행된다. 
+* 카프카 브로커 서버 1대로도 기본 기능이 실행되지만 데이터를 안전하게 보관하고 처리하기 위해 3대 애상의 브로커 서버를 1개의 클러스터로 묶어서 운영한다. 
+* 카프카 클러스터로 묶인 브로커들은 프로듀서가 보낸 데이터를 안전하게 분산 저장하고 복제하는 역할을 수행한다.
 
 
 
 <img src="images/image-20210513200630889-0992613.png" alt="image-20210513200630889" style="zoom:67%;" />
+
+주키퍼와 연동하여 동작하는 카프카 클러스터
 
 
 
@@ -25,26 +29,29 @@ $ ls /tmp/kafka-logs/hello.kafka-0 # --------2
 00000000000000000000.log       leader-epoch-checkpoint
 ```
 
-1. config/server.properties의 log.dir 옵션에 정의한 디렉토리에 데이터를 저장한다. 토픽 이름과 파티션 번호의 조합으로 하위 디렉토리를 생성하여 데이터를 저장한다.
+1. config/server.properties의 <u>log.dir 옵션</u>에 정의한 디렉토리에 데이터를 저장한다. 토픽 이름과 파티션 번호의 조합으로 하위 디렉토리를 생성하여 데이터를 저장한다.
 2. hello.kafka 토픽의 0번 파티션에 존재하는 데이터를 확인할 수 있다.
     * log: 메시지와 메타데이터를 저장
     * index: 메시지의 오프셋을 인덱싱한 정보
     * timeindex: 메시지에 포함된 timestamp값을 기준으로 인덱싱한 정보가 담겨 있다.
-    * Timestamp: 브로커가 적재한 데이터를 삭제하거나 압축하는데 사용한다.
+    * timestamp: 브로커가 적재한 데이터를 삭제하거나 압축하는데 사용한다.
 
 
 
-카프카는 메모리나 데이터베이스에 저장하지 않으며 따로 캐시 메모리를 구현하지도 않는다. 파일 시스템에 저장하기 때문에 파일 입출력으로 인해 속도 이슈가 발생하지 않을까 의문을 가질 수 있다.
+* 카프카는 메모리나 데이터베이스에 저장하지 않으며 따로 캐시 메모리를 구현하지도 않는다. 
+* 파일 시스템에 저장하기 때문에 파일 입출력으로 인해 속도 이슈가 발생하지 않을까 의문을 가질 수 있다.
 
-카프카는 페이지 캐시를 사용하여 디스크 입출력 속도를 높여서 이 문제를 해결했다. 페이지 캐시란 OS에서 파일 입출력의 성능 향상을 위해 만들어 놓은 메모리 영역을 뜻한다. 한번 읽은 내용은 메모리의 페이지 캐시 영역애 저장시킨다. 추후 동일한 파일의 접근이 일어나면 디스크에서 읽지 않고 메모리에서 직접 읽는 방식이다.
+* 카프카는 `페이지 캐시`를 사용하여 디스크 입출력 속도를 높여서 이 문제를 해결했다. 
+* 페이지 캐시란 OS에서 파일 입출력의 성능 향상을 위해 만들어 놓은 메모리 영역을 뜻한다. 
+* 한번 읽은 내용은 메모리의 페이지 캐시 영역애 저장시킨다. 
+* 추후 동일한 파일의 접근이 일어나면 디스크에서 읽지 않고 메모리에서 직접 읽는 방식이다.
 
 
 
 #### 데이터 복제, 싱크
 
 복제의이유는 클러스터로 묶인 브로커 중 일부에 장애가 발생하더라도 데이터를 유실하지 않고 안전하게 사용하기 위함이다.
-
-카프카의 데이터 복제는 파티션 단위로 이루어진다.
+<u>카프카의 데이터 복제는 파티션 단위</u>로 이루어진다.
 
 
 
@@ -54,7 +61,7 @@ $ ls /tmp/kafka-logs/hello.kafka-0 # --------2
 
 프로듀서 또는 컨슈머와 직접 통신하는 파티션을 리더, 나머지 복제 데이터를 가지고 있는 파티션을 팔로워라고 부른다.
 
-팔로워 파티션들은 리더 파티션의 오프셋을 확인하여 현재 자신이 가지고 있는 오프셋과 차이가 나는 경우 리더 파티션으로부터 데이터를 가져와서 자신의 파티션에 저장하는데, 이 과정을 복제라고 부른다. 복제를 통해 데이터를 안전하게 사용할 수 있다는 강력한 장점 때문에 카프카를 운영할 때 2 이상의 복제 개수를 정하는 것이 중요하다.
+팔로워 파티션들은 리더 파티션의 오프셋을 확인하여 현재 자신이 가지고 있는 오프셋과 차이가 나는 경우 <u>리더 파티션으로부터 데이터를 가져와서 자신의 파티션에 저장</u>하는데, 이 과정을 `복제`라고 부른다. 복제를 통해 데이터를 안전하게 사용할 수 있다는 강력한 장점 때문에 카프카를 운영할 때 <u>2 이상의 복제 개수</u>를 정하는 것이 중요하다.
 
 
 
@@ -66,7 +73,7 @@ $ ls /tmp/kafka-logs/hello.kafka-0 # --------2
 
 #### 컨트롤러(controller)
 
-클러스터의 다수 브로커 중 한 대가 컨트롤러의 역할을 한다. 컨트롤러는 다른 브로커들이 상태를 체크하고 브로커가 클러스터에서 빠지는 경우 해당 브로커에 존재하는 리더 파티션을 재분배한다.
+클러스터의 <u>다수 브로커 중 한 대가 컨트롤러의 역할</u>을 한다. <u>컨트롤러는 다른 브로커들의 상태를 체크</u>하고 브로커가 클러스터에서 빠지는 경우 해당 브로커에 존재하는 <u>리더 파티션을 재분배</u>한다. 만약 컨트롤러 역할을 하는 브로커에 장애가 생기면 다른 브로커가 컨트롤러 역할을 한다.
 
 
 
@@ -84,7 +91,7 @@ $ ls /tmp/kafka-logs/hello.kafka-0 # --------2
 
 #### 코디네이터(coordinator)
 
-클러스터의 다수 브로커 중 한 대는 코디네이터의 역할을 수행한다. 코디네이터는 컨슈머 그룹의 상태를 체크하고 파티션을 컨슈머와 매칭되도록 분배하는 역할을 한다. 컨슈머가 컨슈머 그룹에서 빠지면 매칭되지 않은 파티션을 정상 동작하는 컨슈머로 할당하여 끊임없이 데이터가 처리되도록 도와준다. 이렇게 파티션을 컨슈머로 재할당하는 과정을 '`리밸런스`(rebalance)'라고 부른다.
+클러스터의 다수 브로커 중 한 대는 코디네이터의 역할을 수행한다. `코디네이터`는 컨슈머 그룹의 상태를 체크하고 파티션을 컨슈머와 매칭되도록 분배하는 역할을 한다. 컨슈머가 컨슈머 그룹에서 빠지면 매칭되지 않은 파티션을 정상 동작하는 컨슈머로 할당하여 끊임없이 데이터가 처리되도록 도와준다. 이렇게 파티션을 컨슈머로 재할당하는 과정을 '`리밸런스`(rebalance)'라고 부른다.
 
 주키퍼는 카프카의 메타데이터를 관리하는 데에 사용된다.
 
@@ -154,7 +161,7 @@ ls /brokers/topics
 
 ## 3.3 레코드
 
-레코드는 타임스탬프, 메시지 키, 메시지 값, 오프셋으로 구성되어 있다.
+레코드는 타임스탬프, 메시지 키, 메시지 값, 오프셋으로 구성되어 있다. 레코드는 수정할 수 없고 로그 리텐션 기간 또는 용량에 따라서만 삭제된다.
 
 * 타임스탬프
     * 브로커 기준 유닉스 시간이 설정
@@ -164,7 +171,7 @@ ls /brokers/topics
     * 메시지 키를 사용하지 않는다면 레코드는 기본 설정 파티셔너에 따라 파티션에 분배된다.
 * 메시지 값
     * 실질적으로 처리할 데이터가 들어 있다.
-    * 메시지 키와 메시지 값은 직렬화되어 브로커로 전송되기 때문에 동일한 형태로 역질렬화를 수행해야 한다.
+    * 메시지 키와 메시지 값은 직렬화되어 브로커로 전송되기 때문에 동일한 형태로 역직렬화를 수행해야 한다.
 * 오프셋
     * 0 이상의 숫자
     * 이전에 전송된 레코드의 오프셋+1 값으로 생성된다.
@@ -175,7 +182,63 @@ ls /brokers/topics
 
 ### 3.4.1 프로듀서 API
 
+```java
+public class SimpleProducer {
+    private final static Logger logger = LoggerFactory.getLogger(SimpleProducer.class);
+    private final static String TOPIC_NAME = "test";
+    private final static String BOOTSTRAP_SERVERS = "localhost:9092";
+
+    public static void main(String[] args) {
+        Properties configs = new Properties();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(configs);
+
+        String messageKey = "key1";
+        String messageValue = "testMessage";
+        ProducerRecord<String, String> record = new ProducerRecord(TOPIC_NAME, messageKey, messageValue);
+        producer.send(record);
+        logger.info("{}", record);
+        producer.flush();
+        producer.close();
+    }
+}
+```
+
+
+
 ### 3.4.2 컨슈머 API
+
+```java
+public class SimpleConsumer {
+    private final static Logger logger = LoggerFactory.getLogger(SimpleProducer.class);
+    private final static String TOPIC_NAME = "test";
+    private final static String BOOTSTRAP_SERVERS = "localhost:9092";
+    private final static String GROUP_ID = "test-group";
+
+    public static void main(String[] args) {
+        Properties configs = new Properties();
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        configs.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
+        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(configs);
+        consumer.subscribe(Arrays.asList(TOPIC_NAME));
+
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
+            for (ConsumerRecord<String, String> record: records) {
+                logger.info("{}", record);
+            }
+        }
+    }
+}
+```
+
+
 
 #### 컨슈머 중요 개념
 
@@ -247,7 +310,7 @@ ls /brokers/topics
 
 [그림] 컨슈머 내부구조
 
-컨슈머는 poll() 메서드를 통해 레코드들을 반환받지만 poll() 메서드를 호출하는 시점에 클러스터에서 데이터를 가져오는 것은 아니다. 컨슈머 애플리케이션을 실행하게 되면 내부에서 Fetcher 인스턴스가 생성되어 poll() 메서드를 호출하기 전에 미리 레코드들을 내부 큐로 가져온다. 이후에 사용자가 명시적으로 poll() 메서드를 호출하면 컨슈머는 내부 큐에 있는 레코드들을 반환받아 처리를 수행한다.
+컨슈머는 poll() 메서드를 통해 레코드들을 반환받지만 <u>poll() 메서드를 호출하는 시점에 클러스터에서 데이터를 가져오는 것은 아니다</u>. 컨슈머 애플리케이션을 실행하게 되면 내부에서 Fetcher 인스턴스가 생성되어 poll() 메서드를 호출하기 전에 미리 레코드들을 내부 큐로 가져온다. 이후에 사용자가 명시적으로 poll() 메서드를 호출하면 컨슈머는 내부 큐에 있는 레코드들을 반환받아 처리를 수행한다.
 
 
 
