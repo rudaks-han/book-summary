@@ -163,7 +163,7 @@ $ bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
 $ bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
 	--group hello-group \
 	--describe
-
+```
 
 
 ### 2.2.5 kafka-verifiable-producer.sh, consumer.sh
