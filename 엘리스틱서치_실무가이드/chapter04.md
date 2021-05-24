@@ -200,13 +200,242 @@ POST movie_search/_search
 
 
 
+### 4.2.3 Query DSL의 주요 파라미터
+
+##### Multi Index 검색
+
+기본적으로 모든 검색 요청은 Multi Index 및 Multi Type 검색이 가능하다.
+
+```http
+POST movie_search,movie_auto/_search
+{
+	"query": {
+		"term": {
+			"repGenreNm": "다큐멘터리"
+		}
+	}
+}
+```
+
+검색 요청 시 인덱스 이름을 지정할 때 "*"를 와일드카드로 사용할 수 있다.
+
+```http
+POST /logs-2019-*/_search
+```
 
 
 
+##### 쿼리 결과 페이징
+
+문서의 시작을 나타내기 위해 from 파라미터를 사용하고 문서의 개수를 나타내기 위해 size 파라미터를 사용하면 된다.
+
+```http
+# 첫 번째 페이지 요청
+POST movie_search/_search
+{
+	"from": 0,
+	"size": 5,
+	"query": {
+		"term": {
+			"repNationNm": "한국"
+		}
+	}
+}
+```
+
+두 번째 페이지를 요청하기 위해서는 from값을 조정하면 된다.
+
+```http
+# 두 번째 페이지 요청
+POST movie_search/_search
+{
+	"from": 5,
+	"size": 5,
+	"query": {
+		"term": {
+			"repNationNm": "한국"
+		}
+	}
+}
+```
+
+엘라스틱서치는 관계형 데이터베이스와 다르게 페이징된 해당 문서만 선택적으로 가져오는 것이 아니라 모든 데이터를 읽게 된다. 예를 들어, 예제와 같이 5건씩 페이징한 검색 결과의 2페이지를 요청하더라도 총 10건의 문서를 읽어야 한다. 설정된 페이지를 제공하기 위해서는 전체를 읽어서 사이즈만큼 필터링해서 제공하는 구조이기 때문에 페이지 번호가 높아질수록 쿼리 비용은 덩달아 높아질 수밖에 없다는 점에 주의해야 한다.
 
 
 
+##### 쿼리 결과 정렬
 
+```http
+POST movie_search/_search
+{
+	"query": {
+		"term": {
+			"repNationNm": "한국"
+		}
+	},
+	"sort": {
+		"prdtYear": {
+			"order": "asc"
+		}
+	}
+}
+```
+
+1번째 정렬값이 같은 경우 2번째 값으로 정렬
+
+```http
+POST movie_search/_search
+{
+	"query": {
+		"term": {
+			"repNationNm": "한국"
+		}
+	},
+	"sort": {
+		"prdtYear": {
+			"order": "asc"
+		},
+		"_score": {
+		  "order": "desc"
+		}
+	}
+}
+```
+
+
+
+##### _source 필드 필터링
+
+movieNm 필드만 필터링하여 출력
+
+```http
+POST movie_search/_search
+{
+	"_source": [
+		"movieNm"
+	],
+	"query": {
+		"term": {
+			"repNationNm": "한국"
+		}
+	}
+}
+```
+
+
+
+##### 범위 검색
+
+* lt: <
+* gt: >
+* lte: <=
+* gte: >=
+
+
+
+2016년부터 2017년까지 조회
+
+```http
+POST movie_search/_search
+{
+	"query": {
+		"range": {
+			"prdtYear": {
+				"gte": "2016",
+				"lte": "2017"
+			}
+		}
+	}
+}
+```
+
+
+
+##### operator 설정
+
+엘라스틱서치는 검색 시 문장에 들어올 경우 기본적으로 OR 연산으로 동작한다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "match": {
+      "movieNm": {
+        "query": "자전차왕 엄복동"
+        , "operator": "and"
+      }
+    }
+  }
+}
+```
+
+operator 파라미터를 생략하면 OR 연산으로 동작해서 "저전차왕"이라는 단어 혹은 "엄복동"이라는 단어가 들어있는 모든 문서가 검색될 것이다. 하지만 예제에서는 operator 파라미터를 이용해 "and" 값을 명시했으므로 두 개의 텀이 모두 존재하는 문서만 결과로 제공한다.
+
+
+
+##### minimum_should_match 설정
+
+일반적으로 OR 연산을 수행할 경우 검색 결과가 너무 많아질 수 있다. 이 경우 텀의 개수가 몇 개 이상 매칭될 때만 결과로 나오게 할 수 있는데 이때 사용하는 파라미터가 minimum_should_match다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "match": {
+      "movieNm": {
+        "query": "자전차왕 엄복동",
+        "minimum_should_match": 2
+      }
+    }
+  }
+}
+```
+
+
+
+##### fuziness 설정
+
+fuziness 파라미터를 사용하면 단순히 같은 값을 찾는 Match Query를 유사한 값을 찾는 Fuzzy Query로 변경할 수 있다. 이는 레벤슈타인(Levenshtein) 편집 거리 알고리즘을 기반으로 문서의 필드 값을 여러 번 변경하는 방식으로 동작한다. 유사한 검색 결과를 찾기 위해 허용 범위의 텀으로 변경해 가며 문서를 찾아 결과로 출력한다.
+
+
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "match": {
+      "movieNmEn": {
+        "query": "Fli",
+        "fuzziness": 1
+      }
+    }
+  }
+}
+```
+
+
+
+##### boost 설정
+
+이 파라미터는 관련성이 높은 필드나 키워드에 가중치를 더 줄 수 있게 해준다. 영화 데이터의 경우 한글 영화 제목과 영문 영화 제목으로 두 가지 제목 필드를 제공하고 있다. 이때 한글 영화 제목에 좀 더 가중치를 부여해서 검색 결과를 좀 더 상위로 올리고 싶을 때 사용할 수 있다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "Fly",
+      "fields": ["movieNm^3", "movieNmEn"]
+    }
+  }
+}
+```
+
+
+
+## 4.3 Query DSL의 주요 쿼리
+
+### 4.3.1 Match All Query
 
 
 

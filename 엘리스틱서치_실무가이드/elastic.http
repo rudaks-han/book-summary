@@ -4,7 +4,7 @@ content-Type: application/json
 {
   "type": "fs",
   "settings": {
-    "location": "/Users/macbookpro/Downloads/book_backup/search_example",
+    "location": "/tmp/book_backup/search_example",
     "compress": true
   }
 }
@@ -17,7 +17,7 @@ content-Type: application/json
 {
   "type": "fs",
   "settings": {
-    "location": "/Users/macbookpro/Downloads/book_backup/agg_example",
+    "location": "/tmp/book_backup/agg_example",
     "compress": true
   }
 }
