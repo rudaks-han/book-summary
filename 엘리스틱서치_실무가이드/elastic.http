@@ -1,0 +1,28 @@
+PUT http://localhost:9200/_snapshot/javacafe
+content-Type: application/json
+
+{
+  "type": "fs",
+  "settings": {
+    "location": "/Users/macbookpro/Downloads/book_backup/search_example",
+    "compress": true
+  }
+}
+###
+GET http://localhost:9200/_snapshot/javacafe/_all
+###
+PUT http://localhost:9200/_snapshot/apache-web-log
+content-Type: application/json
+
+{
+  "type": "fs",
+  "settings": {
+    "location": "/Users/macbookpro/Downloads/book_backup/agg_example",
+    "compress": true
+  }
+}
+###
+GET http://localhost:9200/_snapshot/apache-web-log/_all
+
+###
+POST http://localhost:9200/_snapshot/javacafe/movie-search/_restore
