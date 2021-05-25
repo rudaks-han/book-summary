@@ -437,6 +437,520 @@ POST movie_search/_search
 
 ### 4.3.1 Match All Query
 
+match_all 파라미터를 사용하는 Match All Query는 색인에 모든 문서를 검색하는 쿼리다. 가장 단순한 쿼리로서 일반적으로 색인에 저장된 문서를 확인할 때 사용된다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+```
+
+
+
+### 4.3.2 Match Query
+
+Match Query는 텍스트, 숫자, 날짜 등이 포함된 문장을 형태소 분석을 통해 텀을 분리한 후 이 텀들을 이용해 검색 질의를 수행한다. 그러므로 검색어가 분석돼야 할 경우에 사용해야 한다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "match": {
+      "movieNm": "그대 장미"
+    }
+  }
+}
+```
+
+* "그대 장미"라는 검색어를 Match Query로 요청하면
+* 엘라스틱서치는 해당 검색어에 대해 형태소 분석을 통해 "그대", "장미"라는 2개의 텀으로 분리한다.
+* 별도 operator가 지정돼 있지 않기 때문에 두 개의 텀을 대상으로 OR 연산을 이용해 검색을 수행한다.
+
+
+
+### 4.3.3 Multi Match Query
+
+Match Query와 기본적인 사용법은 동일하나 단일 필드가 아닌 여러 개의 필드를 대상으로 검색할 때 사용하는 쿼리다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "가족",
+      "fields": ["movieNm", "movieNmEn"]
+    }
+  }
+}
+```
+
+
+
+### 4.3.4 Term Query
+
+텍스트 형태의 값을 검색하기 위해 엘라스틱서치는 두 가지 매핑 유형을 지원한다.
+
+| 타입                | 설명                                                         |
+| :------------------ | :----------------------------------------------------------- |
+| Text 데이터 타입    | 필드에 데이터가 저장되기 전에 데이터가 분석되어 역색인 구조로 저장된다. |
+| Keyword 데이터 타입 | 데이터가 분석되지 않고 그대로 필드에 저장된다.               |
+
+Term Query는 Keyword 데이터 타입을 대상으로 하기 때문에 일반적으로 숫자, Keyword, 날짜 데이터를 쿼리하는 데 사용한다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "term": {
+      "genreAlt": "코미디"
+    }
+  }
+}
+```
+
+* Term Query는 필드에 텀이 정확히 존재하지 않는 경우 검색이 되지 않는다.
+* 영문의 경우 대소문자가 다를 경우 검색되지 않으므로 주의해야 한다.
+
+
+
+### 4.3.5 Bool Query
+
+관계형 데이터베이스에서는 AND, OR로 묶은 여러 조건을 Where 절에서 사용할 수 있다. 이처럼 엘라스틱서치에서도 여러 개의 쿼리를 조합해서 사용하고 싶을 때는 어떻게 해야 할까?
+
+엘라스틱서치에서는 하나의 쿼리나 여러 개의 쿼리를 조합해서 더 높은 스코어를 가진 조건으로 검색을 수행할 수 있다. 이러한 유형의 쿼리를 Compound Query라 하는데, 엘라스틱서치에서는 Bool Query를 제공한다.
+
+```http
+{
+	"query": {
+		"bool": {
+			"must": []
+			"must_not": [],
+			"should": [],
+			"filter": []
+		}
+	}
+}
+```
+
+| Elasticsearch    | SQL                  |설명|
+| :------------------ | :------------- |:---------------------- |
+| must : [필드] | AND 칼럼 = 조건  | 반드시 조건에 만족하는 문서만 검색된다.                      |
+| must_not : [필드] | AND 칼럼 != 조건 | 조건을 만족하지 않는 문서가 검색된다.                        |
+| should : [필드]   | OR 칼럼 = 조건   | 여러 조건 중 하나 이상을 만족하는 문서가 검색된다.           |
+| filter : [필드]   | 칼럼 IN (조건)   |조건을 포함하고 있는 문서를 출력한다. 해당 파라미터를 사용하면 스코어별로 정렬되지는 않는다.|
+
+대표 장르가 "코미디"이고, 제작 국가에 "한국"이 포함돼 있으며, 영화 타입 중 "단편"이 제외된 문서를 검색한다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "repGenreNm": "코미디"
+          }
+        },
+        {
+          "match": {
+            "repNationNm": "한국"
+          }
+        }
+      ],
+      "must_not": [
+        {
+          "match": {
+            "typeNm": "단편"
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+
+
+### 4.3.6 Query String
+
+엘라스틱서치에는 기본적으로 내장된 쿼리 분석기가 있다. query_string 파라미터를 사용하는 쿼리를 작성하면 내장된 쿼리 분석기를 이용하는 질의를 작성할 수 있다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "query_string": {
+      "default_field": "movieNm",
+      "query": "(가정) AND (어린이 날)"
+    }
+  }
+}
+```
+
+'가정'과 '어린이날'이 각각 형태소 분석기를 통해 분석되며, 분석된 텀을 대상으로 AND 조건과 만족하는 문서를 찾아 돌려준다. 여기서 주의해야 할 점은 기존 텀 쿼리와 다르게 공백은 연산자로 사용되지 않으며 입력된 텍스트 그대로 형태소 분석기에 전달된다는 점이다.
+
+
+
+### 4.3.7 Prefix Query
+
+해당 접두어가 있는 모든 문서를 검색하는 데 사용한다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "prefix": {
+      "movieNm": "자전차"
+    }
+  }
+}
+```
+
+
+### 4.3.8 Exists Query
+
+실제 값이 존재하는 문서만 찾고 싶다면 Exists Query를 사용하면 된다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "exists": {
+      "field": "movieNm"
+    }
+  }
+}
+```
+
+
+
+### 4.3.9 Wildcard Query
+
+검색어가 와일드카드와 일치하는 구문을 만든다. 이때 검색된 검색어는 형태소 분석이 이뤄지지 않는다.
+
+
+
+| 와일드카드 옵션 | 설명                                                         |
+| :-------------- | :----------------------------------------------------------- |
+| *               | 문자의 길이와 상관없이 와일드카드와 일치하는 모든 문서를 찾는다. |
+| ?               | 지정된 위치의 한 글자가 다른 경우의 문서를 찾는다.           |
+
+와일드카드 옵션은 두 가지를 선택적으로 사용할 수 있다. 와일드카드를 사용할 경우 단어의 첫 글자로는 절대 사용해서는 안 된다. 첫 글자로 와일드카드가 사용될 경우 색인된 전체 문서를 찾아야 하는 불상사가 발생할 수 있기 때문이다.
+
+```http
+POST movie_search/_search
+{
+  "query": {
+    "wildcard": {
+      "movieNm": "장?"
+    }
+  }
+}
+```
+
+
+
+### 4.3.10 Nested Query
+
+* 분산 시스템에서 SQL에서 지원하는 조인과 유사한 기능을 수행하려면 엄청나게 많은 비용이 소모될 것이다.
+* 수평적으로 샤드가 얼마나 늘어날지 모르는 상황에서 모든 샤드를 검색해야 할 수도 있기 때문이다.
+* 업무를 수행하다 보면 문서 간의 부모/자식 관계의 형태로 모델링이 되는 경우가 종종 발생할 것이다.
+* 이러한 경우에 대비해 엘라스틱서치에서는 분산 데이터 환경에서도 SQL 조인과 유사한 기능을 수행하는 Nested Query를 제공한다.
+
+
+
+Nested 형태의 스키마를 이용해 인덱스를 생성한다.
+
+```http
+PUT movie_nested
+{
+  "settings": {
+    "number_of_replicas": 1,
+    "number_of_shards": 5
+  },
+  "mappings": {
+    "properties": {
+      "repGenreNm": {
+        "type": "keyword"
+      },
+      "companies": {
+        "type": "nested",
+        "properties": {
+          "companyCd": {
+            "type": "keyword"
+          },
+          "companyNm": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+생성된 인덱스에 문서를 하나 추가한다.
+
+```http
+PUT movie_nested/_doc/1
+{
+  "movieCd": "20184623",
+  "movieNm": "바람난 아내들2",
+  "movieNmEn": "",
+  "prdtYear": "2018",
+  "openDt": "",
+  "typeNm": "장편",
+  "prdtStatNm": "개봉예정",
+  "nationAlt": "한국",
+  "genreAlt": "멜로/로맨스",
+  "repNationNm": "한국",
+  "repGenreNm": "멜로/로맨스",
+  "companies": [
+    {
+      "companyCd": "20173401",
+      "companyNm": "(주)케이피에이기획"
+    }
+  ]
+}
+```
+
+Nested Query를 이용해 Child로 저장된 문서의 특정 필드를 검색할 수 있다.
+
+```http
+GET movie_nested/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "repGenreNm": "멜로/로맨스"
+          }
+        },
+        {
+          "nested": {
+            "path": "companies",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "term": {
+                      "companies.companyCd": "20173401"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+참고로 엘라스틱서치는 성능상의 이유로 Parent 문서와 Child 문서를 모두 동일한 샤드에 저장한다. 이러한 방식을 통해 네트워크 비용을 대폭 줄이는 것이 가능해진다.
+
+
+
+## 4.4 부가적인 검색 API
+
+### 4.4.1 효육적인 검색을 위한 환경설정
+
+* 엘라스틱서치는 대량의 데이터를 처리하기 위해 기본적으로 데이터를 분산해서 처리한다.
+* 그렇다면 빠른 검색을 위해 내부적으로는 어떻게 동작하는 것일까?
+* 검색 요청이 발생하면 엘라스틱서치는 모든 샤드에 검색 요청을 브로드캐스팅해서 전달하고 기다린다.
+* 각 샤드는 자신이 가지고 있는 데이터를 기준으로 검색을 수행하고 그 결과를 리턴한다.
+* 그리고 모든 샤드로부터 검색 결과가 도착하면 도착한 모든 결과를 조합해서 최종 질의 결과를 출력한다.
+
+
+
+#### 동적 분배 방식의 샤드 선택
+
+* 엘라스틱서치는 부하 분산과 장애극복을 위해 원본 샤드의 데이터를 복제한 레플리카 샤드를 함께 운영한다.
+* 검색 시 모든 샤드에서 검색을 수행하게 되면 사용자에게 중복된 결과를 전달하게 될 수 있을 것이다.
+* 이러한 문제를 방지하기 위해 엘라스틱서치는 검색을 수행할 때 동일 데이터를 가지고 있는 샤드 중 하나만 선택해 검색을 수행한다.
+* 만일 특별히 설정하지 않는다면 검색 요청의 적절한 분배를 위해 기본적으로 라운드로빈 방식의 알고리즘을 사용한다.
+* 라운드로빈은 순차적으로 샤드를 선택하는 방식이다. 엘라스틱서치에서는 라운드로빈 말고도 동적 분배 방식의 알고리즘도 제공한다.
+* 동적 분배 방식은 검색 요청의 응답시간,, 검색 요청을 수행하는 스레드 풀의 크기 등을 고려해 최적의 샤드를 동적으로 결정하는 방식이다.
+
+다음 예제는 동적으로 요청을 분배하도록 설정하는 예다.
+
+```http
+PUT _cluster/settings
+{
+  "transient": {
+    "cluster.routing.use_adaptive_replica_selection": true
+  }
+}
+```
+
+
+
+#### 글로벌 타임아웃 설정
+
+개별 검색 요청의 경우에는 Request Body에 직접 타임아웃을 설정할 수 있다. 이러한 방식을 많은 불편을 초래하기 때문에 모든 검색 쿼리에 동일하게 적용되도록 정책으로 설정하는 것이 좋다.
+
+글로벌로 적용되는 타임아웃의 기본 정책은 무제한(-1)이다. 이를 변경하려면 다음과 같이 설정한다.
+
+```http
+PUT _cluster/settings
+{
+  "transient": {
+    "search.default_search_timeout": "1s"
+  }
+}
+```
+
+
+
+### 4.2.2 Search Shards API
+
+movie_search 인덱스의 정보를 확인해 보자.
+
+```http
+POST movie_search/_search_shards
+```
+
+
+
+### 4.4.3 Multi Search API
+
+Multi Search API는 여러 건의 검색 요청을 통합해서 한번에 요청하고 한번에 결과를 종합해서 받을 때 사용되는 API다.
+
+```http
+POST _msearch
+{"index": "movie_auto"}
+{"query": {"match_all": {}}, "from": 0, "size": 10}
+{"index": "movie_search"}
+{"query": {"match_all": {}}, "from": 0, "size": 10}
+```
+
+Multi Search API를 사용하면 동시에 여러 개의 색인에서 검색을 수행할 수 있다.
+
+
+
+### 4.4.4 Count API
+
+```http
+POST movie_search/_count?q=prdtYear:2017
+```
+
+
+
+```http
+POST movie_search/_count
+{
+  "query": {
+    "query_string": {
+      "default_field": "prdtYear",
+      "query": "2017"
+    }
+  }
+}
+```
+
+
+
+### 4.4.5 Validate API
+
+Validate API를 사용하면 쿼리를 실행하기에 앞서 쿼리가 유효하게 작성됐는지 검증하는 것이 가능하다.
+
+```http
+POST movie_search/_validate/query?q=prdtYear:2017
+```
+
+```http
+POST movie_search/_validate/query
+{
+  "query": {
+    "match": {
+      "prdtYear": "2017"
+    }
+  }
+}
+```
+
+만약 쿼리에 오류가 발생하는 경우는 자세한 정보를 보기 위해 URL 파라미터로 rewrite=true 파라미터를 추가하면 된다.
+
+```http
+POST movie_search/_validate/query?rewrite=true
+{
+  "query": {
+    "match": {
+      "prdtYear": "2017-01-01"
+    }
+  }
+}
+```
+
+
+
+### 4.4.6 Explain API
+
+문서가 가진 _score 값이 어떻게 계산된 것인지 자세한 정보를 알고 싶다면 Explain API를 사용하면 된다.
+
+스코어 값이 어떤 방식으로 계산됐는지 알아보자.
+
+```http
+POST movie_search/_doc/eDzJqmkBjjM-ebDb8PsR/_explain
+{
+  "query": {
+    "term": {
+      "prdtYear": 2017
+    }
+  }
+}
+```
+
+
+
+### 4.4.7 Profile API
+
+Profile API는 쿼리에 대한 상세한 수행 계획과 각 수행 계획별로 수행된 시간을 돌려주므로 성능을 튜닝하거나 디버깅할 때 유용하게 활용할 수 있다.
+
+```http
+POST movie_search/_search
+{
+  "profile": "true", 
+  "query": {
+    "match_all": {}
+  }
+}
+```
+
+
+
+> "내 질의 결과에 대한 스코어가 어떻게 계산됐는가?"를 확인할 때는 
+> ==> Explain API를 사용
+>
+> "내 질의를 실행하는 과정에서 각 샤드별로 얼마나 많은 시간이 소요됐는가?"를 알고 싶을 때는
+> ==> Profile API를 사용
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
