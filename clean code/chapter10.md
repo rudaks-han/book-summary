@@ -186,7 +186,7 @@ public class ColumnList {
 
 요구사항은 변하기 마련이다. 따라서 코드도 변하기 마련이다.
 
-상세한 구현에 의존하는 코드는 테스트가 어렵다. 예를 들어, PortFolio 클래스를 만든다고 가정하자. 그런데 Portfolio 클래스는 외부 TokyoStockExchange API를 사용해 포트폴리오 값을 계산한다. 따라서 우리 테스트 코드는 시세 변화에 영향을 받는다.
+상세한 구현에 의존하는 코드는 테스트가 어렵다. 예를 들어, Portfolio 클래스를 만든다고 가정하자. 그런데 Portfolio 클래스는 외부 TokyoStockExchange API를 사용해 포트폴리오 값을 계산한다. 따라서 우리 테스트 코드는 시세 변화에 영향을 받는다.
 
 Portfolio 클래스에서 TokyoStockExchange API를 직접 호출하는 대신 StockExchange라는 인터페이스를 생성한 후 메서드 하나를 선언한다.
 

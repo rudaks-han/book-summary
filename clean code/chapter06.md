@@ -19,7 +19,7 @@ public class Point {
 public interface Point {
   double getX();
   double getY();
-  void setCaresian(double x, double y);
+  void setCatesian(double x, double y);
   double getR();
   double getTheta();
   void setPolar(double r, double theta);
@@ -28,7 +28,7 @@ public interface Point {
 
 추상 인터페이스를 제공해 사용자가 구현을 모른 채 자료의 핵심을 조작할 수 있어야 진정한 의미의 클래스다.
 
-다음은 자료차 연료 상태를 구체적인 숫자 값으로 알려준다.
+다음은 자동차 연료 상태를 구체적인 숫자 값으로 알려준다.
 
 [목록 6-3] 구체적인 Vehicle 클래스
 
@@ -110,7 +110,7 @@ final String outputDir = scratchDir.getAbsolutePath();
 ##### 자료 전달 객체
 
 자료 구조체의 전형적인 형태는 공개 변수만 있고 함수가 없는 클래스다. 이런 자료 구조체를 때로는 자료 전달 객체(Data Transfer Object, DTO)라 한다.
-존 더 일반적인 형태는 '빈(bean)' 구조다. 일종의 사이비 캡슐화로, 일부 OO 순수주의자나 만족시킬 뿐 별다른 이익을 제공하지 않는다.
+좀 더 일반적인 형태는 '빈(bean)' 구조다. 일종의 사이비 캡슐화로, 일부 OO 순수주의자나 만족시킬 뿐 별다른 이익을 제공하지 않는다.
 
 
 
