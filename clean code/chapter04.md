@@ -460,13 +460,3 @@ this.pngBytes = new byte[((thiswidth + 1) * this.height * 3) + 200];
 
 
 
-
-
-
-
-
-
-
-
-
-

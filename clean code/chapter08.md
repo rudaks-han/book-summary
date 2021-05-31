@@ -86,7 +86,3 @@ Transmitter라는 간단한 클래스를 만든 후 transmit라는 메서드를 
 
 
 
-
-
-
-
