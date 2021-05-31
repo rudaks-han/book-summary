@@ -2035,7 +2035,7 @@ Update API를 이용할 경우 내부적으로 스냅샷을 생성해서 문서�
 문서를 하나 생성해보자.
 
 ```http
-POST movie_dynamic/_doc/1
+PUT movie_dynamic/_doc/1
 {
   "nationAlt": "한국"
 }
