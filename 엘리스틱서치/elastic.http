@@ -1,0 +1,42 @@
+PUT http://localhost:9200/_snapshot/javacafe
+content-Type: application/json
+
+{
+  "type": "fs",
+  "settings": {
+    "location": "/tmp/book_backup/search_example",
+    "compress": true
+  }
+}
+###
+GET http://localhost:9200/_snapshot/javacafe/_all
+###
+PUT http://localhost:9200/_snapshot/apache-web-log
+content-Type: application/json
+
+{
+  "type": "fs",
+  "settings": {
+    "location": "/tmp/book_backup/agg_example",
+    "compress": true
+  }
+}
+###
+GET http://localhost:9200/_snapshot/apache-web-log/_all
+
+###
+POST http://localhost:9200/_snapshot/javacafe/movie-search/_restore
+
+###
+POST /http://localhost:9200/ac_test/_bulk
+content-Type: application/json
+
+{"index": {"_index": "ac_test", "_type": "ac_test", "_id": "1"}}
+{"itemSrc": "신혼", "itemCompletion": "신혼"}
+
+{"index": {"_index": "ac_test", "_type": "ac_test", "_id": "2"}}
+{"itemSrc": "신혼가전", "itemCompletion": "신혼가전"}
+
+{"index": {"_index": "ac_test", "_type": "ac_test", "_id": "3"}}
+{"itemSrc": "신혼가전특별전", "itemCompletion": "신혼가전특별전"}
+

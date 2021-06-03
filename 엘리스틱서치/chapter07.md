@@ -122,3 +122,96 @@ POST movie_term_completion/_search
 
 ## 7.3 한글 키워드 자동완성
 
+### 7.3.1 Completion Suggest API를 이용한 한글 자동완성
+
+#### 1) 인덱스 생성
+
+```http
+PUT /ac_test
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 5,
+      "number_of_replicas": 1
+    }
+  }
+}
+```
+
+
+
+#### 2) 매핑 설정
+
+```http
+PUT /ac_test/_mapping/ac_test
+{
+  "properties": {
+    "itemSrc": {
+      "type": "keyword"
+    },
+    "itemCompletion": {
+      "type": "completion"
+    }
+  }
+}
+```
+
+
+
+#### 3) 자동완성 데이터 색인
+
+```http
+PUT /ac_test
+
+{"index": {"_index": "ac_test", "_type": "ac_test", "_id": "1"}}
+{"itemSrc": "신혼", "itemCompletion": "신혼"}
+
+{"index": {"_index": "ac_test", "_type": "ac_test", "_id": "2"}}
+{"itemSrc": "신혼가전", "itemCompletion": "신혼가전"}
+
+{"index": {"_index": "ac_test", "_type": "ac_test", "_id": "3"}}
+{"itemSrc": "신혼가전특별전", "itemCompletion": "신혼가전특별전"}
+```
+
+
+
+#### 4) 자동완성 요청
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
