@@ -3284,7 +3284,7 @@ Day day = DayDate.StringToDay(String dayName);
 
 어떤 개념을 특정 방식으로 구현했다면 유사한 개념도 같은 방식으로 구현한다. 앞서 언급한 '최소 놀람의 법칙(The Principle of Least Surprise)'에도 부합한다. 표기법은 신중하게 선택하며, 일단 선택한 표기법은 신중하게 따른다.
 
-한 함수에서 response라는 변수에 HttpServletResponse 인스턴스를 저장했다면 다른 함수에서도 일관성 있게 동일한 변수 이름을 사용한다. 한 메서드를 processVerificationRequest라 명명했다면 다른 메서드도 ProecessDeletionRequest처럼 유사한 이름을 사용한다.
+한 함수에서 response라는 변수에 HttpServletResponse 인스턴스를 저장했다면 다른 함수에서도 일관성 있게 동일한 변수 이름을 사용한다. 한 메서드를 processVerificationRequest라 명명했다면 다른 메서드도 ProcessDeletionRequest처럼 유사한 이름을 사용한다.
 
 
 
@@ -3343,9 +3343,9 @@ public class HourlyEmployeeReport {
     )
   }
 }
-
-확실히 reportHours 메서드는 HourlyEmployee 클래스를 욕심낸다. 하지만 그렇다고 HourlyEmployee 클래스가 보고서 형식을 알 필요는 없다. HourlyEmployee가 보고서 형식과 결합되므로 보고서 형식이 바뀌면 클래스도 바뀐다.
 ```
+확실히 reportHours 메서드는 HourlyEmployee 클래스를 욕심낸다. 하지만 그렇다고 HourlyEmployee 클래스가 보고서 형식을 알 필요는 없다. HourlyEmployee가 보고서 형식과 결합되므로 보고서 형식이 바뀌면 클래스도 바뀐다.
+
 
 
 
@@ -3542,7 +3542,7 @@ assertEquals(
 
 ###### G26: 정확하라
 
-* 검색 결과 중 첫 번째 결과만 유일한 결과로 간주하는 행동은 순진하다.
+* 검색 결과 중 첫 번째 결과만 유일한 결과로 간주하는 행동은 순진하다(naive).
 * 부동소수점으로 통화를 표현하는 행동은 거의 범죄에 가깝다.
 * 갱신할 가능성이 희박하다고 잠금과 트랜잭션 관리를 건너뛰는 행동은 아무리 잘 봐줘도 게으름이다.
 * List로 선언할 변수를 ArrayList로 선언하는 행동은 지나친 제약이다.
@@ -3661,7 +3661,7 @@ public class MoogDiver() {
 }
 ```
 
-위 코드는 시간적인 결합을 노출한다. 각 함수가 내 놓는 결과는 다음 함수에 필요하다. 그러므로 순서를 바꿔 호출할 수가 없다.
+위 코드는 <u>시간적인 결합</u>을 노출한다. 각 함수가 내 놓는 결과는 다음 함수에 필요하다. 그러므로 순서를 바꿔 호출할 수가 없다.
 
 
 
@@ -3793,7 +3793,7 @@ public class HourlyEmployee extends Employee {
 
 ###### J3: 상수 대 Enum
 
-자바 5는 enum을 제공한다. 마음껏 활용하라. Public static final int라는 옛날 기교를 더 이상 사용할 필요가 없다.
+자바 5는 enum을 제공한다. 마음껏 활용하라. public static final int라는 옛날 기교를 더 이상 사용할 필요가 없다.
 
 한 가지 덧붙이자면, enum 문법을 자세히 살펴보기 바란다. 메서드와 필드도 사용할 수 있다. int보다 훨씬 더 유연하기 서술적인 강력한 도구다.
 
@@ -3830,7 +3830,7 @@ public enum HourlyPayGrade {
 
 이름은 성급하게 정하지 않는다. 서술적인 이름을 신중하게 고른다. 소프트웨어가 진화하면 의미도 변하므로 선택한 이름이 적합한지 자주 되돌아본다.
 
-단순히 '듣기 좋은' 충고가 아니다. 소프트웨어 가독성의 90%는 이름이 결정한다. 그러므로 시간을 들여 현명한 이름을 선택하고 유효한 상태로 유지한다.
+단순히 '듣기 좋은' 충고가 아니다. <u>소프트웨어 가독성의 90%는 이름이 결정한다</u>. 그러므로 시간을 들여 현명한 이름을 선택하고 유효한 상태로 유지한다.
 
 
 
