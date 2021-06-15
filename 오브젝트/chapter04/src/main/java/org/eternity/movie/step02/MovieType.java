@@ -1,4 +1,4 @@
-package org.eternity.movie;
+package org.eternity.movie.step02;
 
 public enum MovieType {
     AMOUNT_DISCOUNT,

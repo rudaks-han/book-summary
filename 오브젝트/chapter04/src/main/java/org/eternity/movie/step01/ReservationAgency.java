@@ -1,4 +1,4 @@
-package org.eternity.movie;
+package org.eternity.movie.step01;
 
 import org.eternity.money.Money;
 

@@ -1,6 +1,4 @@
-package org.eternity.movie;
-
-import org.eternity.money.Money;
+package org.eternity.movie.step02;
 
 import java.time.LocalDateTime;
 
