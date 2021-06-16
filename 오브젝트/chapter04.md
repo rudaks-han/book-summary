@@ -141,23 +141,72 @@
 
 ### 캡슐화 위반
 
+* isDiscountable(DayOfWeek dayOfWeek, LocalTime time) 메서드의 시그니처를 보면 DiscountCondition에 속성으로 포함돼 있는 DayOfWeek 타입의 요일 정보와 LocalTime 타입의 시간 정보를 파라미터로 받는다.
+    * 이 메서드는 객체 내부에 DayOfWeek 타입의 요일과 LocalTime 타입의 시간 정보가 인스턴스 변수로 포함돼 있다는 사실을 외부에 노출하고 있다.
+    * isDiscountable(int sequence) 메서드 역시 int 타입의 정보를 포함하고 있음을 외부에 노출한다.
+* Movie 역시 내부 구현을 인터페이스에 노출시키고 있다.
+    * calculateAmountDiscountedFee, calculatedPercentDiscountedFee, calculateNoneDiscountedFee라는 세 개의 메서드를 노출하고 있다.
+
+
+
+> **캡슐화의 진정한 의미**
+>
+> 캡슐화란 변할 수 있는 어떤 것이라도 감추는 것이다. 그것이 속성 타입이건, 할인 정책의 종류건 상관 없이 내부 구현의 변경으로 인해 외부의 객체가 영향을 받는다면 캡슐화를 위반한 것이다. 설계에서 변하는 것이 무엇인지 고려하고 변하는 개념을 캡슐화해야 한다.
+
 
 
 ### 높은 결합도
 
+* 중요한 것은 Movie와 DiscountCondition 사이의 결합도이므로 DiscountCondition에 대한 어떤 변경이 Movie에게까지 영향을 미치는지를 살펴봐야 한다.
 
+    * DiscountCondition의 기간 할인 조건의 명칭이 PERIOD에서 다른 값으로 변경된다면 Movie를 수정해야 한다.
+    * DiscountCondition의 종류가 추가되거나 삭제된다면 Movie안의 if ~ else 구문을 수정해야 한다.
+    * 각 DiscountCondition의 만족 여부를 판단하는 데 필요한 정보가 변경된다면 Movie의 isDiscountable 메서드로 전달된 파라미터를 변경해야 한다.
+
+    
 
 ### 낮은 응집도
+
+* 할인 조건의 종류를 변경하기 위해서는 DiscountCondition, Movie 그리고 Screening을 함께 수정해야 한다. 하나의 변경을 수용하기 위해 코드의 여러 곳을 동시에 변경해야 한다는 것은 설계의 응집도가 낮다는 증거다.
 
 
 
 ## 06 데이터 중심 설계의 문제점
 
+두 번째 설계가 변경에 유연하지 못한 이유는 캡슐화를 위반했기 때문이다.
+
+
+
 ### 데이터 중심 설계는 객체의 행동보다는 상태에 초점을 맞춘다
+
+* 데이터 중심 설계 방식에 익숙한 개발자들은 일반적으로 데이터와 기능을 분리하는 절차적 프로그래밍 방식을 따른다.
+* 데이터 중심의 관점에서는 객체는 그저 단순한 데이터의 집합체일 뿐이다.
+* 이로 인해 접근자와 수정자를 과도하게 추가하게 된다.
+* 접근자와 수정자는 public 속성과 큰 차이가 없기 때문에 객체의 캡슐화는 완전히 무너질 수밖에 없다.
 
 
 
 ### 데이터 중심 설계는 객체를 고립시킨 채 오퍼레이션을 정의하도록 만든다
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
