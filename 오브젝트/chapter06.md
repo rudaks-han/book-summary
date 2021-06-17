@@ -56,37 +56,129 @@
 
 ## 02 인터페이스와 설계 품질
 
+* 좋은 인터페이스는 최소한의 인터페이스와 추상적인 인터페이스라는 조건을 만족해야 한다.
+* 추상적인 인터페이스는 어떻게 수행하는지가 아니라 무엇을 하는지를 표현한다.
 
+퍼블릭 인터페이스의 품질에 영향을 미치는 원칙과 기법
+
+* 디미터 법칙
+* 묻지 말고 시켜라
+* 의도를 드러내는 인터페이스
+* 명령-쿼리 법칙
+
+
+
+### 디미터 법칙
+
+* 객체의 내부 구조와 강하게 결합되지 않도록 협력 경로를 제한하라는 것
+* "낮선 자에게 말하지 말라(don't talk to stranger)"
+* "오직 인접한 이웃하고만 말하라(only talk to your immediate neighbors)"
+* "하나의 도트만 사용하라(use only one dot)"
+
+클래스 내부의 메서드가 아래 조건을 만족하는 인스턴스에만 메시지를 전송해야 한다.
+
+* this 객체
+* 메서드의 매개변수
+* this의 속성
+* this의 속성인 컬렉션 요소
+* 메서드 내에서 생성된 지역 객체
 
 
 
 ### 묻지 말고 시켜라
 
-
+* 묻지 말고 시켜라(Tell, don't Ask)
+* ReservationAgent는 Movie에 접근하는 대신 Screening에게 직접 요금을 계산하도록 요청했다.
 
 
 
 ### 의도를 드러내는 인터페이스
 
+```java
+public Class PeriodCondition {
+    public boolean isSatisfiedByPeriod(Screening screening) { ... }
+}
 
+public Class SequenceCondition {
+    public boolean isSatisfiedBySequence(Screening screening) { ... }
+}
+```
+
+이런 스타일은 좋지 않은데 그 이유를 두 가지로 요약할 수 있다.
+
+* 메서드에 대해 제대로 커뮤니케이션하지 못한다. 클라이언트의 관점에서 isSatisfiedByPeriod와 isSatisfiedBySequence 모두 할인 조건을 판단하는 동일한 작업을 수행한다. 하지만 메서드의 이름이 다르기 때문에 두 메서드의 내부 구현을 정확히 이해하지 못한다면 두 메서드가 동일 작업을 수행한다는 사실을 알아채기 어렵다.
+* 더 큰 문제는 메서드 수준에서 캡슐화를 위반한다는 것이다. PeriodCondition을 사용하는 코드를 SequenceCondition을 사용하도록 변경하려면 단순히 참조하는 객체를 변경하는 것뿐만 아니라 메서드를 변경해야 한다.
+
+메서드의 이름을 짓는 두 번째 방법은 '어떻게'가 아니라 '무엇'을 하는지를 드러내는 것이다.
+
+클라이언트 관점에서 협력을 바라봐야 한다. 두 메서드 모두 클라이언트의 의도를 담을 수 있도록 isSatisfiedBy로 변경하는 것이 적절할 것이다.
+
+```java
+public Class PeriodCondition {
+    public boolean isSatisfiedBy(Screening screening) { ... }
+}
+
+public Class SequenceCondition {
+    public boolean isSatisfiedBy(Screening screening) { ... }
+}
+```
+
+이처럼 어떻게 하느냐가 아니라 무엇을 하느냐에 따라 메서드의 이름을 짓는 패턴을 **의도를 드러내는 선택자(Intention Revealing Selector)**라고 부른다.
+
+<<도메인 주도 설계>>에서 에릭 에반스는 켄트 벡의 의도를 드러내는 선택자를 인터페이스 레벨로 확장한 **의도를 드러내는 인터페이스(Intention Revealing Interface)**를 재시했다.
 
 
 
 ### 함께 모으기
 
+#### 디미터 법칙을 위반하는 티켓 판매 도메인
 
+```java
+public class Theater {
+    private TicketSeller ticketSeller;
+
+    public Theater(TicketSeller ticketSeller) {
+        this.ticketSeller = ticketSeller;
+    }
+
+    public void enter(Audience audience) {
+        if (audience.getBag().hasInvitation()) {
+            Ticket ticket = ticketSeller.getTicketOffice().getTicket();
+            audience.getBag().setTicket(ticket);
+        } else {
+            Ticket ticket = ticketSeller.getTicketOffice().getTicket();
+            audience.getBag().minusAmount(ticket.getFee());
+            ticketSeller.getTicketOffice().plusAmount(ticket.getFee());
+            audience.getBag().setTicket(ticket);
+        }
+    }
+}
+```
+
+
+
+#### 묻지 말고 시켜라
+
+
+
+#### 인터페이스에 의도를 드러내자
+
+* 객체는 자신이 아닌 클라이언트의 의도를 표현하는 이름을 가져야 한다. 
+* sellTo, buy, hold는 클라이언트가 객체에게 무엇을 원하는지를 명확하게 표현한다. setTicket은 그렇지 않다.
 
 
 
 ## 03 원칙의 함정
 
-
-
-
-
 ### 디미터 법칙은 하나의 도트(.)를 강제하는 규칙이 아니다
 
+```java
+IntStream.of(1, 15, 20, 3, 9).filter(x -> x > 10).distinct().count();
+```
 
+이 코드는 디미터 법칙을 위반하지 않는다. 디미터 법칙은 결합도와 관련된 것이다.
+
+IntStream을 다른 IntStream으로 변환할 뿐, 캡슐은 그대로 유지된다.
 
 
 
@@ -98,7 +190,12 @@
 
 ## 04 명령-쿼리 분리 원칙
 
-
+* 어떤 절차를 묶어 호출 가능하도록 이름을 부여한 기능 모듈을 **루틴(routine)**이라고 부른다.
+* 루틴은 다시 **프로시저(procedure)**와 **함수(function)**로 구분할 수 있다.
+    * 프로시저는 부수효과를 발생시킬 수 있지만 값을 반환할 수 없다.
+    * 함수는 값을 반환할 수 있지만 부수효과를 발생시킬 수 없다.
+* 명령(Command)과 쿼리(Query)는 프로시저와 함수를 부르는 또 다른 이름이다.
+* 명령-쿼리 분리 원칙을 한 문장으로 표현하면 "질문이 답변을 수정해서는 안 된다"는 것이다.
 
 
 
