@@ -16,6 +16,8 @@
         <module>chapter10</module>
         <module>chapter11</module>
         <module>chapter12</module>
+        <module>chapter13</module>
+        <module>chapter14</module>
     </modules>
 
     <build>
