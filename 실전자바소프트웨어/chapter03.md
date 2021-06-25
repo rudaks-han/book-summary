@@ -9,11 +9,16 @@
 
 ## 3.4 개방/폐쇄 원칙
 
-특정 금액 이상의 모든 입출금 내역을 검색하는 메서드를 구현해보자. '이 메서드를 어디에 정의해야 할까'라는 의문이 먼저 떠오른다.
+특정 금액 이상의 모든 입출금 내역을 검색하는 메서드를 구현해보자.
+
+* '이 메서드를 어디에 정의해야 할까'라는 의문이 먼저 떠오른다.
+* findTransactions() 메서드를 포함하는 BankTransactionFinder 클래스를 따로 만들 수 있다.
+* 하지만 2장에서 이미 BankTransactionProcessor 클래스를 선언했다.
+* BankTransactionProcessor 안에 정의하면 나중에 관련 메서드를 조금 더 쉽게 찾을 수 있다.
 
 
 
-특정 금액 이상의은행 거래 내역 찾기
+특정 금액 이상의 은행 거래 내역 찾기
 
 ```java
 public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
@@ -33,7 +38,7 @@ public double calculateTotalInMonth(final Month month) {
 특정 월이나 금액으로 입출금 내역 검색하기
 
 ```java
-public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
+public List<BankTransaction> findTransactionsGreaterThanEqual(final Month month, final int amount) {
   final List<BankTransaction> result = new ArrayList();
   for (final BankTransaction bankTransaction: bankTransactions) {
     if (bankTransaction.getDate().getMonth() == month && bankTransaction.getAmount() > = amount) {
@@ -52,6 +57,8 @@ public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) 
 
 개방/폐쇄 원칙은 이런 상황에 적용한다. 
 
+* 개방/폐쇄 원칙을 적용하면 코드를 직접 바꾸지 않고 해당 메서드나 클래스의 동작을 바꿀 수 있다.
+
 
 
 BankTransactionFilter 인터페이스
@@ -63,7 +70,7 @@ public interface BankTransactionFilter {
 }
 ```
 
-개방/폐쇠 원칙을 적용한 후 유연해진 findTransactions() 메서드
+개방/폐쇄 원칙을 적용한 후 유연해진 findTransactions() 메서드
 
 ```java
 public List<BankTransaction> findTransactions(final BankTransactionFilter bankTransactionFilter) {
@@ -104,8 +111,6 @@ final List<BankTransaction> transactions = bankStatementProcessor.findTransactio
 
 하지만 새로운 요구사항이 있을 때마다 별도의 클래스를 만들어야 한다. 이는 큰 의미가 없는 코드를 반복해서 만드는 귀찮은 작업이다.
 
-
-
 람다 표현식으로 BankTransactionFilter 구현하기
 
 ```java
@@ -123,7 +128,12 @@ final List<BankTransaction> transactions = bankStatementProcessor.findTransactio
 
 ## 3.5 인터페이스 문제
 
-한 인터페이스에 모든 기능을 추가하는 갓 인터페이스를 만드는 일은 피해야 한다.
+* 2장에서 구현한 서로 다른 세 개의 메서드를 어떻게 처리하느냐의 문제가 남았다.
+    * calculateTotalAmount()
+    * calculateTotalInMonth()
+    * calculateTotalForCategory()
+
+* 한 인터페이스에 모든 기능을 추가하는 갓 인터페이스를 만드는 일은 피해야 한다.
 
 
 
@@ -142,8 +152,12 @@ interface BankTransactionProcessor {
 }
 ```
 
+모든 헬퍼 연산이 명시적인 API 정의에 포함되면서 인터페이스가 복잡해진다.
+
 * 자바의 인터페이스는 모든 구현이 지켜야 할 규칙을 정의한다. 즉 구현 클래스는 인터페이스에서 정의한 모든 연산의 구현 코드를 제공해야 한다. 따라서 인터페이스를 바꾸면 구현한 코드도 바뀐 내용을 지원하도록 갱신되어야 한다. 더 많은 연산을 추가할수록 더 자주 코드가 바뀌며, 문제가 발생할 수 있는 범위도 넓어진다.
 * 월, 카테고리 같은 BankTransaction의 속성이 calculateAverageForCategory(), calculateTotalInJanuary() 처럼 메서드 이름의 일부로 사용되었다. 인터페이스가 도메인 객체의 특정 접근자에 종속되는 문제가 생겼다. <u>도메인 객체의 세부 내용이 바뀌면 인터페이스도 바뀌어야 하며 결과적으로 구현코드도 바뀌어야 한다</u>.
+
+이런 이유에서 보통 작은 인터페이스를 권장한다. 그래야 도메인 객체의 다양한 내부 연산으로의 디펜던시를 최소화할 수 있다.
 
 
 
@@ -178,12 +192,33 @@ interface CalculateTotalInMonth {
     * 어떤 동작을 수행하는지 잘 설명되어 있다.
     * 사용하기 쉽다.
     * API의 가독성을 높이고 쉽게 이해하도록 메서드 이름을 만들었다.
+    * 하지만 이 메서드의 용도가 특정 상황에 국한되어 각 상황에 맞는 새로운 메서드를 많이 만들어야 하는 상황이 벌어진다.
 * 암묵적 API
     * findTransactions()와 같이 메서드를 정의한다.
     * 처음에는 사용하기 어렵다.
     * 거래 내역을 검색하는 데 필요한 모든 상황을 단순한 API로 처리할 수 있다.
 
 어떤 것이 좋은 방법인지는 정해져 있지 않다. 질문의 종류에 따라 달라질 수 있기 때문이다.
+
+
+
+BankTransactionProcessor 클래스의 핵심 연산
+
+```java
+@FunctionalInterface
+public interface BankTransactionSummarizer {
+  double summarize(double accumulator, BankTransaction bankTransaction);
+}
+
+@FunctionalInterface
+public interface BankTransactionFilter {
+  boolean test(BankTransaction bankTransaction);
+}
+
+public class BankTransactionProcessor {
+	// ...
+}
+```
 
 
 
@@ -266,20 +301,32 @@ public interface Exporter {
 
 ## 3.8 예외 처리
 
+* 입출금 내역 분석기 소프트웨어가 아래와 같은 오작동을 일으킨다면 어떻게 해야 할까?
+
+    * 데이터를 적절하게 파싱하지 못한다면?
+    * 입출금 내역을 포함하는 CSV 파일을 읽을 수 없다면?
+    * 응용프로그램을 실행하는 하드웨어에 램이나 저장 공간이 부족하다면?
+
+    
+
 ### 3.8.1 예외를 사용해야 하는 이유
 
-고전 적인 C 프로그래밍에서는 수많은 if 조건을 추가해 암호 같은 오류 코드를 반환했다. 코드 부분이 따로 분리되어 이해하기가 어려워진다. 결과적으로 코드를 유지보수하기 어렵다. 어떤 값이 실제 값인지 아니면 오류를 가리키는 값인지 구분하기가 어렵다.
+고전적인 C 프로그래밍에서는 수많은 if 조건을 추가해 암호 같은 오류 코드를 반환했다. 코드 부분이 따로 분리되어 <u>이해하기가 어려워진다</u>. 결과적으로 코드를 유지보수하기 어렵다. 어떤 값이 실제 값인지 아니면 오류를 가리키는 값인지 구분하기가 어렵다.
 
 자바는 이런 문제를 해결하도록 예외를 일급 언어 기능으로 추가하고 다음과 같은 장점을 제공한다.
 
-* 문서화: 메서드 시그니처 자체에 예외를 지원한다.
-* 형식 안정성: 개발자가 예외 흐름을 처리하고 있는지를 형식 시스템이 파악한다.
-* 관심사 분리: 비즈니스 로직과 예외 회복이 각각 try/catch 블록으로 구분된다.
+* **문서화**: 메서드 시그니처 자체에 예외를 지원한다.
+* **형식 안정성**: 개발자가 예외 흐름을 처리하고 있는지를 형식 시스템이 파악한다.
+* **관심사 분리**: 비즈니스 로직과 예외 회복이 각각 try/catch 블록으로 구분된다.
 
 자바는 두 가지 종류의 예외를 지원한다.
 
-* 확인된 예외: 회복해야 하는 대상의 예외다. 자바에서는 메서드가 던질 수 있는 확인된 예외 목록을 선언해야 한다. 아니면 해당 예외를 try/catch로 처리해야 한다.
-* 미확인 예외: 프로그램을 실행하면서 언제든 발생할 수 있는 종류의 예외다. 확인된 예외와 달리 메서드 시그니처에 오류를 선언하지 않으면 호출자도 이를 꼭 처리할 필요가 없다.
+* **확인된 예외**: 회복해야 하는 대상의 예외다. 자바에서는 메서드가 던질 수 있는 확인된 예외 목록을 선언해야 한다. 아니면 해당 예외를 try/catch로 처리해야 한다.
+* **미확인 예외**: 프로그램을 실행하면서 언제든 발생할 수 있는 종류의 예외다. 확인된 예외와 달리 메서드 시그니처에 오류를 선언하지 않으면 호출자도 이를 꼭 처리할 필요가 없다.
+
+Error와 RuntimeException 클래스는 미확인 예외이며 throwable의 서브클래스다. 보통 이런 오류는 잡지 않는다.
+
+Exception 클래스는 일반적으로 프로그램에서 잡아 회복해야 하는 오류를 가리킨다.
 
 
 
@@ -287,7 +334,7 @@ public interface Exporter {
 
 #### 미확인 예외와 확인된 예외에서 선택하기
 
-문법 예외 던지기
+CSV 파일에 잘못된 문법이 포함될 수 있다.
 
 ```java
 final String [] columns = line.split(",");
@@ -314,6 +361,11 @@ CSVSyntaxException은 확인된 예외로 사용해야 할까, 아니면 미확�
 
 
 
+* 예외를 활용해 다양한 방법으로 검증자를 구현할 수 있다. 예제는 과도하게 자세한 방법이다. 
+* 이 방법을 적용하면 각각의 예오에 적합하고 정확한 회복 기법을 구현할 수 있지만 너무 많은 설정 작업이 필요하고, 여러 예외를 선언해야 하며, 사용자가 이 모든 예외를 처리해야 하므로 생산성이 현저하게 떨어진다. 다시 말해 사용자가 API를 쉽게 사용할 수 없게 된다.
+
+과도하게 세밀한 예외
+
 ```java
 public class OverlySpecificBankStatementValidator {
   private String description;
@@ -325,7 +377,26 @@ public class OverlySpecificBankStatementValidator {
   }
   
   public boolean validate() throws DescriptionTooLongException, InvalidDateFormat, DateInTheFutureException, InvalidAmountException {
-    ...
+    if (this.description.length() > 100) {
+      throw new DescriptionTooLongException();
+    }
+    
+    final LocalDate parsedDate;
+    try {
+      parsedDate = LocalDate.parse(this.date);
+    } catch (DateTimeParseException e) {
+      throw new InvalidDateFormat();
+    }
+    
+    if (parsedDate.isAfter(LocalDate.nowI())) throw new DateInTheFutureException();
+    
+    try {
+      Double.parseDouble(this.amount);
+    } catch (NumberFormatException e) {
+      throw new InvalidAmountException();
+    }
+    
+    return true;
   }
 }
 ```
@@ -339,15 +410,25 @@ public class OverlySpecificBankStatementValidator {
 ```java
 public boolean validate() {
   if (this.description.length() > 100) {
-    throw new IllegalArumentException("The description is too long");
+    throw new IllegalArgumentException("The description is too long");
   }
   
-  if (...) {
-    throw new IllegalArumentException("...");
-  }
-  
-  if (...) {
-    throw new IllegalArumentException("...");
+  final LocalDate parsedDate;
+    try {
+      parsedDate = LocalDate.parse(this.date);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("Invalid format for date", e);
+    }
+    
+    if (parsedDate.isAfter(LocalDate.nowI())) throw new IllegalArgumentException("date cannot be in the future");
+    
+    try {
+      Double.parseDouble(this.amount);
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException("Invalid format for amount", e);
+    }
+    
+    return true;
   }
 }
 ```
@@ -357,6 +438,62 @@ public boolean validate() {
 #### 노티피케이션 패턴
 
 노티피케이션 패턴은 너무 많은 미확인 예외를 사용하는 상황에 적합한 해결책을 제공한다.
+
+오류를 수집하는 도메인 클래스 Notification
+
+```java
+public class Notification {
+  private final List<String> errors = new ArraysList<>();
+  
+  public void addError(final String message) {
+    errors.add(message);
+  }
+  
+  public boolean hasErrors() {
+    return !errors.isEmpty();
+  }
+  
+  public String errorMessage() {
+    return errors.toString();
+  }
+
+  public List<String> getErrors() {
+    return this.errors;
+  }
+}
+```
+
+
+
+노티피케이션 패턴
+
+```java
+public Notification validate() {
+  final Notification notification = new Notification();
+  if (this.description.length() > 100) {
+    notification.addError("The description is too long");
+  }
+  
+   final LocalDate parsedDate;
+   try {
+      parsedDate = LocalDate.parse(this.date);
+    } catch (DateTimeParseException e) {
+      notification.addError("Invalid format for date");
+    }
+    
+    if (parsedDate.isAfter(LocalDate.nowI())) {
+		notification.addError("date cannot be in the future");
+    }
+    
+    try {
+      Double.parseDouble(this.amount);
+    } catch (NumberFormatException e) {
+      notification.addError("Invalid format for amount");
+    }
+  
+     return notification;
+}
+```
 
 
 
