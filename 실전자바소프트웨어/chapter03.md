@@ -22,7 +22,13 @@
 
 ```java
 public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
-  return findTransactions(bankTransaction -> bankTransaction.getAmount() >= amount);
+  final List<BankTransaction> result = new ArrayList<>();
+  for (final BankTransaction bankTransaction: bankTransactions) {
+    if (bankTransaction.getAmount() >= amount) {
+      result.add(bankTransaction);
+    }
+  }
+  return result;
 }
 ```
 
@@ -30,15 +36,19 @@ public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) 
 
 ```java
 public double calculateTotalInMonth(final Month month) {
-  return summarizeTransactions((acc, bankTransaction) ->
-                               bankTransaction.getDate().getMonth() == month ? acc + bankTransaction.getAmount() : acc);
+  final List<BankTransaction> result = new ArrayList<>();
+  for (final BankTransaction bankTransaction: bankTransactions) {
+    if (bankTransaction.getDate().getMonth() == month) {
+      result.add(bankTransaction);
+    }
+  }
 }
 ```
 
 특정 월이나 금액으로 입출금 내역 검색하기
 
 ```java
-public List<BankTransaction> findTransactionsGreaterThanEqual(final Month month, final int amount) {
+public List<BankTransaction> findTransactionsInMonthAndGreater(final Month month, final int amount) {
   final List<BankTransaction> result = new ArrayList();
   for (final BankTransaction bankTransaction: bankTransactions) {
     if (bankTransaction.getDate().getMonth() == month && bankTransaction.getAmount() > = amount) {
@@ -58,6 +68,8 @@ public List<BankTransaction> findTransactionsGreaterThanEqual(final Month month,
 개방/폐쇄 원칙은 이런 상황에 적용한다. 
 
 * 개방/폐쇄 원칙을 적용하면 코드를 직접 바꾸지 않고 해당 메서드나 클래스의 동작을 바꿀 수 있다.
+
+> 한 개의 추상 메서드를 포함하는 인터페이스를 함수형 인터페이스라 부르며 자바 8에서 처음 이 용어를 소개했다. @FunctionalInterface 애너테이션을 이용하면 인터페이스의 의도를 더 명확하게 표현할 수 있다.
 
 
 
@@ -361,8 +373,8 @@ CSVSyntaxException은 확인된 예외로 사용해야 할까, 아니면 미확�
 
 
 
-* 예외를 활용해 다양한 방법으로 검증자를 구현할 수 있다. 예제는 과도하게 자세한 방법이다. 
-* 이 방법을 적용하면 각각의 예오에 적합하고 정확한 회복 기법을 구현할 수 있지만 너무 많은 설정 작업이 필요하고, 여러 예외를 선언해야 하며, 사용자가 이 모든 예외를 처리해야 하므로 생산성이 현저하게 떨어진다. 다시 말해 사용자가 API를 쉽게 사용할 수 없게 된다.
+* 예외를 활용해 다양한 방법으로 검증자를 구현할 수 있다. 예제는 <u>과도하게 자세한 방법</u>이다. 
+* 이 방법을 적용하면 각각의 예외에 적합하고 정확한 회복 기법을 구현할 수 있지만 너무 많은 설정 작업이 필요하고, 여러 예외를 선언해야 하며, 사용자가 이 모든 예외를 처리해야 하므로 생산성이 현저하게 떨어진다. 다시 말해 사용자가 API를 쉽게 사용할 수 없게 된다.
 
 과도하게 세밀한 예외
 
@@ -540,8 +552,8 @@ public String read(final Source source) throws OracleException { ... }
 try {
   while (true) {
     System.out.println(source.read());
-  } catch (NoDataException e)
-}
+  } catch (NoDataException e) {
+  }
 ```
 
 * 이런 종류의 코드는 다음과 같은 여러 문제를 일으키므로 피해야 한다.
