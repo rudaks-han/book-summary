@@ -229,6 +229,327 @@ public void shouldNotAuthenticateUserWithWrongPassword() {
 
 ## 6.8 팔로워와 트웃
 
+* 이번에는 사용자 팔로우 기능을 살펴보자.
+* 소프트웨어 설계를 크게 두 가지 방법으로 접근한다.
+* 상향식 기법
+    * 응용프로그램의 코어(데이터 저장 모델이나 코어 도메인 객체 간의 관계) 설계에서 시작해 시스템 전체를 만드는 방법이다.
+    * 팔로우를 할 때 발생하는 사용자의 관계를 어떻게 모델링할지 결정해야 한다.
+    * 사용자는 여러 사용자를 팔로우할 수 있고 한 사용자는 여러 팔로워를 가질 수 있으므로 다대다 관계가 성립한다.
+    * 이렇게 정의한 데이터 모델 위에 사용자에게 필요한 기능을 제공하는 비즈니스 기능을 구현한다.
+* 하향식 기법
+    * 사용자 요구 사항이나 스토리에서 출발해 구현하는 데 필요한 동작이나 기능을 먼저 개발하고, 점차 저장소나 데이터 모델을 추가한다.
+    * 예를 들어 다른 사용자를 팔로우하는 이벤트 수신 API를 만든 다음, 이 동작에 필요한 저장소를 설계한다.
+    * 이렇게 API를 먼저 구현하고 저장 비즈니스 로직을 나중에 구현한다.
+* 어떤 방법이 항상 옳다고 단정하긴 어렵지만 경험상 영업과 관련된 형식의 자바 응용프로그램에서는 하향식 기법이 주효했다.
+    * 보통 소프트웨어의 데이터 모델이나 코어 도메인을 먼저 설계하면 실질적으로 소프트웨어의 동작에 필요 없는 부분까지 만들 수 있기 때문이다.
+    * 반면 하향식 기법은 요구 사항과 스토리를 구현하면서 초기 버전의 설계 방식에 문제가 있음을 발견하게 된다는 단점이 있다.
+    * 하향식 기법을 사용할 때 현재 설계에 안심하지 않고 반복적으로 개선하기 위해 노력해야 한다.
+* 여기서는 하향식 기법을 사용한다.
+
+
+
+### 6.8.1 오류 모델링
+
+```java
+@Test
+public void shouldFollowValidUser() {
+  logon();
+  
+  final FollowStatus followStatus = endPoint.onFollow(TestData.OTHER_USER_ID);
+  
+  assertEquals(SUCCESS, followStatus);
+}
+```
+
+* 인수로 전달된 사용자 ID가 실제 사용자와 일치하지 않는다면?
+* 사용자가 이미 팔로우하고 있는 사용자를 다시 팔로우하려 한다면?
+
+
+
+* 성공했을 때는 아무것도 반환하지 않고(void), 이외에는 예외를 던지는 방법이 있다.
+    * 나쁘지 않은 선택이지만 UI에서는 웬만해서 이런 시나리오를 피한다.
+* 불리언으로 성공일 때는 true, 실패일 때는 false로 표현하는 간단한 방법도 있다.
+    * 여러 가지 이유로 동작이 실패할 수 있는 상황에서 왜 이 동작이 실패했는지 알려줄 수 없다는 것이 불리언의 단점이다.
+* Int 상숫값으로 표현하는 방법도 있다.
+    * Int 상수값은 그 자체에 오류가 발생할 수 있고, 안전한 형식을 제공하지 못하며, 가독성과 유지보수성도 낮아진다.
+* enum이 int기반의 상태 코드보다 여러모로 낫다.
+
+
+
+FollowStatus
+
+```java
+public enum FollowStatus {
+  SUCCESS,
+  INVALID_USER,
+  ALREADY_FOLLOWING
+}
+```
+
+```java
+@Test
+public void shouldNotDuplicateFollowValidUser() {
+  logon();
+  
+  endPoint.onFollow(TestData.OTHER_USER_ID);
+  
+  final FollowStatus followStatus = endPoint.onFollow(TestData.OTHER_USER_ID);
+  assertEquals(ALREADY_FOLLOWING, followStatus);
+}
+```
+
+shouldNotFollowInValidUser() 테스트는 사용자가 유효하지 않음을 가정하며 결과 상태로 이를 확인할 수 있다.
+
+
+
+### 6.8.2 트우팅
+
+* 트웃 전송 기능이 필요하므로 SenderEndPoint에 onSendTwoot() 메서드를 추가한다.
+* 또한 사용자가 트웃을 게시했음을 팔로워에게 알려야 한다.
+
+```java
+public interface ReceiverEndPoint {
+  void onTwoot(Twoot twoot);
+}
+```
+
+
+
+### 6.8.3 목 만들기
+
+* 목 객체 개념을 이용해 쉽게 문제를 해결할 수 있다.
+* 목 객체는 다른 객체인 척하는 객체다.
+* 목 객체는 원래 객체가 제공하는 메서드와 공개 API를 모두 제공한다.
+
+
+
+```java
+public class MockReceiverEndPoint implements ReceiverEndPoint {
+  private final List<Twoot> receivedTwoots = new ArrayList<>();
+  
+  @Override
+  public void onTwoot(final Twoot twoot) {
+    receivedTwoots.add(twoot);
+  }
+  
+  public void verifyOnTwoot(final Twoot twoot) {
+    assertThat(receivedTwoots, contains(twoot));
+  }
+}
+```
+
+* 모키토 관련 대부분의 기능은 Mockito 클래스에서 제공하는 정적 메서드로 제공하므로 이를 정적 임포트해서 사용한다.
+
+```java
+private final ReceiverEndPoint receiverEndPoint = mock(ReceiverEndPoint.class);
+```
+
+
+
+### 6.8.4 목으로 확인하기
+
+```java
+verify(receiverEndPoint).onTwoot(aTwootObject);
+```
+
+
+
+### 6.8.5 모킹 라이브러리
+
+* 이 책에서는 모키토 라이브러리를 사용했지만, 다른 자바 모킹 프레임워크도 있다.
+* 파워목이나 이지목 모두 유명한 프레임워크다.
+* 파워목
+    * 모키토 문법을 그대로 지원하며 모키토가 지원하지 않는 목 기능(예를 들어 final 클래스나 정적 메서드)도 지원한다.
+* 이지목
+    * 이지목은 엄격한 모킹을 장려한다는 점이 다르다.
+    * 엄격한 모킹이란 명시적으로 호출이 발생할 거라 선언하지 않은 상태에서 호출이 발생했을 때 이를 오류로 간주하는 것이다.
+    * 하지만 이 때문에 관계 없는 동작과 결합한다는 단점이 있다.
+
+
+
+### 6.8.6 SenderEndPoint 클래스
+
+```java
+public class SenderEndPoint {
+  private final User user;
+  private final Twootr twootr;
+  
+  SenderEndPoint(final User user, final Twootr twootr) {
+    Objects.requireNotNull(user, "user");
+    Objects.requireNotNull(twootr, "twootr");
+    
+    this.user = user;
+    this.twootr = twootr;
+  }
+  
+  public FollowStatus onFollow(final String userIdToFollow) {
+    Objects.requireNotNull(userIdtoFollow, "userIdToFollow");
+    
+    return twootr.onFollow(user, userIdToFollow);
+  }
+}
+```
+
+
+
+* 실제 Twoot을 전송하려면 코어 도메인을 조금 바꿔야 한다.
+* User 객체는 Twoot이 도착했음을 알릴 수 있도록 팔로워 집합을 가져야 한다.
+
+```java
+void onSendTwoot(final String id, final User user, final String content) {
+  final String userId = user.getId();
+  final Twoot twoot = new Twoot(id, userId, content);
+  user.followers()
+    .filter(User::isLoggedOn)
+    .forEach(follower -> follower.receiveTwoot(twoot));
+}
+```
+
+
+
+## 6.9 Position 객체
+
+* Position 객체를 살펴보기 전에 왜 Position 객체가 필요한지 알아보자.
+* 사용자가 로그인했을 때, 로그인 이전부터 발생한 팔로워의 모든 트웃을 볼 수 있어야 한다.
+* 그러러면 다양한 트웃을 재생할 수 있어야 하며, 사용자가 로그인했을 때 어떤 트웃을 확인하지 않았는지 알아야 한다.
+
+
+
+```java
+@Test
+public void shouldReceiveReplayOfTwootsAfterLogoff() {
+  final String id = "1";
+  
+  userFollowsOtherUser();
+  
+  final SenderEndPoint otherEndPoint = otherLogon();
+  otherEndPoint.onSendTwoot(id, TWOOT);
+  logon();
+  
+  verify(receiverEndPoint).onTwoot(twootAt(id, POSITION_1));
+}
+```
+
+* 이 기능을 구현하려면 사용자가 로그아웃한 후 어떤 트웃이 발생했는지 시스템이 알아야 한다.
+    * 모든 트웃의 시간을 기록하고 사용자가 로그아웃한 시간과 다시 로그인한 시간 사이에 발생한 모든 트웃을 검색
+    * 트웃을 연속적인 스트림으로 간주하며 특정 트웃을 스트림의 위치로 지정해 사용자가 로그아웃했을 때 마지막으로 확인한 트웃의 위치를 저장
+    * 위치(position) 기능으로 마지막으로 확인한 트웃의 위치를 기록
+* 메시지를 시간순으로 정렬하는 방법은 고려하지 않는다.
+* 처음에는 메시지를 정렬해야 한다고 생각할 수 있지만 이는 좋은 생각이 아니다.
+    * 예를 들어 밀리초 단위로 메시지 시간을 기록한다고 가정하자.
+    * 만약 두 트웃이 동시에 발생한다면 어떨까?
+    * 사용자가 로그아웃한 같은 시간에 트웃을 수신한다면 어떨까?
+* 사용자가 로그아웃한 시간을 기록하는 방법엔 문제가 있다.
+    * 사용자가 버튼을 명시적으로 클릭해서 로그아웃한다면 별 문제가 없겠지만, 실질적으로 다양한 방법으로 UI를 중단할 수 있기 때문이다.
+* 이런 이유로 트웃을 재생하는 가장 안전한 방법 즉, 트웃에 위치를 할당하고 사용자가 마지막으로 확인한 트웃의 위치를 저장하는 방법을 선택했다.
+
+
+
+```java
+public class Position {
+  public static final Position INITIAL_POSITION = new Position(-1);
+  
+  private final int value;
+  
+  public Position(final int value) {
+    this.value = value;
+  }
+  
+  public int getValue() {
+    return value;
+  }
+  
+  @Override
+  public String toString() {
+    //
+  }
+  
+  @Override
+  public boolean equals(final Object o) {
+    //
+  }
+  
+  @Override
+  public int hashCode() {
+    return value;
+  }
+  
+  public Position next() {
+    return new Position(value + 1);
+  }
+}
+```
+
+
+
+### 6.9.1 equals()와 hashCode() 메서드
+
+* 같은 값을 갖는 객체 두 개를 비교했을 때, 예상과 다르게 두 값이 같지 않다고 판정되는 상황을 종종 목격할 수 있다.
+
+
+
+같아야 할 것 같지만 다른 Point 객체
+
+```java
+final Point p1 = new Point(1, 2);
+final Point p2 = new Point(1, 2);
+System.out.println(p1 == p2); // false 출력
+```
+
+
+
+Point 객체 일치 정의
+
+```java
+@override
+public boolean equals(final Object o) {
+  //
+}
+
+@override
+public int hasCode() {
+  //
+}
+
+final Point p1 = new Point(1, 2);
+final Point p2 = new Point(1, 2);
+System.out.println(p1.equals(p2)); // true 출력
+```
+
+
+
+### 6.9.2 equals()와 hashCode() 메서드 사이의 계약
+
+* 두 객체를 equals() 메서드로 같다고 판단했을 때 hashCode() 메서드 역시 같은 값을 반환해야 한다.
+* equals(), hashCode() 메서드를 직접 구현하는 일은 드물다.
+* 이 기능을 구현하려면 모든 Twoot에 Position 정보가 필요하므로 Twoot 클래스에 위치 정보를 저장하는 필드를 추가하자.
+* 또한 사용자가 마지막으로 본 Position을 저장할 lastSeenPosition 필드는 User에 추가한다.
+* User가 Twoot을 수신하면 위치를 갱신하고, User가 로그인하면 아직 사용자가 확인하지 않은 트웃을 방출한다.
+* 따라서 SenderEndPoint나 ReceiverEndPoint에 새 이벤트를 추가해야 한다.
+* 우선은 JDK에서 제공하는 List에 Twoot 객체를 저장했다가 필요할 때 트웃을 재생한다.
+* 이제 사용자는 트우터에 접속하지 않아도 모든 트웃을 확인할 수 있다.
+
+
+
+## 6.10 총정리
+
+* 통신 방식이라는 큰 그림의 아키텍처를 배웠다.
+* 어떤 라이브러리와 프레임워크를 선택하든 도메인 로직에 영향이 없도록 결합을 분리하는 기술을 익혔다.
+* 테스트를 먼저 만들고 코드를 구현하는 방식을 배웠다.
+* 조금 더 큰 프로젝트에 객체지향 도메인 모델링 기술을 적용했다.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
