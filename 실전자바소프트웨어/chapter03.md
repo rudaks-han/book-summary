@@ -669,26 +669,3 @@ if (columns.length < EXPECTED_ATTRIBUTES_LENGTH) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
