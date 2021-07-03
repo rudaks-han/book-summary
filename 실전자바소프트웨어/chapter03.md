@@ -1,5 +1,18 @@
 # 3장 입출금 내역 분석기 확장판
 
+## 3.2 목표
+
+* 2장에서는 CSV 형식의 입출금 내역을 분석하는 응용프로그램을 만들었다.
+* 이 과정에서 유지보수할 수 있는 코드를 만드는 데 도움이 되는 핵심 디자인 원칙 즉, 단일 책임 원칙, 피해야 할 안티 패턴(갓 클래스와 코드 중복)을 배웠다.
+* 코드를 점진적으로 리팩터링하는 과정에서 결합도와 응집도도 배웠다.
+* 다양한 종류의 입출금 내역을 검색하고, 여러 포맷을 지원하고, 처리하며 텍스트, HTML 등의 형식으로 리포트를 멋지게 내보내려면 무엇이 필요할까?
+* 코드베이스에 유연성을 추가하고 유지보수성을 개선하는 데 도움을 주는 개방/폐쇄 원칙(OCP)을 배운다.
+* 언제 인터페이스를 사용해야 좋을지를 설명하는 일반적인 가이드라인과 높은 결합도를 피할 수 있는 기법도 배운다.
+* 자바에서 언제 API에 예외를 포함하거나 포함하지 않을지를 결저하는 자바의 예외 처리 방법을 배운다.
+* 마지막으로 메이븐, 그레이들 같은 검증된 빌드 도구를 이용해 자바 프로젝트를 시스템적으로 빌드하는 방법도 배워본다.
+
+
+
 ## 3.3 확장된 입출금 내역 분석기 요구 사항
 
 1. 특정 입출금 내역을 검색할 수 있는 기능. 예를 들어 주어진 날짜 범위 또는 특정 범주의 입출금 내역 얻기.
@@ -145,13 +158,13 @@ final List<BankTransaction> transactions = bankStatementProcessor.findTransactio
     * calculateTotalInMonth()
     * calculateTotalForCategory()
 
-* 한 인터페이스에 모든 기능을 추가하는 갓 인터페이스를 만드는 일은 피해야 한다.
+* 한 인터페이스에 모든 기능을 추가하는 갓 인터페이스(god interface)를 만드는 일은 피해야 한다.
 
 
 
 ### 3.5.1 갓 인터페이스
 
-갓 인터페이스
+* 여러분은 BankTransactionProcessor 클래스가 API 역할을 한다고 생각할 수 있다.
 
 ```java
 interface BankTransactionProcessor {
@@ -164,18 +177,18 @@ interface BankTransactionProcessor {
 }
 ```
 
-모든 헬퍼 연산이 명시적인 API 정의에 포함되면서 인터페이스가 복잡해진다.
+* 하지만 이 접근 방식에는 몇 가지 문제가 있다.
+* 우선 모든 헬퍼 연산이 명시적인 API 정의에 포함되면서 인터페이스가 복잡해진다.
+    * 자바의 인터페이스는 모든 구현이 지켜야 할 규칙을 정의한다. 즉 구현 클래스는 인터페이스에서 정의한 모든 연산의 구현 코드를 제공해야 한다. 따라서 인터페이스를 바꾸면 구현한 코드도 바뀐 내용을 지원하도록 갱신되어야 한다. 더 많은 연산을 추가할수록 더 자주 코드가 바뀌며, 문제가 발생할 수 있는 범위도 넓어진다.
+    * 월, 카테고리 같은 BankTransaction의 속성이 calculateAverageForCategory(), calculateTotalInJanuary() 처럼 메서드 이름의 일부로 사용되었다. 인터페이스가 도메인 객체의 특정 접근자에 종속되는 문제가 생겼다. <u>도메인 객체의 세부 내용이 바뀌면 인터페이스도 바뀌어야 하며 결과적으로 구현코드도 바뀌어야 한다</u>.
 
-* 자바의 인터페이스는 모든 구현이 지켜야 할 규칙을 정의한다. 즉 구현 클래스는 인터페이스에서 정의한 모든 연산의 구현 코드를 제공해야 한다. 따라서 인터페이스를 바꾸면 구현한 코드도 바뀐 내용을 지원하도록 갱신되어야 한다. 더 많은 연산을 추가할수록 더 자주 코드가 바뀌며, 문제가 발생할 수 있는 범위도 넓어진다.
-* 월, 카테고리 같은 BankTransaction의 속성이 calculateAverageForCategory(), calculateTotalInJanuary() 처럼 메서드 이름의 일부로 사용되었다. 인터페이스가 도메인 객체의 특정 접근자에 종속되는 문제가 생겼다. <u>도메인 객체의 세부 내용이 바뀌면 인터페이스도 바뀌어야 하며 결과적으로 구현코드도 바뀌어야 한다</u>.
-
-이런 이유에서 보통 작은 인터페이스를 권장한다. 그래야 도메인 객체의 다양한 내부 연산으로의 디펜던시를 최소화할 수 있다.
+* 이런 이유에서 보통 작은 인터페이스를 권장한다. 그래야 도메인 객체의 다양한 내부 연산으로의 디펜던시를 최소화할 수 있다.
 
 
 
 ### 3.5.2 지나친 세밀함
 
-인터페이스는 작을수록 좋은 걸까? 아래는 각 동작을 별도의 인터페이스로 정의하는 극단적인 예다. BankTransactionProcessor 클래스는 이 모든 인터페이스를 구현해야 한다.
+* 인터페이스는 작을수록 좋은 걸까? 아래는 각 동작을 별도의 인터페이스로 정의하는 극단적인 예다. BankTransactionProcessor 클래스는 이 모든 인터페이스를 구현해야 한다.
 
 지나치게 세밀한 인터페이스
 
@@ -193,12 +206,19 @@ interface CalculateTotalInMonth {
 }
 ```
 
-지나치게 인터페이스가 세밀해도 코드 유지보수에 방해가 된다. 실제로 위 예제는 안티 응집도 문제가 발생한다. 즉 기능이 여러 인터페이스로 분산되므로 필요한 기능을 찾기가 어렵다. 자주 사용하는 기능을 쉽게 찾을 수 있어야 유지보수성이 좋아진다.
+* 지나치게 인터페이스가 세밀해도 코드 유지보수에 방해가 된다. 
+* 실제로 위 예제는 안티 응집도 문제가 발생한다. 
+* 즉 기능이 여러 인터페이스로 분산되므로 필요한 기능을 찾기가 어렵다. 
+* 자주 사용하는 기능을 쉽게 찾을 수 있어야 유지보수성이 좋아진다.
 
 
 
 ## 3.6 명시적 API vs 암묵적 API
 
+* 이 문제를 어떻게 하면 제대로 해결할 수 있을까?
+* 개방/폐쇄 원칙을 적용하면 연산에 유연성을 추가하고 가장 공통적인 상황을 클래스로 정의할 수 있다.
+* 일반적인 findTransactions() 메서드를 쉽게 정의할 수 있는 상황에서 findTransactionsGreaterThanEqual()처럼 구체적으로 메서드를 정의해야 하는지 의문이 생긴다.
+* 이런 딜레마를 명시적 API 제공 vs 암묵적 API 제공 문제라고 부른다.
 * 명시적 API
     * findTransactionsGreaterThanEqual() 처럼 구체적으로 메서드를 정의하는 방법
     * 어떤 동작을 수행하는지 잘 설명되어 있다.
@@ -228,7 +248,27 @@ public interface BankTransactionFilter {
 }
 
 public class BankTransactionProcessor {
-	// ...
+	private final List<BankTransaction> bankTransactions;
+  
+  public BankTransactionProcessor(final List<BankTransaction> bankTransactions) {
+    this.bankTransactions = bankTransactions;
+  }
+  
+  public double summarizeTransactions(final BankTransactionSummarizer bankTransactionSummarizer) {
+    //
+  }
+  
+  public double calculateToTotalInMonth(final Month month) {
+    //
+  }
+  
+  public List<BankTransaction> findTransactions(final BankTransactionFilter bankTransactionFilter) {
+    //
+  }
+  
+  public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
+    //
+  }
 }
 ```
 
@@ -236,19 +276,34 @@ public class BankTransactionProcessor {
 
 ### 3.6.1 도메인 클래스 vs 원싯값
 
-BankTransactionSummarizer의 인터페이스를 간단하게 정의하면서 double이라는 원싯값을 결과로 반환하는데, 이는 일반적으로 좋은 방법이 아니다. 원싯값으로는 다양한 결과를 반환할 수 없어 유연성이 떨어지기 때문이다.
-
-double을 감싸는 새 도메인 클래스 Summary를 만들면 이 문제를 해결할 수 있다.
+* BankTransactionSummarizer의 인터페이스를 간단하게 정의하면서 double이라는 원싯값을 결과로 반환하는데, 이는 일반적으로 좋은 방법이 아니다. 
+* 원싯값으로는 다양한 결과를 반환할 수 없어 유연성이 떨어지기 때문이다.
+* summarizeTransaction() 메서드는 현재 double을 반환한다.
+* 다양한 결과를 포함하도록 메서드 시그니처를 바꾸려면 모든 BankTransactionProcessor의 구현을 바꿔야 한다.
+* double을 감싸는 새 도메인 클래스 Summary를 만들면 이 문제를 해결할 수 있다.
 
 
 
 ## 3.7 다양한 형식으로 내보내기
 
-선택한 입출금 목록의 요약 통계를 텍스트, HTML, JSON 등 다양한 형식으로 내보내야 한다.
+* 선택한 입출금 목록의 요약 통계를 텍스트, HTML, JSON 등 다양한 형식으로 내보내야 한다.
 
 
 
 ### 3.7.1 도메인 객체 소개
+
+* 사용자가 어떤 형식으로 내보내고 싶은지 정확하게 파악해야 한다.
+* 각각 다음과 같은 장단점이 있다.
+    * 숫자
+        calculateAverageInMonth 처럼 연산의 반환 결과가 필요한 사용자가 있을 것이다. 이때 결과값은 double이다. double을 반환하면 간단하게 프로그램을 구현할 수있지만 요구 사항이 바뀔 때 유연하게 대처할 수 없다.
+    * 컬렉션
+        findTransaction()이 반환한느 입출금 목록을 원하는 사용자도 있을 것이다. Iterable을 반환하면 상황에 맞춰서 처리하기 때문에 유연성을 높일 수있다. 유연성은 좋아지지만 오직 컬렉션만 반환해야 한다는 제약이 따른다. 어떻게 하면 목록, 기타 요약 정보 등 다양한 종류의 결과를 반환할 수 있을까?
+    * 특별한 도메인 객체
+        사용자가 내보려는 요약 정보를 대표하는 SummaryStatistics라는 새로운 개념을 만들 수 있다. 도메인 객체를 이용하면 결합을 깰 수 있다. 새로운 요구사항이 생겨서 추가 정보를 내보내야 한다면 기존 코드를 바꿀 필요 없이 새로운 클래스의 일부로 이를 구현할 수 있다.
+    * 더 복잡한 도메인 객체
+        Report처럼 조금 더 일반적이며 거래 내역 컬렉션 등 다양한 결과를 저장하는 필드를 포함하는 개념을 만들 수 있다. 사용자의 요구사항이 무엇이며 더 복잡한 정보를 내보내야 하는지 여부에 따라 사용할 도메인 객체가 달라진다.
+
+
 
 요약 정보를 저장하는 도메인 객체
 
@@ -288,6 +343,11 @@ public class SummaryStatistics {
 
 ### 3.7.2 적절하게 인터페이스를 정의하고 구현하기
 
+* Exporter라는 인터페이스를 정의해 다양한 내보내기 구현 코드가 다른 코드와 결합하지 않도록 방지한다.
+* 이는 개방/폐쇄 원칙으로 다시 연결된다.
+
+
+
 Exporter 인터페이스의 나쁜 예
 
 ```java
@@ -306,6 +366,19 @@ Exporter 인터페이스의 좋은 예
 ```java
 public interface Exporter {
   String export(SummaryStatistics summaryStatistics);
+}
+```
+
+
+
+Exporter 인터페이스 구현
+
+```java
+public class HtmlExporter implements Exporter {
+  @Override
+  public String export(final SummaryStatistics summaryStatistics) {
+    //
+  }
 }
 ```
 
@@ -665,7 +738,6 @@ if (columns.length < EXPECTED_ATTRIBUTES_LENGTH) {
 * 예외를 무시하거나 일반적인 Exception을 잡으면 근본적이 문제를 파악하기가 어렵다.
 * 빌드 도구를 사용하면 응용프로그램 빌드, 테스트, 배포 등 소프트웨어 개발 생명 주기 작업을 자동화할 수 있다.
 * 요즘 자바 커뮤니티에서는 빌드 도구로 메이븐과 그레이들을 주로 사용한다.
-
 
 
 
