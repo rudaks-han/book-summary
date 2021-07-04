@@ -1,5 +1,13 @@
 # 5장 비즈니스 규칙 엔진
 
+## 5.2 목표
+
+* 유닛 테스트를 구현하는 데 유용한 모킹 기법도 전반적으로 배운다.
+* 지역 변수 형식 추론, switch 문 등 몇 가지 최신 자바 기능도 살펴본다.
+* 마지막으로 빌더 패턴과 인터페이스 분리 원칙으로 사용자 친화적인 API 개발 장법도 배운다.
+
+
+
 ## 5.3 비즈니스 규칙 엔진 요구사항
 
 * 프로그래머가 아닌 사람도 자신의 워크플로에 비즈니스 로직을 추가하거나 바꿀 수 있는 기능을 만들려 한다.
@@ -132,6 +140,12 @@ void shouldExecuteOneAction() {
 
 ## 5.6 조건 추가하기
 
+* 실제 업무에서는 비즈니스 규칙 엔진으로 특정 조건을 만족하면 액션을 수행하도록 설정할 수 있어야 한다.
+* 이 조건은 어떤 팩트에 의존한다.
+* 예를 들어 '잠재 고개그이 직함이 CEO'면 알림 같은 상황이다.
+
+
+
 ### 5.6.1 상태 모델링
 
 익명 클래스로 액션 추가
@@ -261,6 +275,36 @@ businessRuleEngine.addAction(facts -> {
 
 
 ### 5.6.2 지역 변수 형식 추론
+
+* 형식 추론(type inference)이란 컴파일러가 정적 형식을 자동으로 추론해 결정하는 기능으로 사용자는 더 이상 명시적으로 명식적으로 형식을 지정할 필요가 없다.
+
+```java
+Map<String, String> facts = new HashMap<>();
+```
+
+아래 코드 대신 위 코드면 충분하다.
+
+```java
+Map<String, String> facts = new HashMap<String, String>();
+```
+
+* 이 기능은 자바 7에서 추가된 다이아몬드 연산자라는 기능이다.
+
+
+
+명시적 형식으로 지역 변수 선언
+
+```java
+Facts env = new Facts();
+BusinessRuleEngine businessRuleEngine = new BusinessRuleEngine(env);
+```
+
+지역 변수 형식 추론
+
+```java
+var env = new Facts();
+var businessRuleEngine = new BusinessRuleEngine(env);
+```
 
 
 
@@ -522,7 +566,6 @@ public class BusinessRuleEngine {
 * 자바는 지역 변수 형식 추론과 switch문을 지원한다.
 * 빌더 패턴은 복잡한 객체를 사용자 친화적인 API로 인스턴스화할 수 있도록 돕는다.
 * 인터페이스 분리 원칙은 불필요한 메서드의 디펜던시를 감소시켜 높은 응집도를 촉진한다. 큰 인터페이스를 응집력 있는 작은 인터페이스로 분리해 사용자는 필요한 기능만 사용할 수 있다.
-
 
 
 
