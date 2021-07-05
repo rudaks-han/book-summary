@@ -8,7 +8,7 @@
 * 다양한 종류의 입출금 내역을 검색하고, 여러 포맷을 지원하고, 처리하며 텍스트, HTML 등의 형식으로 리포트를 멋지게 내보내려면 무엇이 필요할까?
 * 코드베이스에 유연성을 추가하고 유지보수성을 개선하는 데 도움을 주는 개방/폐쇄 원칙(OCP)을 배운다.
 * 언제 인터페이스를 사용해야 좋을지를 설명하는 일반적인 가이드라인과 높은 결합도를 피할 수 있는 기법도 배운다.
-* 자바에서 언제 API에 예외를 포함하거나 포함하지 않을지를 결저하는 자바의 예외 처리 방법을 배운다.
+* 자바에서 언제 API에 예외를 포함하거나 포함하지 않을지를 결정하는 자바의 예외 처리 방법을 배운다.
 * 마지막으로 메이븐, 그레이들 같은 검증된 빌드 도구를 이용해 자바 프로젝트를 시스템적으로 빌드하는 방법도 배워본다.
 
 
@@ -158,13 +158,15 @@ final List<BankTransaction> transactions = bankStatementProcessor.findTransactio
     * calculateTotalInMonth()
     * calculateTotalForCategory()
 
-* 한 인터페이스에 모든 기능을 추가하는 갓 인터페이스(god interface)를 만드는 일은 피해야 한다.
+* 한 인터페이스에 모든 기능을 추가하는 **갓 인터페이스(god interface)**를 만드는 일은 피해야 한다.
 
 
 
 ### 3.5.1 갓 인터페이스
 
 * 여러분은 BankTransactionProcessor 클래스가 API 역할을 한다고 생각할 수 있다.
+* 아래 예에서 보여주는 것처럼 여러 입출금 내역 분석기 구현에서 결합을 제거하도록 인터페이스를 정의해야 한다.
+* 이 인터페이스는 입출금 내역 분석기가 구현해야 할 모든 기능을 포함한다.
 
 ```java
 interface BankTransactionProcessor {
@@ -188,7 +190,9 @@ interface BankTransactionProcessor {
 
 ### 3.5.2 지나친 세밀함
 
-* 인터페이스는 작을수록 좋은 걸까? 아래는 각 동작을 별도의 인터페이스로 정의하는 극단적인 예다. BankTransactionProcessor 클래스는 이 모든 인터페이스를 구현해야 한다.
+* 인터페이스는 작을수록 좋은 걸까? 
+* 아래는 각 동작을 별도의 인터페이스로 정의하는 극단적인 예다. 
+* BankTransactionProcessor 클래스는 이 모든 인터페이스를 구현해야 한다.
 
 지나치게 세밀한 인터페이스
 
@@ -207,9 +211,10 @@ interface CalculateTotalInMonth {
 ```
 
 * 지나치게 인터페이스가 세밀해도 코드 유지보수에 방해가 된다. 
-* 실제로 위 예제는 안티 응집도 문제가 발생한다. 
+* 실제로 위 예제는 **안티 응집도(anti-cohesion)** 문제가 발생한다. 
 * 즉 기능이 여러 인터페이스로 분산되므로 필요한 기능을 찾기가 어렵다. 
 * 자주 사용하는 기능을 쉽게 찾을 수 있어야 유지보수성이 좋아진다.
+* 더욱이 인터페이스가 너무 세밀하면 복잡도가 높아지며, 새로운 인터페이스가 계속해서 프로젝트에 추가된다.
 
 
 
@@ -230,7 +235,8 @@ interface CalculateTotalInMonth {
     * 처음에는 사용하기 어렵다.
     * 거래 내역을 검색하는 데 필요한 모든 상황을 단순한 API로 처리할 수 있다.
 
-어떤 것이 좋은 방법인지는 정해져 있지 않다. 질문의 종류에 따라 달라질 수 있기 때문이다.
+* 어떤 것이 좋은 방법인지는 정해져 있지 않다. 질문의 종류에 따라 달라질 수 있기 때문이다.
+* findTransactionsGreaterThanEqual 메서드가 가장 흔히 사용하는 연산이라면, 사용자가 쉽게 이해하고 사용하도록 이를 명시적 API로 만드는 것이 합리적인 방법이다.
 
 
 
@@ -248,7 +254,7 @@ public interface BankTransactionFilter {
 }
 
 public class BankTransactionProcessor {
-	private final List<BankTransaction> bankTransactions;
+  private final List<BankTransaction> bankTransactions;
   
   public BankTransactionProcessor(final List<BankTransaction> bankTransactions) {
     this.bankTransactions = bankTransactions;
@@ -295,9 +301,9 @@ public class BankTransactionProcessor {
 * 사용자가 어떤 형식으로 내보내고 싶은지 정확하게 파악해야 한다.
 * 각각 다음과 같은 장단점이 있다.
     * 숫자
-        calculateAverageInMonth 처럼 연산의 반환 결과가 필요한 사용자가 있을 것이다. 이때 결과값은 double이다. double을 반환하면 간단하게 프로그램을 구현할 수있지만 요구 사항이 바뀔 때 유연하게 대처할 수 없다.
+        calculateAverageInMonth 처럼 연산의 반환 결과가 필요한 사용자가 있을 것이다. 이때 결과값은 double이다. double을 반환하면 간단하게 프로그램을 구현할 수 있지만 요구 사항이 바뀔 때 유연하게 대처할 수 없다.
     * 컬렉션
-        findTransaction()이 반환한느 입출금 목록을 원하는 사용자도 있을 것이다. Iterable을 반환하면 상황에 맞춰서 처리하기 때문에 유연성을 높일 수있다. 유연성은 좋아지지만 오직 컬렉션만 반환해야 한다는 제약이 따른다. 어떻게 하면 목록, 기타 요약 정보 등 다양한 종류의 결과를 반환할 수 있을까?
+        findTransaction()이 반환하는 입출금 목록을 원하는 사용자도 있을 것이다. Iterable을 반환하면 상황에 맞춰서 처리하기 때문에 유연성을 높일 수있다. 유연성은 좋아지지만 오직 컬렉션만 반환해야 한다는 제약이 따른다. 어떻게 하면 목록, 기타 요약 정보 등 다양한 종류의 결과를 반환할 수 있을까?
     * 특별한 도메인 객체
         사용자가 내보려는 요약 정보를 대표하는 SummaryStatistics라는 새로운 개념을 만들 수 있다. 도메인 객체를 이용하면 결합을 깰 수 있다. 새로운 요구사항이 생겨서 추가 정보를 내보내야 한다면 기존 코드를 바꿀 필요 없이 새로운 클래스의 일부로 이를 구현할 수 있다.
     * 더 복잡한 도메인 객체
@@ -666,13 +672,15 @@ if (columns.length < EXPECTED_ATTRIBUTES_LENGTH) {
 * 빈 객체는 아무것도 수행하지 않으므로 동작을 예측하기 쉽다.
 * 하지만 이 패턴을 사용하면 데이터에 문제가 있어도 빈 객체를 이용해 실제 문제를 무시할 수 있어 나중에 문제를 해결하기가 더 어려워질 수 있다.
 
-널 객체 패턴: https://johngrib.github.io/wiki/null-object-pattern/
+참고) 널 객체 패턴: https://johngrib.github.io/wiki/null-object-pattern/
 
 
 
 #### Optional< T >
 
 * 값이 없는 상태를 명시적으로 처리하는 다양한 메서드 집합을 제공하므로 버그의 범위를 줄이는 데 큰 도움이 된다.
+
+참고) Java Optional 바르게 쓰기: http://homoefficio.github.io/2019/10/03/Java-Optional-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0/
 
 
 
