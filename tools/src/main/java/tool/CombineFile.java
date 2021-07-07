@@ -26,7 +26,7 @@ public class CombineFile {
         for (File file: files) {
             String absolutePath = file.getAbsolutePath();
             String fileName = file.getName();
-            if (absolutePath.endsWith(".md") && !fileName.equals(bookName+".md")) {
+            if (absolutePath.endsWith(".md") && !fileName.equals(bookName+".md") && !fileName.equals("README.md")) {
                 System.out.println(absolutePath);
 
                 String data = FileUtils.readFileToString(new File(absolutePath), "UTF-8");
