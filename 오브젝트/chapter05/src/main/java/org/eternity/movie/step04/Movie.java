@@ -35,7 +35,7 @@ public abstract class Movie {
         return discountConditions.stream().anyMatch(discountCondition -> discountCondition.isSatisfiedBy(screening));
     }
 
-    public Money getFee() {
+    protected Money getFee() {
         return fee;
     }
 }

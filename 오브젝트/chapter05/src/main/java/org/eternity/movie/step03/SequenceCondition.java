@@ -1,6 +1,6 @@
 package org.eternity.movie.step03;
 
-public class SequenceCondition {
+public class SequenceCondition implements DiscountCondition {
 
     private int sequence;
 

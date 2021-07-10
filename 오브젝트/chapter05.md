@@ -113,53 +113,540 @@
 
 ### 높은 응집도와 낮은 결합도
 
-* 할인 요금 예산을 Movie가 DiscountCondition에게 메시지를 전송하지만 Screening이 직접 DiscountCondition과 협력하는 것을 어떨까?
-* 해답의 실마리는 결합도에 있다.
-* 도메인 상으로 Movie는 DiscountCondition의 목록을 속성으로 포함하고 있다. Movie와 DiscountCondition은 이미 결합돼 있기 때문에 Movie를 DiscountCondition과 협력하게 되면 전체적으로 결합도를 추가하지 않고도 협력을 완성할 수 있다.
-* High Cohesion 관점
-    * Screening의 가장 중요한 책임은 예매를 생성하는 것이다.
-    * Screening이 DiscountCondition과 협력해야 한다면 영화 요금 계산과 관련된 책임의 일부를 떠안아야 할 것이다.
-    * 예매 요금을 계산하는 방식이 변경될 경우 Screening도 함께 변경해야 한다.
+* 방금 전에 설계한 영화 예매 시스템에서는 할인 요금을 계산하기 위해 Movie가 DiscountCondition에 할인 여부를 판단하라 메시지를 전송한다.
+    * 그렇다면 Movie 대신 Screening이 직접 DiscountCondition과 협력하게 하는 것은 어떨까?
+    * 위 설계는 기능적인 측면에서만 놓고 보면 Movie와 DiscountCondition이 직접 상호작용하는 앞의 설계와 동일하다.
+    * 그렇다면 왜 우리는 이 설계 대신 Movie가 DiscountCondition과 협력하는 방법을 선택한 것일까?
+* 그 이유는 응집도와 결합도에 있다.
+    * 책임을 할당할 수 있는 다양한 대안들이 존재한다면 응집도와 결합도 측면에서 더 나은 대안을 선택하는 것이 좋다.
+* GRASP에서는 이를 LOW COUPLING(낮은 결합도) 패턴과 HIGH COHESION(높은 응집도) 패턴이라고 부른다.
+
+> **LOW COUPLING 패턴**
+>
+> 어떻게 하면 의존성을 낮추고 변화의 영향을 주이며 재사용성을 증가시킬 수 있을까? 설계의 전체적인 결합도가 낮게 유지되도록 책임을 할당하라.
+>
+> 낮은 결합도는 모든 설계 결정에서 염두에 둬야 하는 원리다. 다시 말해 설계 결정을 평가할 때 적용할 수 있는 평가 원리다.
+
+* DiscountCondition이 Movie와 협력하는 것이 좋을까, 아니면 Screening과 협력하는 것이 좋을까?
+    * 해답의 실마리는 결합도에 있다.
+    * 도메인 상으로 Movie는 DiscountCondition의 목록을 속성으로 포함하고 있다.
+    * Movie와 DiscountCondition은 이미 결합돼 있기 때문에 Movie를 DiscountCondition과 협력하게 하면 설계 전체적으로 결합도를 추가하지 않고도 협력을 완성할 수있다.
+    * 하지만 Screening이 DiscountCondition과 협력하는 경우에는 Screening과 DiscountCondition 사이에 새로운 결합도가 추가된다. 
+    * 따라서 LOW COUPLING 패턴의 관점에서는 Screening이 DiscountCondition과 협력하는 것보다는 Movie가 DiscountCondition과 협력하는 것이 더 나은 설계 대안인 것이다.
+* HIGH COHESION 패턴의 관섬에서도 설계 대안들을 평가할 수 있다.
+
+> **HIGH COHESION** 패턴
+>
+> 어떻게 복잡성을 관리할 수 있는 수준으로 유지할 것인가? 높은 응집도를 유지할 수 있게 책임을 할당하라.
+>
+> 설계 결정을 평가할 때 적용할 수 있는 평가 원리다. 현재의 책임 할당을 검토하고 있거나 여러 설계 대안 중 하나를 선택해야 한다면 높은 응집도를 유지할 수 잇는 설계를 선택하라.
+
+* Screening의 가장 중요한 책임은 예매를 생성하는 것이다.
+* 만약 Screening이 DiscountCondition과 협력해야 한다면 Screening은 영화 요금 계산에 관련된 책임 일부를 떠안아야 할 것이다.
+* 다시 말해서 예매 요금을 계산하는 방식이 변경될 경우 Screening도 함께 변경해야 하는 것이다.
+    * 결과적으로 Screening과 DiscountCondition이 협력하게 되면 Screening은 서로 다른 이유로 변경되는 책임을 짊어지게 되고 응집도가 낮아질 수밖에 없다.
 
 
 
 ### 창조자에게 객체 생성 책임을 할당하라
 
-* CREATOR(창조자) 패턴은 객체를 생성할 책임을 어떤 객체에게 할당할지에 대한 지침을 제공한다.
+* 영화 예매 협력의 최종 결과물은 Reservation 인스턴스를 생성하는 것이다.
+    * 이것은 협력에 참여하는 어떤 객체에게는 Reservation 인스턴스를 생성할 책임을 할당해야 한다는 것을 의미한다.
+    * **CREATOR(창조자)** 패턴은 객체를 생성할 책임을 어떤 객체에게 할당할지에 대한 지침을 제공한다.
+
+> **CREATOR 패턴**
+>
+> 객체 A를 생성해야 할 때 어떤 객체에게 객체 생성 책임을 할당해야 하는가? 아래 조건을 최대한 많이 만족하는 B에게 객체 생성책임을 할당하라.
+>
+> * B가 A 객체를 포함하거나 참조한다.
+> * B가 A 객체를 기록한다.
+> * B가 A 객체를 긴밀하게 사용한다.
+> * B가 A 객체를 초기화하는 데 필요한 데이터를 가지고 있다.
+
+* Screening은 예매 정보를 생성하는 데 필요한 영화, 상영 시간, 상영 순번 등의 정보에 대한 전문가이며, 예매 요금을 계산하는 데 필수적인 Movie도 알고 있다.
+* Screening을 Reservation의 CREATOR로 선택하는 것이 적절해 보인다.
 
 
 
 ## 03 구현을 통한 검증
 
+* Screening은 영화를 예매할 책임을 맡으며 그 결과로 Reservation 인스턴스를 생성할 책임을 수행해야 한다.
+* 다시 말해 Screening은 예매에 대한 정보 전문가인 동시에 Reservation의 창조자다.
+
+```java
+public class Screening {
+  public Reservation reserve(Customer customer, int audienceCount) {
+    
+  }
+}
+```
+
+* 책임이 결정됐으므로 책임을 수행하는 데 필요한 인스턴스 변수를 결정해야 한다.
+* Screening은 상영시간(whenScreened)과 상영 순번(sequence)을 인스턴스 변수로 포함한다.
+* 또한 Movie에 가격을 계산하라 메시지를 전송해야 하기 때문에 영화(movie)에 대한 참조도 포함해야 한다.
+
+```java
+public class Screening {
+  private Movie movie;
+  private int sequence;
+  private LocalDateTime whenScreened;
+  
+  public Reservation reserve(Customer customer, int audienceCount) {
+  }
+}
+```
+
+* 영화를 예매하기 위해서는 movie에게 가격을 계산하라 메시지를 전송해서 계산된 영화 요금을 반환받아야 한다.
+* calculateFee 메서드는 이렇게 반환된 요금에 예매 인원 수를 곱해서 전체 예매 요금을 계산한 후 Reservation을 생성해서 반환한다.
+
+```java
+public class Screening {
+  private Movie movie;
+  private int sequence;
+  private LocalDateTime whenScreened;
+  
+  public Reservation reserve(Customer customer, int audienceCount) {
+    new Reservation(customer, this, calculateFee(audienceCount), audienceCount);
+  }
+  
+  private Money calculateFee(int audienceCount) {
+    return movie.calculateMovieFee(this).times(audienceCount);
+  }
+}
+```
+
+* Screening이 Movie의 내부 구현에 대해 어떤 지식도 없이 전송할 메시지를 결정했다.
+* Screening과 Movie를 연결하는 유일한 연결 고리는 메시지 뿐이다.
+* 따라서 메시지가 변경되지 않는 한 Movie의 어떤 수정을 가하더라도 Screening에는 영향을 미치지 않는다.
+
+
+
+* Screening은 Movie와 협력하기 위해 calculateMovieFee 메시지를 전송한다.
+* Movie는 이 메시지에 응답하기 위해 calculateMovieFee 메서드를 구현해야 한다.
+
+```java
+public class Movie {
+  public Money calculateMovieFee(Screening screening)
+}
+```
+
+* 요금을 계산하기 위해 Movie는 기본 금액(fee), 할인 조건(discountCondition), 할인 정책 등의 정보를 알아야 한다.
+* 현재의 설계에서는 할인 정책을 구성하는 할인 금액(discountAmount)과 할인 비율(discountPercent)을 Movie의 인스턴스 변수로 선언했다.
+* 그리고 현재의 Movie가 어떤 할인 정책이 적용된 영화인지를 나타내기 위해 영화 종류를 인스턴스 변수로 포함한다.
+
+```java
+public class Movie {
+  private String title;
+  private Duration runnintTime;
+  private Money fee;
+  private List<DiscountCondition> discountConditions;
+  
+  private MovieType movieType;
+  private Money discountAmount;
+  private Money discountPercent;
+  
+  public Money calculateMovieFee(Screening screening)
+}
+```
+
+* MovieType은 할인 정책의 종류를 나열하는 단순한 열거형 타입이다.
+
+```java
+public enum MovieType {
+  AMOUNT_DISCOUNT, // 금액 할인 정책
+  PERCENT_DISCOUNT, // 비율 할인 정책
+  NONE_DISCOUNT // 미적용
+}
+```
+
+```java
+public class Movie {
+  public Money calculateMovieFee(Screening screening) {
+        if (isDiscountable(screening)) {
+            return fee.minus(calculateDiscountAmount());
+        }
+
+        return fee;
+    }
+
+    private boolean isDiscountable(Screening screening) {
+        return discountConditions.stream()
+            .anyMatch(condition -> condition.isSatisfiedBy(screening));
+    }
+}
+```
+
+* 실제로 할인 요금을 계산하는 calculateDiscountAmount 메서드는 movieType의 값에 따라 적절한 메서드를 호출한다.
+
+```java
+public class Movie {
+  private Money calculateDiscountAmount() {
+        switch (movieType) {
+            case AMOUNT_DISCOUNT:
+                return calculateAmountDiscountAmount();
+            case PERCENT_DISCOUNT:
+                return calculatePercentDiscountAmount();
+            case NONE_DISCOUNT:
+                return calculateNoneDiscountAmount();
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    private Money calculateAmountDiscountAmount() {
+        return discountAmount;
+    }
+
+    private Money calculatePercentDiscountAmount() {
+        return fee.times(discountPercent);
+    }
+
+    private Money calculateNoneDiscountAmount() {
+        return Money.ZERO;
+    }
+}
+```
+
+* Movie는 각 DiscountCondition에 할인 여부를 판단하라 메시지를 전송한다.
+* DiscountCondition은 이 메시지를 처리하기 위해 isSatisfiedBy 메서드를 구현해야 한다.
+
+```java
+public class DiscountCondition {
+  public boolean isSatisfiedBy(Screening screen) {
+    
+  }
+}
+```
+
+```java
+public class DiscountCondition {
+    private DiscountConditionType type;
+    private int sequence;
+    private DayOfWeek dayOfWeek;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+    public boolean isSatisfiedBy(Screening screening) {
+        if (type == DiscountConditionType.PERIOD) {
+            return isSatisfiedByPeriod(screening);
+        }
+
+        return isSatisfiedBySequence(screening);
+    }
+
+    private boolean isSatisfiedByPeriod(Screening screening) {
+        return dayOfWeek.equals(screening.getWhenScreened().getDayOfWeek()) &&
+            startTime.compareTo(screening.getWhenScreened().toLocalTime()) <= 0 &&
+            endTime.compareTo(screening.getWhenScreened().toLocalTime()) <= 0;
+    }
+
+    private boolean isSatisfiedBySequence(Screening screening) {
+        return sequence == screening.getSequence();
+    }
+}
+```
+
+* DiscountCondition은 할인 조건을 판단하기 위해 Screening의 상영 시간과 상영 순번을 알아야 한다.
+
+```java
+public class Screening {
+  public LocalDateTime getWhenScreened() {
+        return this.whenScreened;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+}
+```
+
+* DiscountConditionType은 할인 조건의 종류를 나열하는 단순한 열거형 타입이다.
+
+```java
+public enum DiscountConditionType {
+    SEQUENCE,
+    PERIOD
+}
+```
+
 
 
 ### DiscountCondition 개선하기
 
+* 가장 큰 문제는 변경에 취약한 클래스를 포함하고 있다는 것이다.
+* DiscountCondition은 다음과 같이 서로 다른 세 가지 이유로 변경될 수 있다.
+    * 새로운 할인 조건 추가
+        isSatisfiedBy 메서드 안의 if ~ else 구문을 수정해야 한다.
+    * 순번 조건을 판단하는 로직 변경
+        isSatisfiedBySequence 메서드의 내부 구현을 수정해야 한다.
+    * 기간 조건을 판단하는 로직이 변경되는 경우
+        isSatisfiedByPeriod 메서드의 내부 구현을 수정해야 한다.
+* DiscountCondition은 하나 이상의 변경 이유를 가지기 때문에 응집도가 낮다.
+    * 응집도가 낮다는 것은 서로 연관성이 없는 기능이나 데이터가 하나의 클래스 안에 뭉쳐져 있다는 것을 의미한다.
+    * 따라서 낮은 응집도가 초래하는 문제를 해결하기 위해서는 변경의 이유에 따라 클래스를 분리해야 한다.
+* 앞에서 살펴본 것처럼 DiscountCondition 안에 구현된 isSatisifiedBySequence 메서드와 isSatisifiedByPeriod 메서드는 서로 다른 이유로 변경된다.
+* 두 가지 변경이 코드에 영향을 미치는 시점은 서로 다를 수있다.
+    * DiscountCondition은 서로 다른 이유로, 서로 다른 시점에 변경될 확률이 높다.
+    * 서로 다른 이유로 변경되는 두 개의 메서드를 가지는 DiscountCondition 클래스의 응집도는 낮아질 수밖에 없는 것이다.
+* 지금까지 살펴본 것처럼 일반적으로 설계를 개선하는 작업은 변경의 이유가 하나 이상인 클래스를 찾는 것으로부터 시작하는 것이 좋다.
+    * 변경의 이유가 하나 이상인 클래스에는 위험 징후를 또렷하게 드러내는 몇 가지 패턴이 존재한다는 점이다.
+* 코드를 통해 변경의 이유를 파악할 수 있는 첫 번째 방법은 **인스턴스 변수가 초기화되는 시점**을 살펴보는 것이다.
+    * 응집도가 높은 클래스는 인스턴스를 생성할 때 모든 속성을 함께 초기화한다.
+    * 반면 응집도가 낮은 클래스는 객체의 속성 중 일부만 초기화하고 일부는 초기화되지 않은 상태로 남겨진다.
+    * 따라서 **함께 초기화되는 속성을 기준으로 코드를 분리해야 한다.**
+* 코드를 통해 변경의 이유를 파악할 수 있는 두 번째 방법은 **메서드들이 인스턴스 변수를 사용하는 방식**을 살펴보는 것이다.
+    * 모든 메서드가 객체의 모든 속성을 사용한다면 클래스의 응집도는 높다고 볼 수 있다.
+    * 메서들이 사용하는 속성에 따라 그룹이 나뉜다면 클래스의 응집도는 낮다고 볼 수 있다.
+    * **속성 그룹과 해당 그룹에 접근하는 메서드 그룹을 기준으로 코드를 분리해야 한다.**
 
+> **클래스 응집도 판단하기**
+>
+> 다음과 같은 징후로 몸살을 앓고 있다면 클래스의 응집도는 낮은 것이다.
+>
+> * 클래스가 하나 이상의 이유로 변경돼야 한다면 응집도가 낮은 것이다. 변경의 이유를 기준으로 클래스를 분리하라.
+> * 클래스의 인스턴스를 초기화하는 시점에 경우에 따라 서로 다른 속성들을 초기화하고 있다면 응집도가 낮은 것이다. 초기화되는 속성의 그룹을 기준으로 클래스를 분리하라.
+> * 메서드 그룹이 속성 그룹을 사용하는지 여부로 나뉜다면 응집도가 낮은 것이다. 이들 그룹을 기준으로 클래스를 분리하라.
 
 
 
 ### 타입 분리하기
 
+* DiscountCondition의 가장 큰 문제는 순번 조건과 기간 조건이라는 두 개의 독립적인 타입이 하나의 클래스 안에 공존하고 있다는 점이다.
+* 가장 먼저 떠오르는 해결 방법은 두 타입을 SequenceCondition과 PeriodCondition이라는 두 개의 클래스로 분리하는 것이다.
 
+```java
+public class PeriodCondition {
+
+    private DayOfWeek dayOfWeek;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+    public PeriodCondition(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public boolean isSatisfiedBy(Screening screening) {
+        return dayOfWeek.equals(screening.getWhenScreened().getDayOfWeek()) &&
+            startTime.compareTo(screening.getWhenScreened().toLocalTime()) <= 0 &&
+            endTime.compareTo(screening.getWhenScreened().toLocalTime()) <= 0;
+    }
+}
+```
+
+SequenceCondition은 하나의 인스턴스 변수만을 포함하는 간단한 클래스로 분리될 수 있다.
+
+```java
+public class SequenceCondition {
+
+    private int sequence;
+
+    public SequenceCondition(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public boolean isSatisfiedBy(Screening screening) {
+        return screening.getSequence() == sequence;
+    }
+}
+```
+
+* 클래스를 분리하면 앞에서 언급했던 문제점들이 모두 해결된다.
+* 클래스를 분리함으로써 코드의 품질을 높이는 데 성공한 것이다.
+* 하지만 안타깝게도 클래스를 분리한 후에 새로운 문제가 나타났다.
+    * 수정 전에는 Movie와 협력하는 클래스는 DiscountCondition 하나뿐이었다.
+    * 그러나 수정 후에 Movie의 인스턴스는 SequenceCondition과 PeriodCondition이라는 두 개의 서로 다른 클래스의 인스턴스 모두와 협력할 수 있어야 한다.
+* 이 문제를 해결하기 위해 생각할 수 있는 첫 번째 방버은 Movie 클래스 안에서 SequenceCondition의 목록과 PeriodCondition의 목록을 따로 유지하는 것이다.
+
+```java
+public class Movie {
+    private List<PeriodCondition> periodConditions;
+    private List<SequenceCondition> sequenceConditions;
+  
+    private boolean isDiscountable(Screening screening) {
+        return checkPeriodCondition(screening) || checkSequenceCondition(screening);
+    }
+
+    private boolean checkPeriodCondition(Screening screening) {
+        return periodConditions.stream().anyMatch(condition -> condition.isSatisfiedBy(screening));
+    }
+
+    private boolean checkSequenceCondition(Screening screening) {
+        return periodConditions.stream().anyMatch(condition -> condition.isSatisfiedBy(screening));
+    }
+}
+```
+
+* 하지만 이 방법은 새로운 문제를 야기한다.
+    * 첫 번째 문제는 Movie 클래스가 PeriodCondition과 SequenceCondition 클래스 양쪽 모두에게 결합된다는 것이다.
+    * 두 번째 문제는 수정 후에 새로운 할인 조건을 추가하기가 더 어려워졌다는 것이다.
+* 클래스를 분리하기 전에는 DiscountCondition의 내부 구현만 수정하면 Movie에는 아무런 영향도 미치지 않았다.
+* 하지만 수정 후에는 할인 조건을 추가하려면 Movie도 함께 수정해야 한다.
 
 
 
 ### 다형성을 통해 분리하기
 
+* Movie 입장에서 보면 SequenceCondition과 PeriodCondition은 아무 차이도 없다.
+    * 둘 모두 할인 여부를 판단하는 동일한 책임을 수행하고 있을 뿐이다.
+* 이 시점이 되면 자연스럽게 역할의 개념이 무대 위로 등장한다.
+    * Movie 입장에서 SequenceCondition과 PeriodCondition이 동일한 책임을 수행한다는 것은 동일한 역할을 수행한다는 것을 의미한다.
+* 역할을 사용하면 객체의 구체적인 타입을 추상화할 수 있다.
+    * 역할을 대체할 클래스들 사이에서 구현을 공유해야 할 필요가 있다면 추상 클래스를 사용하면 된다.
+    * 구현을 공유할 필요 없이 역할을 대체하는 객체들의 책임만 정의하고 싶다면 인터페이스를 사용하면 된다.
 
+```java
+public interface DiscountCondition {
+    boolean isSatisfiedBy(Screening screening);
+}
+```
+
+```java
+public class PeriodCondition implements DiscountCondition {
+  ...
+}
+
+public class SequenceCondition implements DiscountCondition {
+  ...
+}
+```
+
+* 이제 Movie는 협력하는 객체의 구체적인 타입을 몰라도 상관없다.
+* 협력하는 객체가 DiscountCondition 역할을 수행하고 있고 isSatisfiedBy 메시지를 이해할 수 있다는 사실만 알고 있어도 충분하다.
+
+```java
+public class Movie {
+  private List<DiscountCondition> discountConditions;
+  
+  public Money calculateMovieFee(Screening screening) {
+        if (isDiscountable(screening)) {
+            return fee.minus(calculateDiscountAmount());
+        }
+
+        return fee;
+    }
+}
+```
+
+* DiscountCondition의 경우에서 알 수 있듯이 객체의 암시적인 타입에 따라 행동을 분기해야 한다면 암시적인 타입을 명시적인 클래스로 정의하고 행동을 나눔으로써 응집도 문제를 해결할 수 있다.
+* 다시 말해 객체의 타입에 따라 변하는 행동이 있다면 타입을 분리하고 변화하는 행동을 각 타입의 책임으로 할당하라는 것이다.
+* GRASP에서는 이를 POLOMORPHISM(다형성) 패턴이라고 부른다.
 
 
 
 ### 변경으로부터 보호하기
 
-
+* 새로운 할인 조건을 추가하는 경우에는 어떻게 될까?
+    * DiscountCondition이라는 역할이 Movie로부터 PeriodCondition과 SequenceCondition의 존재를 감춘다는 사실에 주목하라.
+    * Movie 관점에서는 DiscountCondition의 타입이 캡슐화된다는 것은 새로운 DiscountCondition 타입을 추가하더라도 Movie가 영향을 받지 않는다는 것을 의미한다.
+* 이처럼 변경을 캡슐화하도록 책임을 할당하는 것을 GRASP에서는 **PROTECTED VARIATIONS(변경 보호)** 패턴이라고 부른다.
+* 클래스를 변경에 따라 분리하고 인터페이스를 이용해 변경을 캡슐화하는 것은 설계의 결합도와 응집도를 향상시키는 매우 강력한 방법이다.
+    * 하나의 클래스가 여러 타입의 행동을 구현하고 있는 것처럼 보인다면 클래스를 분해하고 POLYMORPHISM 패턴에 따라 책임을 분산시켜라.
+    * 예측 가능한 변경으로 인해 여러 클래스들이 불안정해진다면 PROTECTED VARIATIONS 패턴에 따라 안정적인 인터페이스 뒤로 변경으 캡슐화하라.
 
 
 
 ### Movie 클래스 개선하기
 
+* Movie 역시 DiscountCondition과 동일한 문제로 몸살을 앓고 있다.
+* 금액 할인 정책 영화와 비율 할인 정책 영화라는 두 가지 타입을 하나의 클래스 안에 구현하고 있기 때문에 하나 이상의 이유로 변경될 수 있다.
 
+```java
+public abstract class Movie {
+    private String title;
+    private Duration runningTime;
+    private Money fee;
+
+    private List<DiscountCondition> discountConditions;
+
+    public Movie(String title, Duration runningTime, Money fee, DiscountCondition ... discountConditions) {
+        this.title = title;
+        this.runningTime = runningTime;
+        this.fee = fee;
+        this.discountConditions = Arrays.asList(discountConditions);
+    }
+
+    public Money calculateMovieFee(Screening screening) {
+        if (isDiscountable(screening)) {
+            return fee.minus(calculateDiscountAmount());
+        }
+
+        return fee;
+    }
+
+    protected abstract Money calculateDiscountAmount();
+}
+```
+
+* 할인 정책의 종류에 따라 할인 금액을 계산하는 로직이 달라져야 한다.
+    * 이를 위해 calculateDiscountAmount 메서드를 추상 메서드로 선언함으로써 서브클래스들이 할인 금액을 계산하는 방식을 원하는대로 오버라딩할 수 있게 했다.
+
+```java
+public class AmountDiscountMovie extends Movie {
+    private Money discountAmount;
+
+    public AmountDiscountMovie(String title, Duration runningTime, Money fee, Money discountAmount, DiscountCondition ... discountConditions) {
+        super(title, runningTime, fee, discountConditions);
+        this.discountAmount = discountAmount;
+    }
+
+    @Override
+    protected Money calculateDiscountAmount() {
+        return discountAmount;
+    }
+}
+```
+
+```java
+public class PercentDiscountMovie extends Movie {
+
+    private double percent;
+
+    public PercentDiscountMovie(String title, Duration runningTime, Money fee, double percent, DiscountCondition ... discountConditions) {
+        super(title, runningTime, fee, discountConditions);
+        this.percent = percent;
+    }
+
+    @Override
+    protected Money calculateDiscountAmount() {
+        return getFee().times(percent);
+    }
+}
+```
+
+* 할인 요금을 게산하기 위해서는 영화의 기본 금액이 필요하다.
+* 이 메서드는 서브클래스에서만 사용해야 하므로 기시성을 public이 아닌 protected로 제한해야 한다.
+
+```java
+public abstract class Movie {
+  protected Money getFee() {
+        return fee;
+    }
+}
+```
+
+할인 정책을 적용하지 않기 위해서는 NoneDiscountMovie 클래스를 사용하면 된다.
+
+```java
+public class NoneDiscountMovie extends Movie {
+
+    public NoneDiscountMovie(String title, Duration runningTime, Money fee, DiscountCondition ... discountConditions) {
+        super(title, runningTime, fee, discountConditions);
+    }
+
+    @Override
+    protected Money calculateDiscountAmount() {
+        return Money.ZERO;
+    }
+}
+```
+
+* 데이터 중심 설계는 정반대의 길을 걷는다.
+    * 데이터 중심의 설계는 데이터와 관련된 클래스의 내부 구현이 인터페이스에 여과 없이 노출되기 때문에 캡슐화를 지키기 어렵다.
+    * 이로 인해 응집도가 낮고 결합도가 높으며 변경에 취약한 코드가 만들어질 가능성이 높다.
+* 결론은 데이터가 아닌 책임을 중심으로 설계하라는 것이다.
+    * 객체에게 중요한 것은 상태가 아니라 행동이다.
 
 
 

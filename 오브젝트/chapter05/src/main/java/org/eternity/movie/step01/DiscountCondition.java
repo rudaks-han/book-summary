@@ -4,7 +4,6 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 public class DiscountCondition {
-
     private DiscountConditionType type;
     private int sequence;
     private DayOfWeek dayOfWeek;
@@ -28,5 +27,4 @@ public class DiscountCondition {
     private boolean isSatisfiedBySequence(Screening screening) {
         return sequence == screening.getSequence();
     }
-
 }
