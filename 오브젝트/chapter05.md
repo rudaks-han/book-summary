@@ -652,23 +652,270 @@ public class NoneDiscountMovie extends Movie {
 
 ### 변경과 유연성
 
+* 설계를 주도하는 것은 변경이다.
+    * 개발자로서 변경에 대비할 수 있는 두 가지 방법이 있다.
+    * 하나는 코드를 이해하고 수정하기 쉽도록 최대한 단순하게 설계하는 것이다.
+    * 다른 하나는 코드를 수정하지 않고도 변경을 수용할 수 있도록 코드를 더 유연하게 만드는 것이다.
+    * 대부분의 경우에 전자가 더 좋은 방법이지만 유사한 변경이 반복적으로 발생하고 있다면 복잡성이 상승하더라도 유연성을 추가하는 두 번째 방법이 더 좋다.
+* 예를 들어, 영화에 설정된 할인 정책을 실행 중에 변경할 수 있어야 한다는 요구사항이 추가됐다고 가정해 보자.
+* 새로운 할인 정책이 추가될 때마다 인스턴스를 생성하고, 상태를 복사하고, 식별잘르 관리하는 코드를 추가하는 일은 번거로울뿐만 아니라 오류가 발생하기도 쉽다.
+    * 이 경우 코드의 복잡성이 높아지더라도 할인 정책의 변경을 쉽게 수용할 수 있게 코드를 유연하게 만드는 것이 더 좋은 방법이다.
+* 해결 방법은 상속 대신 합성을 사용하는 것이다.
+    * Movie의 상속 계층 안에 구현된 할인 정책을 독립적인 DiscountPolicy로 분리한 후 Movie에 합성시키면 유연한 설계가 완성된다.
+* 이제 금액 할인 정책이 적용된 영화를 비율 할인 정책으로 바꾸는 일은 Movie에 연결된 DiscountPolicy의 인스턴스를 교체하는 단순한 작업으로 바뀐다.
 
+```java
+Movie movie = new Movie("타이타닉",
+                       Duration.ofMinutes(120),
+                       Money.wons(10000),
+                       new AmountDiscountPolicy(...));
+movie.changeDiscountPolicy(new PercentDiscountMovie(...));
+```
+
+* 합성을 사용한 예제의 경우 새로운 할인 정책이 추가되더라도 할인 정책을 변경하는 데 필요한 추가적인 코드를 작성할 필요가 없다.
+* 이 예는 유연성에 대한 압박이 설계에 어떤 영향을 미치는지를 잘 보여준다.
+    * 실제로 유연성은 의존성 관리의 문제다.
+    * 요소들 사이의 읜존성의 정도가 유연성의 정도를 결정한다.
+    * 유연성의 정도에 따라 결합도를 조절할 수 있는 능력은 객체지향 개발자가 갖춰야 하는 중요한 기술 중 하나다.
 
 
 
 ## 04 책임 주도 설계의 대안
 
+* 개인적으로 책임과 객체 사이에서 방황할 때 돌파구를 찾기 위해 선택하는 방법은 최대한 빠르게 목적한 기능을 수행하는 코드를 작성하는 것이다.
+* 주로 객체지향 설계에 대한 경험이 부족한 개발자들과 페어 프로그래밍을 할 때나 설계의 실마리가 풀리지 않을 때 이런 방법을 사용하는데 생각보다 훌륭한 설계를 얻게 되는 경우가 종종 있다.
+* 주의할 점은 코드를 수정한 후에 겉으로 드러나는 동작이 바뀌어서는 안 된다는 것이다. 캡슐화를 향상시키고, 응집도를 높이고, 결합도를 낮춰야 하지만 동작은 그대로 유지해야 한다.
+* 이처럼 이해하기 쉽고 수정하기 쉬운 소프트웨어로 개선하기 위해 겉으로 보이는 동작은 바꾸지 않은 채 내부 구조를 변경하는 것을 **리팩터링(refactoring)**이라고 부른다.
+
 
 
 ### 메서드 응집도
 
+* 영화 예매를 처리하는 모든 절차는 ReservationAgency에 집중돼 있었다.
 
+```java
+public class ReservationAgency {
+    public Reservation reserve(Screening screening, Customer customer, int audienceCount) {
+        Movie movie = screening.getMovie();
+
+        boolean discountable = false;
+        for (DiscountCondition condition: movie.getDiscountConditions()) {
+            if (condition.getType() == DiscountConditionType.PERIOD) {
+                discountable = screening.getWhenScreened().getDayOfWeek().equals(condition.getDayOfWeek())
+                        && condition.getStartTime().compareTo(screening.getWhenScreened().toLocalTime()) <= 0
+                        && condition.getEndTime().compareTo(screening.getWhenScreened().toLocalTime()) >= 0;
+            } else {
+                discountable = condition.getSequence() == screening.getSequence();
+            }
+
+            if (discountable) {
+                break;
+            }
+        }
+
+        Money fee;
+        if (discountable) {
+            Money discountAmount = Money.ZERO;
+            switch (movie.getMovieType()) {
+                case AMOUNT_DISCOUNT:
+                    discountAmount = movie.getDiscountAmount();
+                    break;
+                case PERCENT_DISCOUNT:
+                    discountAmount = movie.getFee().times(movie.getDiscountPercent());
+                    break;
+                case NONE_DISCOUNT:
+                    discountAmount = Money.ZERO;
+                    break;
+            }
+
+            fee = movie.getFee().minus(discountAmount).times(audienceCount);
+        } else {
+            fee = movie.getFee();
+        }
+
+        return new Reservation(customer, screening, fee, audienceCount);
+    }
+}
+```
+
+* reserve 메서드는 너무 길고 이해하기도 어렵다.
+* 긴 메서드는 다양한 측면에서 코드의 유지보수에 부정적인 영향을 미친다.
+    * 어떤 일을 수행하는지 한눈에 파악하기 어렵기 때문에 코드를 전체적으로 이해하는 데 너무 많은 시간이 걸린다.
+    * 하나의 메서드 안에서 너무 많은 작업을 처리하기 때문에 변경이 필요할 때 수정해야 할 부분을 찾기 어렵다.
+    * 메서드 내부의 일부 로직만 수정하더라도 메서드의 나머지 부분에서 버그가 발생할 확률이 높다.
+    * 로직의 일부만 재사용하는 것이 불가능하다.
+    * 코드를 재사용하는 유일한 방법은 원하는 코드를 복사해서 붙여는 것뿐이므로 코드 중복을 초래하기 쉽다.
+* 한마디로 말해서 긴 메서드는 응집도가 낮기 때문에 이해하기도 어렵고 재사용하기도 어려우며 변경하기도 어렵다.
+    * 마이클 페더스는 이런 메서드를 몬스터 메서드(monster method)라고 부른다.
+* 응집도가 낮은 메서드는 로직의 흐름을 이해하기 위해 주석이 필요한 경우가 대부분이다.
+    * 메서드가 명령문들의 그룹으로 구성되고 각 그룹에 주석을 달아야 할 필요가 있다면 그 메서드의 응집도는 낮은 것이다.
+    * 주석을 추가하는 대신 메서드를 작게 분해해서 각 메서드의 응집도를 높여라.
+* 클래스의 응집도와 마찬가지로 메서드의 응집도를 높이는 이유는 변경과 관련이 깊다.
+    * 응집도 높은 메서드는 변경되는 이유가 단 하나여야 한다.
+* 객체로 책임을 분배할 때 가장 먼저 할 일은 메서드를 응집도 있는 수준으로 분해하는 것이다. 
+* 긴 메서드를 작고 응집도 높은 메서드로 분리하면 각 메서드를 적절한 클래스로 이동하기가 더 수월해지기 때문이다.
+
+다음은 ReservationAgency를 응집도 높은 메서드들로 잘게 분해한 것이다.
+
+```java
+public class ReservationAgency {
+
+    public Reservation reserve(Screening screening, Customer customer,
+                               int audienceCount) {
+        boolean discountable = checkDiscountable(screening);
+        Money fee = calculateFee(screening, discountable, audienceCount);
+        return createReservation(screening, customer, audienceCount, fee);
+    }
+
+    private boolean checkDiscountable(Screening screening) {
+        return screening.getMovie().getDiscountConditions().stream()
+            .anyMatch(condition -> condition.isDiscountable(screening));
+    }
+
+    private Money calculateFee(Screening screening, boolean discountable,
+                               int audienceCount) {
+        if (discountable) {
+            return screening.getMovie().getFee()
+                .minus(calculateDiscountedFee(screening.getMovie()))
+                .times(audienceCount);
+        }
+
+        return  screening.getMovie().getFee();
+    }
+
+    private Money calculateDiscountedFee(Movie movie) {
+        switch(movie.getMovieType()) {
+            case AMOUNT_DISCOUNT:
+                return calculateAmountDiscountedFee(movie);
+            case PERCENT_DISCOUNT:
+                return calculatePercentDiscountedFee(movie);
+            case NONE_DISCOUNT:
+                return calculateNoneDiscountedFee(movie);
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    private Money calculateAmountDiscountedFee(Movie movie) {
+        return movie.getDiscountAmount();
+    }
+
+    private Money calculatePercentDiscountedFee(Movie movie) {
+        return movie.getFee().times(movie.getDiscountPercent());
+    }
+
+    private Money calculateNoneDiscountedFee(Movie movie) {
+        return movie.getFee();
+    }
+
+    private Reservation createReservation(Screening screening,
+                                          Customer customer, int audienceCount, Money fee) {
+        return new Reservation(customer, screening, fee, audienceCount);
+    }
+}
+```
+
+
+
+* 일단 메서드를 분리하고 나면 public 메서드는 상위 수준의 명세를 읽는 것 같은 느낌이든다.
+* 수정 후에 reserve 메서드가 어떻게 수정됐는지 보자.
+
+```java
+    public Reservation reserve(Screening screening, Customer customer,
+                               int audienceCount) {
+        boolean discountable = checkDiscountable(screening);
+        Money fee = calculateFee(screening, discountable, audienceCount);
+        return createReservation(screening, customer, audienceCount, fee);
+    }
+```
+
+* 수정 전과 수정 후의 차이를 느낄 수 있겠는가?
+    * 수정 전에는 메서드를 처음부터 끝까지 읽어봐도 목적을 알기 어려웠지만 수정 후에는 메서드가 어떤 일을 하는지를 한눈에 알아볼 수 있다.
+* 코드를 작은 메서드들로 분해하면 전체적인 흐름을 이해하기도 쉬워진다.
+    * 동시에 너무 많은 세부사항을 기억하도록 강요하는 코드는 이해하기도 어렵다.
+* 수정 후의 코드는 변경하기도 더 쉽다.
+    * 각 메서드는 단 하나의 이유에 의해 변경된다.
+* 작고, 명확하며, 한 가지 일에 집중하는 응집도 높은 메서드는 변경 가능한 설계를 이끌어 내는 기반이 된다.
+* 안타깝게도 메서드들의 응집도 자체는 높아졌지만 이 메서드들을 담고 있는 ReservationAgency의 응집도는 여전히 낮다.
 
 
 
 ### 객체를 자율적으로 만들자
 
+* 어떤 메서드를 어떤 클래스로 이동시켜야 할까?
+    * 객체가 자율적인 존재여야 한다는 사실을 떠올리면 쉽게 답할 수 있을 것이다.
+    * 자신이 소유하고 있는 데이터를 자기 스스로 처리하도록 만드는 것이 자율적인 객체를 만드는 지름길이다.
+    * 따라서 메서드가 사용하는 데이터를 저장하고 있는 클래스로 메서드를 이동시키면 된다.
+* 어떤 데이터를 사용하는지를 가장 쉽게 알 수 있는 방법은 메서드 안에서 어떤 클래스의 접근자 메서드를 사용하는지 파악하는 것이다.
 
+```java
+public class ReservationAgency {
+  private boolean isDiscountable(DiscountCondition condition, Screening screening) {
+    if (condition.getType == DiscountConditionType.PERIOD) {
+      return isSatisfiedByPeriod(condition, screening);
+    }
+    
+    return isSatisifiedBySequence(condition, screening);
+  }
+  
+  private boolean isSatisfiedByPeriod(DiscountCondition condition, Screening screening) {
+    return screening.getWhenScreened().getDayOfWeek().equals(condition.getDayOfWeek()) & 
+      condition.getStartTime().compareTo(screening.getWhenScreened().toLocalTime()) <= 0 &&
+      condition.getEndTime().compareTo(screening.getWhenScreened().toLocalTime()) >= 0;
+  }
+  
+  private boolean isSatisfiedBySequence(DiscountCondition condition, Screening screening) {
+    return condition.getSequence() == screening.getSequence();
+  }
+}
+```
+
+* ReservationAgency의 isDiscountable 메서드는 DiscountCondition의 getType 메서드를 호출해서 할인 조건의 타입을 알아낸 후 타입에 따라 isSatisfiedBySequence 메서드나 isSatisfiedByPeriod 메서드를 호출한다.
+* 두 메서드를 데이터가 존재하는 DiscountCondition으로 이동하고 ReservationAgency에서 삭제하자.
+
+```java
+public class DiscountCondition {
+    private DiscountConditionType type;
+    private int sequence;
+    private DayOfWeek dayOfWeek;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+  public boolean isDiscountable(Screening screening) {
+        if (type == DiscountConditionType.PERIOD) {
+            return isSatisfiedByPeriod(screening);
+        }
+
+        return isSatisfiedBySequence(screening);
+    }
+
+    private boolean isSatisfiedByPeriod(Screening screening) {
+        return screening.getWhenScreened().getDayOfWeek().equals(dayOfWeek) &&
+            startTime.compareTo(screening.getWhenScreened().toLocalTime()) <= 0 &&
+            endTime.compareTo(screening.getWhenScreened().toLocalTime()) >= 0;
+    }
+
+    private boolean isSatisfiedBySequence(Screening screening) {
+        return sequence == screening.getSequence();
+    }
+}
+```
+
+* 이제 ReservationAgency는 할인 여부를 판단하기 위해 DiscountCondition의 isDiscountable 메서드를 호출하도록 변경된다.
+
+```java
+public class ReservationAgency {
+    private boolean checkDiscountable(Screening screening) {
+        return screening.getMovie().getDiscountConditions().stream()
+            .anyMatch(condition -> condition.isDiscountable(screening));
+    }
+}
+```
+
+* 변경 후의 코드는 책임 주도 설계 방법을 적용해서 구현했던 DiscountCondition 클래스의 초기 모습과 유사해졌다는 사실을 알 수 있다.
+    * 여기서 POLYMORPHISM 패턴과 PROTECTED VARIATIONS 패턴을 차례로 적용하면 우리의 최종 설계와 유사한 모스브이 코드를 얻게 될 것이다.
+* 여기서 하고 싶은 말은 책임 주도 설계 방법에 익숙하지 않다면 일단 데이터 중심으로 구현한 후 이를 리팩터링하더라도 유사한 결과를 얻을 수 있다는 것이다.
+    * 처음부터 책임 주도 설계 방법을 따르는 것보다 동작하는 코드를 작성한 후에 리팩터링 하는 것이 더 훌륭한 결과물을 낳을 수도 있다.
 
 
 
