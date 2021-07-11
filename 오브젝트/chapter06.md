@@ -329,21 +329,117 @@ public class Bag {
 
 ## 03 원칙의 함정
 
+* 디미터 법칙과 묻지 말고 시켜라 스타일은 객체의 퍼블릭 인터페이스를 깔끔하고 유연하게 만들 수 있는 훌륭한 설계 원칙이다.
+    * 하지만 절대적인 법칙은 아니다.
+    * 법칙에는 예외가 없지만 원칙에는 예외가 넘쳐난다.
+* 잊지 말아야 하는 사실은 설계가 트레이드오프의 산물이라는 것이다.
+* 원칙이 현재 상황에 부적합하다고 판단된다면 과감하게 원칙을 무시하라.
+
+
+
 ### 디미터 법칙은 하나의 도트(.)를 강제하는 규칙이 아니다
+
+* 대부분의 사람들은 자바 8의 IntStream을 사용한 아래의 코드가 기차 충돌을 초래하기 때문에 디미터 법칙을 위반한다고 생각할 것이다.
 
 ```java
 IntStream.of(1, 15, 20, 3, 9).filter(x -> x > 10).distinct().count();
 ```
 
-이 코드는 디미터 법칙을 위반하지 않는다. 디미터 법칙은 결합도와 관련된 것이다.
-
-IntStream을 다른 IntStream으로 변환할 뿐, 캡슐은 그대로 유지된다.
+* 하지만 이 코드는 디미터 법칙을 위반하지 않는다. 
+    * 디미터 법칙은 결합도와 관련된 것이며, 이 결합도가 문제가 되는 것은 객체의 내부 구조가 오부로 노출되는 경우로 한정된다.
+    * 단지 IntStream을 다른 IntStream으로 변환할 뿐, 객체를 둘러싸고 있는 캡슐은 그대로 유지된다.
 
 
 
 ### 결합도와 응집도의 충돌
 
+* 일반적으로 어떤 객체의 상태를 물어본 후 반환된 상태를 기반으로 결정을 내리고 그 결정에 따라 객체의 상태를 변경하는 코드는 묻지 말고 시켜라 스타일로 변경해야 한다.
 
+```java
+public class Theater {
+    public void enter(Audience audience) {
+        if (audience.getBag().hasInvitation()) {
+            Ticket ticket = ticketSeller.getTicketOffice().getTicket();
+            audience.getBag().setTicket(ticket);
+        } else {
+            Ticket ticket = ticketSeller.getTicketOffice().getTicket();
+            audience.getBag().minusAmount(ticket.getFee());
+            ticketSeller.getTicketOffice().plusAmount(ticket.getFee());
+            audience.getBag().setTicket(ticket);
+        }
+    }
+}
+```
+
+* Theater는 Audience 내부에 포함된 Bag에 대해 질문한 후 반환된 결과를 이용해 Bag의 상태를 변경한다.
+    * 이 코드는 Audience의 캡슐화를 위반하기 때문에 Theater는 Audience의 내부 구조에 강하게 결합된다.
+    * 이 문제를 해결할 수 있는 방법은 질문하고, 판단하고, 상태를 변경하는 모든 코드를 Audience로 옮기는 것이다.
+
+```java
+public class Audience {
+    public Long buy(Ticket ticket) {
+        if (bag.hasInvitation()) {
+            bag.setTicket(ticket);
+            return 0L;
+        } else {
+            bag.setTicket(ticket);
+            bag.minusAmount(ticket.getFee());
+            return ticket.getFee();
+        }
+    }
+}
+```
+
+* 이제 Audience는 상태와 함께 상태를 조작하는 행동도 포함하기 때문에 응집도가 높아졌다.
+* 안타깝게도 묻지 말고 시켜라와 디미터 법칙을 준수하는 것이 항상 긍정적인 결과로만 귀결되는 것은 아니다.
+* 클래스는 하나의 변경 원인만을 가져야 한다.
+    * 서로 상관없는 책임들이 함께 뭉쳐있는 클래스는 응집도가 낮으며 작은 변경으로도 쉽게 무너질 수 있다.
+    * 따라서 디미터 법칙과 묻지 말고 시켜라 원칙을 무작정 따르면 애플리케이션은 응집도가 낮은 객체로 넘쳐날 것이다.
+* 영화 예매 시스템의 PeriodCondition 클래스를 살펴보자.
+    * isSatisfiedBy 메서드는 screening에게 질의한 상영 시간을 이용해 할인 여부를 결정한다.
+    * 이 코드는 얼핏 보기에는 Screening의 내부 상태를 가져와서 사용하기 때문에 캡슐화를 위반한 것으로 보일 수 있다.
+
+```java
+public class PeriodCondition implements DiscountCondition {
+    public boolean isSatisfiedBy(Screening screening) {
+        return screening.getStartTime().getDayOfWeek().equals(dayOfWeek) &&
+                startTime.compareTo(screening.getStartTime().toLocalTime()) <= 0 &&
+                endTime.compareTo(screening.getStartTime().toLocalTime()) >= 0;
+    }
+}
+```
+
+* 따라서 할인 여부를 판단하는 로직을 Screening의 isDiscountable 메서드로 옮기고 PeriodCondition이 이 메서드를 호출하도록 변경하자.
+
+```java
+public class Screening {
+  public boolean isDiscountable(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    ...
+  }
+}
+
+public class PeriodCondition implements DiscountCondition {
+    public boolean isSatisfiedBy(Screening screening) {
+        return screening.isDiscountable(dayOfWeek, startTime, endTime);
+    }
+}
+```
+
+* 하지만 이렇게 하면 Screening이 기간에 따른 할인 조건을 판단하는 책임을 떠안게 된다.
+    * 이것이 Screening이 담당해야 하는 본질적인 책임인가? 그렇지 않다.
+* 가끔씩은 묻는 것 외에는 다른 방법이 존재하지 않는 경우도 존재한다.
+    * 컬렉션에 포함된 객체들을 처리하는 유일한 방법은 객체에게 물어보는 것이다.
+    * 다음 코드에서 Movie에게 묻지 않고도 movies 컬렉션에 포함된 전체 영화의 가격을 계산할 수 있는 방법이 있을까?
+
+```java
+for (Movie each: movies) {
+  total += each.getFee();
+}
+```
+
+* 물으려는 객체가 정말로 데이터인 경우도 있다.
+    * 로버트 마틴은 클린코드에서 디미터 법칙의 위반 여부는 묻는 대상이 객체인지, 자료 구조인지에 달려있다고 설명한다.
+    * 객체는 내부 구조를 숨겨야 하므로 디미터 법칙을 따르는 것이 좋지만 자료 구조라면 당연히 내부를 노출해야 하므로 디미터 법칙을 적용할 필요가 없다.
 
 
 
@@ -353,7 +449,13 @@ IntStream을 다른 IntStream으로 변환할 뿐, 캡슐은 그대로 유지된
 * 루틴은 다시 **프로시저(procedure)**와 **함수(function)**로 구분할 수 있다.
     * 프로시저는 부수효과를 발생시킬 수 있지만 값을 반환할 수 없다.
     * 함수는 값을 반환할 수 있지만 부수효과를 발생시킬 수 없다.
-* 명령(Command)과 쿼리(Query)는 프로시저와 함수를 부르는 또 다른 이름이다.
+* 명령(Command)과 쿼리(Query)는 객체의 인터페이스 측면에서 프로시저와 함수를 부르는 또 다른 이름이다.
+    * 객체의 상태를 수정하는 오퍼레이션을 명령이라고 부르고 객체와 관련된 정보를 반환하는 오퍼레이션을 쿼리라고 부른다.
+* 명령-쿼리 분리 원칙의 요지는 오퍼레이션은 부수효과를 발생시키는 명령이거나 부수효과를 발생시키지 않는 쿼리 중 하나여야 한다는 것이다.
+    * 어떤 오퍼레이션도 명령인 동시에 쿼리여서는 안된다.
+    * 따라서 명령과 쿼리를 분리하기 위해서는 다음의 두 가지 규칙을 준수해야 한다.
+        * 객체의 상태를 변경하는 명령은 반환값을 가질 수 없다.
+        * 객체의 정보를 반환하는 쿼리는 상태를 변경할 수 없다.
 * 명령-쿼리 분리 원칙을 한 문장으로 표현하면 "질문이 답변을 수정해서는 안 된다"는 것이다.
 
 
