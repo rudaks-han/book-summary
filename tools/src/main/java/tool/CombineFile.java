@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CombineFile {
     public static void main(String[] args) throws IOException {
-        String bookName = "실전자바소프트웨어";
+        String bookName = "오브젝트";
         //String bookName = "Get Your Hands Dirty on Clean Architecture";
 
         String userDir = System.getProperty("user.dir");
