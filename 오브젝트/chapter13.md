@@ -584,3 +584,38 @@ public class Movie {
 
 ### 서브타입과 계약
 
+* 물론 모든 상황이 이렇게 행복한 것만은 아니다.
+    * 계약의 관점에서 상속이 초래하는 가장 큰 문제는 자식 클래스가 부모 클래스의 메서드를 오버라이딩할 수 있다는 것이다.
+* 예를 들어 보자.
+    * DiscountPolicy를 상속받은 BrokenDiscountPolicy 클래스는 calculateDiscountAmount 메서드를 오버라이딩한 후 여기에 새로운 사전 조건을 추가한다.
+    * 새로운 사전 조건은 checkStrongerPrecondition 메서드로 구현돼 있으며 종료 시간이 자정을 넘는 영화를 예매할 수 없다는 것이다.
+    * 따라서 DiscountPolicy보다 더 강화된 사전조건을 정의한다.
+
+```java
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
