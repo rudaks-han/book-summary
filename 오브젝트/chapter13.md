@@ -305,49 +305,280 @@ public class Penguin extends Bird {
 
 ## 04 리스코프 치환 원칙
 
-* 1988년 바바라 리스코프는 올바른 상속 관계의 특징을 정의하기 위해 리스코프 치환 원칙(Liscov Substitution Principle, LSP)을 발표했다.
-    * 여기서 요구되는 것은 다음의 치환 속성과 같은 것이다. S형의 각 객체 o1에 대해 T형의 객체 o2가 하나 있고, T에 의해 정의된 모든 프로그램 P에서 T가 S로 치환될 때, P의 동작이 변하지 않으면 S는 T의 서브타입이다.
-* 리스코프 치환 원칙을 한마디로 정리하면 "서브타입은 그것의 기반 타입에 대해 대체 가능해야 한다"
+* 1988년 바바라 리스코프는 올바른 상속 관계의 특징을 정의하기 위해 **리스코프 치환 원칙(Liscov Substitution Principle, LSP)**을 발표했다.
+    * 바바라 리스코프에 의하면 상속 관계로 연결한 두 클래스가 서브타이핑 관계를 만족시키기 위해서는 다음의 조건을 만족시켜야 한다.
+
+> 여기서 요구되는 것은 다음의 치환 속성과 같은 것이다. S형의 각 객체 o1에 대해 T형의 객체 o2가 하나 있고, T에 의해 정의된 모든 프로그램 P에서 T가 S로 치환될 때, P의 동작이 변하지 않으면 S는 T의 서브타입이다.
+
+* 리스코프 치환 원칙을 한마디로 정리하면 "서브타입은 그것의 기반 타입에 대해 대체 가능해야 한다"는 것으로 클라이언트가 "차이점을 인식하지 못한 채 파생 클래스의 인터페이스를 통해 서브클래스를 사용할 수 있어야 한다"는 것이다.
+    * 리스코프 치환 원칙은 앞에서 논의한 행동 호환성을 설계 원칙으로 정리한 것이다.
+    * 리스코프 치환 원치겡 따르면 자식 클래스가 부모 클래스와 행동 호환성을 유지함으로써 부모 클래스를 대체할 수 있도록 구현된 상속 관계만을 서브타이핑이라고 불러야 한다.
+* 10장에서 살펴본 Stack과 Vector는 리스코프 치환원칙을 위반하는 전형적인 예다.
+    * is-a 관계의 애매모호함을 설명하기 위해 예를 들었단 Penguin과 Bird 역시 리스코프 치환 원칙을 위반한다.
+* 대부분의 사람들은 "직사각형은 사각형이다"라는 이야기를 당연하게 생각한다.
+    * 하지만 직사각형은 사격형이 아닐 수 있다.
+    * 사실 직사각형과 사각형의 상속 관계는 리스코프 치환 원칙을 위반하는고전적인 사례 중 하나다.
+
+```java
+public class Rectangle {
+    private int x, y, width, height;
+
+    public Rectangle(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getArea() {
+        return width * height;
+    }
+}
+```
+
+* 이제 이 애플리케이션에 Square를 추가하자.
+    * 개념적으로 정사각형은 사각형의 특수한 경우이고 사각형은 정사각형의 일반적인 경우이기 때문에 정사각형과 사각형 사이에 어휘적으로 is-a 관계가 성립한다.
+    * 이미 알고 있는 것처럼 Is-a 관계를 구현하는 가장 간단한 방법은 상속을 사용하는 것이다.
+
+
+
+정사각형은 너비가 높이와 동일해야 한다.
+
+```java
+public class Square extends Rectangle {
+    public Square(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
+
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
+        super.setHeight(width);
+    }
+
+    @Override
+    public void setHeight(int height) {
+        super.setHeight(height);
+        super.setHeight(height);
+    }
+}
+```
+
+```java
+public void resize(Rectangle rectangle, int width, int height) {
+  rectangle.setWidth(width);
+  rectangle.setHeight(height);
+  assert rectangle.getWidth() == width && rectangle.getHeight() == height;
+}
+```
+
+* Rectangle은 is-a 라는 말이 얼마나 우리의 직관에서 벗어날 수  있는지를 잘 보여준다.
+    * 중욯나 것은 클라이언트 관점에서 행동이 호환되는지 여부다.
+    * 그리고 행동이 화환될 경우에만 자식 클래스가 부모 클래스 대신 사용될 수 있다.
 
 
 
 ### 클라이언트와 대체 가능성
 
+* Square가 Rectangle을 대체할 수 없는 이유는 클라이언트의 관점에서 Square와 Rectangle이 다르기 때문이다.
+    * Square와 Rectangle의 문제는 본질적으로 Stack과 Vector가 가지고 있던 문제와 동일하다.
+    * 클라이언트 입장에서 정사각형을 추상화한 Square는 사각형을 추상화한 Rectangle과 동일하지 않다는 점이다.
+* Rectangle을 사용하는 클라이언트는 Rectangle의 너비와 높이가 다를 수 있다는 가정하에 코드를 개발한다.
+    * 반면 Square는 너비와 높이가 항상 같다.
+    * 너비와 높이가 다르다는 가정하에 개발된 클라이언트 코드에서 Rectangle을 Square로 대체할 경우 Rectangle에 대해 세워진 가정을 위반할 확률이 높다.
+    * 결국 코드는 예산한 대로 작동하지 않으며 개발자는 밤을 새워 디버깅해야 하는 악몽과도 같은 상황에 빠져버리고 말 것이다.
 * 리스코프 치환 원칙은 자식 클래스가 부모 클래스를 대체하기 위해서는 부모 클래스에 대한 클라이언트의 가정을 준수해야 한다는 것을 강조한다.
-* 행동 호환성고 리스코프 치환 원칙에서 한 가지만 기억해야 한다면 이것을 기억하라. 대체 가능성을 결정하는 것은 클라이언트다.
+    * Square를 Rectangle의 자식 클래스로 만드는 것은 Rectangle에 대해 클라이언트가 세운 가정을 송두리째 뒤흔드는 것이다.
+* Stack과 Vector가 서브타이핑 관계가 아니라 서브클래싱 관계인 이유도 마찬가지다.
+    * Stack과 Vector가 리스코프 치환 원칙을 위반하는 가장 큰 이유는 상속으로 인해 Stack에 포함돼서는 안 되는 Vector의 퍼블릭 인터페이스가 Stack의 퍼블릭 인터페이스에 포함됐기 때문이다.
+* Vector를 사용하는 클라이언트의 관점에서 Stack의 행동은 Vector의 행동과 호환되지 않는다.
+    * Vector의 클라이언트는 임의의 위치에 요소를 추가하거나 임의의 위치에 요소를 추출할 것이라고 예상한다.
+    * 그러나 Stack의 클라이언트는 Stack이 임의의 위치에서의 조회나 추가를 금지할 것이라고 예상한다.
+* 리스코프 치환 원칙은 "클라이언트와 격리한 채 본 모델은 의미 있게 검증하는 것이 불가능하다"는 아주 중요한 결론을 이끈다.
+    * 어떤 모델의 유효성은 클라이언트의 관점에서만 검증 가능하다는 것이다.
+* 리스코프 치환 원칙은 상속 관계에 있는 두 클래스 사이의 관계를 클라이언트와 떨어트려 놓고 판단하지 말라고 속삭인다.
+    * 상속 관계는 클라이언트 관점에서 자식 클래스가 부모 클래스를 대체할 수 있을때만 올바르다.
+* 행동 호환성과 리스코프 치환 원칙에서 한 가지만 기억해야 한다면 이것을 기억하라. 
+    * 대체 가능성을 결정하는 것은 클라이언트다.
 
 
 
 ### is-a 관계 다시 살펴보기
 
-* is-a는 클라이언트 관점에서 is-a일 때만 참이다.
+* 상속이 적합한지를 판단하기 위해 마틴 오더스키가 제안한 두 질문을 다시 떠올려 보자.
+    * 상속 관계가 어휘적으로 is-a 관계를 모델링한 것인가?
+    * 클라이언트 입장에서 부모 클래스 대신 자식 클래스를 사용할 수 있는가?
+* 사실 이 두 질문을 별개로 취급할 필요는 없다.
+    * 클라이언트 관점에서 자식 클래스의 행동이 부모 클래스의 행동과 호환되지 않고 그로 인해 대체가 불가능하다면 어휘적으로 is-a라고 말할 수 있다고 하더라도 그 관계를 is-a관계라고 할 수 없다. is-a는 클라이언트 관점에서 is-a일 때만 참이다.
+    * 정사각형은 직사각형인가? 클라이언트가 이 둘을 동일하게 취급할 수 있을 때만 그렇다.
+    * 펭귄은 새인가?
+    * 클라이언트가 이 둘을 동일하게 취급할 수 있을때만 그렇다.
+* is-a 관계로 표현된 문장을 볼 때마다 문장 앞에 "클라이언트 입장에서"라는 말이 빠져 있다고 생각하라.
+    * (클라이언트 입장에서) 정사작형은 직사각형이다.
+    * (클라이언트 입장에서) 펭귄은 새다.
+    * 클라이언트를 배제한 is-a 관계는 여러분을 혼란으로 몰아갈 가능성이 높다.
 * is-a 관계는 객체지향에서 중요한 것은 객체의 속성이 아니라 객체의 행동이라는 점을 강조한다.
+    * 일반적으로 클라이언트를 고려하지 않은 채 개념과 속성의 측면에서 상속 관계를 정할 경우 리스코프 치환원칙을 위반한느 서브클래싱을 이르게 될 확률이 높다.
+* 오더스키가 설명한 is-a 관계를 행동이 호환되는 타입에 어떤 이름을 붙여야 하는지를 설명하는 가이드라고 생각하는 것이 좋다.
 
 
 
 ### 리스코프 치환 원칙은 유연한 설계의 기반이다
 
+* 지금까지 살펴본 것처럼 리스코프 치환원칙은 클라이언트가 어떤 자식 클래스와도 안정적으로 협력할 수 있는 상속 구조를 구현할 수 있는 가이드라인을 제공한다.
+    * 새로운 자식 클래스를 추가하더라도 클라이언트의 입장에서 동일하게 행동하기만 한다면 클라이언트를 수정하지 않고도 상속 계층을 확장할 수 있다.
+    * 다시 말해서 클라이언트의 입장에서 퍼블릭 인터페이스의 행동 방식이 변경되지 않는다면 클라이언트의 코드를 변경하지 않고도 새로운 자식 클래스와 협력할 수 있게 된다는 것이다.
 * 리스코프 치환 원칙을 따르는 설계는 유연할뿐만 아니라 확장성이 높다.
-* DiscountPolicy 상속 계층에 새로운 자식 클래스인 OverlappedDiscountPolicy를 추가하더라도 클라이언트를 수정할 필요가 없었던 것을 기억하는가?
-* 의존성 역전 원칙 : 구체 클래스인 Movie와 OverlappedDiscountPolicy 모두 추상 클래스인 DiscountPolicy에 의존한다.
-* 리스코프 치환 원칙: Movie의 관점에서 DiscountPolicy 대신 OverlappedDiscountPolicy와 협력하더라도 아무런 문제가 없다.
-* 개방-폐쇄 원칙: 중복 할인 정책이라는 새로운 기능을 추가하기 우해 OverlappedDiscountPolicy를 추가하더라도 Movie에는 영향을 끼치지 않는다.
-* 자식 클래스가 클라이언트 관점에서 부모 클래스를 대체할 수 있다면 기능 확장을 위해 자식 클래스를 추가허다라도 코드를 수정할 필요가 없어진다.
-* 따라서 리스코프 치환 원칙은 개방-폐쇄 원칙을 만족하는 설계를 위한 전제 조건이다.
-* 일반적으로 리스코프 치환 원칙 위반은 잠재적인 개방-폐쇄 원칙 위반이다.
+    * 8장에서 중복 할인 정책을 구현하기 위해 기존의 DiscountPolicy 상속 계층에 새로운 자식 클래스인 OverlappedDiscountPolicy를 추가하더라도 클라이언트를 수정할 필요가 없었던 것을 기억하는가?
+* 사실 이 설계는 의존성 역전 원칙과 개방-폐쇄 원칙, 리스코프 치환 원칙이 한데 어우러져 설계를 확장 가능하게 만든 대표적인 예다.
+    * **의존성 역전 원칙** : 구체 클래스인 Movie와 OverlappedDiscountPolicy 모두 추상 클래스인 DiscountPolicy에 의존한다.
+    * **리스코프 치환 원칙**: Movie의 관점에서 DiscountPolicy 대신 OverlappedDiscountPolicy와 협력하더라도 아무런 문제가 없다.
+    * **개방-폐쇄 원칙**: 중복 할인 정책이라는 새로운 기능을 추가하기 우해 OverlappedDiscountPolicy를 추가하더라도 Movie에는 영향을 끼치지 않는다.
+* 리스코프 치환 원칙이 어떻게 개방-폐쇄 원칙을 지원하는지 눈여겨보기 바란다.
+    * 자식 클래스가 클라이언트 관점에서 부모 클래스를 대체할 수 있다면 기능 확장을 위해 자식 클래스를 추가허다라도 코드를 수정할 필요가 없어진다.
+    * 따라서 리스코프 치환 원칙은 개방-폐쇄 원칙을 만족하는 설계를 위한 전제 조건이다.
+    * 일반적으로 리스코프 치환 원칙 위반은 잠재적인 개방-폐쇄 원칙 위반이다.
 
 
 
 ### 타입 계층과 리스코프 치환 원칙
 
-
+* 한 가지 잊지 말아야 하는 사실은 클래스 상속은 타입 계층을 구현할 수 잇는 다양한 방법 중 하나일 뿐이라는 것이다.
 
 
 
 ## 05 계약에 의한 설계와 서브타이핑
 
 * 클라이언트와 서버 사이의 협력을 의무(obligation)와 이익(benefit)으로 구성된 계약의 관점에서 표현하는 것을 **계약에 의한 설계(Design By Contract, DBC)**라고 부른다.
-* 계약에 의한 설계는 클라이언트가 정상적으로 메서드를 실행하기 위해 만족시켜야 하는 사전조건(precondition)과 메서드가 실행된 후에 서버가 클라이언트에게 보장해야 하는 사후조건(postcondition), 메서드 실행 전과 실행 후 인스턴스가 만족시켜야 하는 클래스 불변식(class invariant)의 세 가지 요소로 구성된다.
+    * 계약에 의한 설계는 클라이언트가 정상적으로 메서드를 실행하기 위해 만족시켜야 하는 **사전조건(precondition)**과 메서드가 실행된 후에 서버가 클라이언트에게 보장해야 하는 **사후조건(postcondition)**, 메서드 실행 전과 실행 후 인스턴스가 만족시켜야 하는 **클래스 불변식(class invariant)**의 세 가지 요소로 구성된다.
+* 리스코프 치환 원칙은 어떤 타입이 서브타입이 되기 위해서는 슈퍼타입의 인스턴스와 협력하는 '클라이언트'의 관점에서 서브타이브이 인스턴스가 슈퍼타입을 대체하더라도 협력에 지장이 없어야 한다는 것을 의미한다.
+    * 따라서 계약에 의한 설계를 사용하면 리스코프 치환 원칙이 강제하는 조건을 계약의 개념을 이용해 좀 더 명확하게 설명할 수 있다.
+* 리스코프 치환 원칙과 계약에 의한 설계 사이의 관계를 다음과 같은 한 문장으로 요약할 수 있다.
+
+> 서브타입이 리스코프 치환 원칙을 만족시키기 위해서는 클라이언트와 슈퍼타입 간에 체결된 '계약'을 준수해야 한다.
+
+* 이해를 돕기 위해 영화 예매 시스템에서 DiscountPolicy와 협력하는 Movie 클래스를 예로 들어보자.
+
+```java
+public class Movie {
+  ...
+    public Money calculateMovieFee(Screening screening) {
+        return fee.minus(discountPolicy.calculateDiscountAmount(screening));
+    }
+}
+```
+
+* Movie는 DiscountPolicy의 인스턴스에게 calculateDiscountAmount 메시지를 전송하는 클라이언트다.
+    * DiscountPolicy는 Movie의 메시지를 수신한 후 할인 가격을 계산해서 반환한다.
+
+```java
+public abstract class DiscountPolicy {
+    public Money calculateDiscountAmount(Screening screening) {
+        for (DiscountCondition each: conditions) {
+            if (each.isSatisfiedBy(screening)) {
+                return getDiscountAmount(screening);
+            }
+        }
+
+        return screening.getMovieFee();
+    }
+
+    abstract protected Money getDiscountAmount(Screening screening);
+}
+```
+
+* 계약에 의한 설계에 따르면 협력하는 클라이언트와 슈퍼타입의 인스턴스 사이에는 어떤 계약이 맺어져있다.
+    * 클라이언트와 슈퍼타입은 이 계약을 준수할 때만 정상적으로 협력할 수 있다.
+* 리스코프 치환 원칙은 서브타입이 그것의 슈퍼타입을 대체할 수 있어야 하고 클라이언트가 그 차이점을 인식하지 못한 채 슈퍼타입의 인터페이스를 이용해 서브타입과 협력할 수 있어야 한다고 말한다.
+    * 클라이언트의 입장에서 서브타입은 정말 슈퍼타입의 '한 종류'여야 하는 것이다.
+* 이제 여러분은 서브클래스와 서브타입은 서로 다른 개념이라는 사실을 잘 알고 있을 것이다.
+    * 어떤 클래스가 다른 클래스를 상속 받으면 그 클래스의 자식 클래스 또는 서브클래스가 되지만 모든 서브클래스가 서브타입인 것은 안디ㅏ.
+    * 코드 재사용을 위해 상속을 사용했다면, 그리고 클라이언트의 관점에서 자식 클래스가 부모 클래스를 대체할 수 없다면 서브타입이라고 할 수 없다.
+* 서브타입이 슈퍼타입처럼 보일 수 있는 유일한 방법은 클라이언트가 슈퍼타입과 맺은 계약을 서브타입이 준수하는 것뿐이다.
+* 지금까지는 Movie와 DiscountPolicy 사이의 계약에 대해서는 크게 상관하지 않았다.
+    * 하지만 코드를 살펴보면 직접적으로 언급을 하지 않았을 뿐 암묵적인 사전조건과 사후조건이 존재한다는 사실을 알 수 있다.
+* 먼저 사전조건부터 살펴보자.
+    * DiscountPolicy의 calculateDiscountAmount 메서드는 인자로 전달된 screening이 null인지 여부를 확인하지 않는다.
+    * 하지만 screening에 null이 전달되면 screening.getMovieFee()가 실행될 때 NullPointerException 예외가 던져질 것이다.
+* Screening에 null이 전달되는 것은 우리가 기대했던 것이 아니다.
+    * calculateDiscountAmount 메서드는 클라이언트가 전달하는 screening의 값이 null이 아니고 영화 시작 시간이 아직 지나지 않았다고 가정할 것이다.
+    * 따라서 단정문을 사용해 사전조건을 다음과 같이 표현할 수 있다.
+
+```java
+assert screening != null && screening.getStartTime().isAfeter(LocalDateTime.now());
+```
+
+* Movie의 calculateMovieFee 메서드를 살펴보면 DiscountPolicy의 calculateDiscountAmount 메서드의 반환값에 어떤 처리도 하지 않고 fee에서 차감하고 있음을 알 수 있다.
+    * 따라서 calculateDiscountAmount 메서드는 반환값이 항상 null이 아니어야 한다.
+    * 추가로 반환되는 값은 청구되는 요금이기 때문에 최소한 0보다는 커야 한다.
+    * 따라서 사후조건은 다음과 같다.
+
+```java
+assert amount != null && amount.isGreaterThanOrEqual(Money.ZERO);
+```
+
+* 다음은 calculateDiscountAmount 메서드에 사전 조건과 사후조건을 추가한 것이다.
+    * 사전조건은 checkPrecondition 메서드로, 사후조건은 checkPostcondition 메서드로 구현돼 있다.
+
+```java
+public abstract class DiscountPolicy {
+    public Money calculateDiscountAmount(Screening screening) {
+        checkPreconditoin(screening);
+      
+        Money amount = Money.ZERO;
+        for (DiscountCondition each: conditions) {
+            if (each.isSatisfiedBy(screening)) {
+                amount = getDiscountAmount(screening);
+                checkPostcondition(amount);
+                return amount;
+            }
+        }
+
+        amoutn = screening.getMovieFee();
+        checkPostcondition(amount);
+        return amount;
+    }
+
+    protected void checkPrecondition(Screening screening) {
+        assert screening != null && screening.getStartTime().isAfeter(LocalDateTime.now());
+    }
+  
+    protected void checkPostcondition(Money money) {
+        assert amount != null && amount.isGreaterThanOrEqual(Money.ZERO);
+    }
+    abstract protected Money getDiscountAmount(Screening screening);
+}
+```
+
+* calculateDiscountConditoin 메서드가 정의한 사전 조건을 만족시키는 것은 Movie의 핵심이다.
+    * 따라서 Movie는 사전조건을 위반하는 screening을 전달해서는 안된다.
+
+```java
+public class Movie {
+    public Money calculateMovieFee(Screening screening) {
+        if (screening == null || screening.getStartTime().isBefore(LocalDatTime.now())) {
+            throw new I*nvalidScreeningException();
+        }
+        return fee.minus(discountPolicy.calculateDiscountAmount(screening));
+    }
+}
+```
 
 
 
