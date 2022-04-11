@@ -856,7 +856,7 @@ List<Dish> vegetarianDishes = menu.streams()
 
 
 
-## 5.1 피터링과 슬라이싱
+## 5.1 필터링과 슬라이싱
 
 ### 5.1.1 프레디케이트로 필터링
 
