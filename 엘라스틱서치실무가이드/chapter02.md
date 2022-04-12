@@ -1,4 +1,4 @@
-# 02 엘리스틱서치 살펴보기
+# 02 엘라스틱서치 살펴보기
 
 ## 2.1 엘라스틱서치를 구성하는 개념
 
@@ -14,7 +14,7 @@
 
 * 인덱스는 데이터 저장 공간이다.
 * 하나의 인덱스는 하나의 타입만 가지며 하나의 물리적인 노드에 여러 개의 논리적인 인덱스를 생성할 수 있다.
-* 검색 시 인덱스 이름으로 문서 데이터를 거색하며, 여러 개의 인덱스를 동시에 검색하는 것도 가능하다.
+* 검색 시 인덱스 이름으로 문서 데이터를 검색하며, 여러 개의 인덱스를 동시에 검색하는 것도 가능하다.
 * 분산환경으로 구성하면 하나의 인덱스가 여러 노드에 분산되어 관리된다.
 * 인덱스 이름은 모두 소문자여야 한다.
 * 인덱스가 없는 상태에서 데이터가 추가된다면 데이터를 이용해 인덱스가 자동으로 생성된다.
@@ -219,7 +219,7 @@ GET /movie
               }
             }
           },
-          ...
+          ..
     "settings" : {
       "index" : {
         "creation_date" : "1621601145957",
@@ -260,30 +260,30 @@ GET /movie
 PUT /movie
 {
  	 "settings": {
-		"number_of_shards": 3,
-	     "number_of_replicas": 2
+ 	 	"number_of_shards": 3,
+	       "number_of_replicas": 2
 	},
  	 "mappings": {
 		"_doc": {
 			"properties": {
 				"movieCd": {"type": "integer"},
 				"movieNm": {"type": "text"},
-		         "movieEn": {"type": "text"},
-       		    "prdtYear": {"type": "integer"},
-		         "openDt": {"type": "date"},
-		         "typeNm": {"type": "keyword"},
-		         "prdtStatNm": {"type": "keyword"},
-		         "nationAlt": {"type": "keyword"},
-		         "genreAlt": {"type": "keyword"},
-		         "repNationNm": {"type": "keyword"},
-		         "repGenreNm": {"type": "keyword"}
+		        	 "movieEn": {"type": "text"},
+		         	  "prdtYear": {"type": "integer"},
+		         	  "openDt": {"type": "date"},
+		         	  "typeNm": {"type": "keyword"},
+		         	  "prdtStatNm": {"type": "keyword"},
+		        	 "nationAlt": {"type": "keyword"},
+		         	  "genreAlt": {"type": "keyword"},
+		         	  "repNationNm": {"type": "keyword"},
+		         	  "repGenreNm": {"type": "keyword"}
 			}
 		}
 	}
 }
 ```
 
-* 단순 문자열열로 저장하고 싶을 경우 keyword 타입을 사용하고 형태소 분석을 원할 경우 text 타입을 사용한다.
+* 단순 문자열로 저장하고 싶을 경우 keyword 타입을 사용하고 형태소 분석을 원할 경우 text 타입을 사용한다.
 
 
 
@@ -383,6 +383,25 @@ GET /movie/_doc/1
 ```http
 DELETE /movie/_doc/1
 ```
+
+실행된 결과는 다음과 같다.
+
+```json
+{
+    "_index" : "movie",
+    "_type" : "_doc",
+    "_id" : "1",
+    "_version" : 1,
+    "result": "deleted",
+    "_shards": {
+        "total": 2,
+        "successful": 2,
+        "failed": 0
+    }
+}
+```
+
+
 
 
 
