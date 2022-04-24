@@ -2383,7 +2383,7 @@ PUT movie_dynamic/_doc/1
 }
 ```
 
-Update API를 이용해 해당 여오하의 관객 수를 1만큼 증가시킬 수 있다.
+Update API를 이용해 해당 영화의 관객 수를 1만큼 증가시킬 수 있다.
 
 ```http
 POST movie_dynamic/_doc/1/_update
