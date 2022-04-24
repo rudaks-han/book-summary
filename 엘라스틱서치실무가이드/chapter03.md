@@ -62,24 +62,24 @@ movie_search는 개봉 영화의 세부 정보를 제공하는 인덱스다.
 
 ```json
 {
-	"movieCd": "20173732",
-  "movieNm": "살아남은 아이",
-  "movieNmEn": "Last Child",
-  "prdtYear": "2017",
-  "openDt": "",
-  "typeNm": "장편",
-  "prdtStatNm": "기타",
-  "nationAlt": "한국",
-  "genreAlt": "드라마,가족",
-  "repNationNm": "한국",
-  "repGenreNm": "한국",
-  "directors": [{
-  	"peopleNm": "신동석"
-  }],
-  "companies": [
-  	"companyCd": "",
-  	"companyNm" ""
-  ]
+    "movieCd": "20173732",
+    "movieNm": "살아남은 아이",
+    "movieNmEn": "Last Child",
+    "prdtYear": "2017",
+    "openDt": "",
+    "typeNm": "장편",
+    "prdtStatNm": "기타",
+    "nationAlt": "한국",
+    "genreAlt": "드라마,가족",
+    "repNationNm": "한국",
+    "repGenreNm": "한국",
+    "directors": [{
+        "peopleNm": "신동석"
+    }],
+    "companies": [
+        "companyCd": "",
+        "companyNm" ""
+    ]
 }
 ```
 
@@ -155,7 +155,7 @@ PUT movie_search
 
 ### 3.1.2 매핑 확인
 
-매핑을 확인하려면 _mapping AP를 사용할 수 있다.
+매핑을 확인하려면 _mapping API를 사용할 수 있다.
 
 ```http
 GET movie_search/_mapping
@@ -243,7 +243,7 @@ PUT movie_search_mapping/_mapping/_doc
 
 * 날짜/시간을 문자열로 표시한다.
 
-| 포캣       | 날짜 형식 | 비고       |
+| 포맷       | 날짜 형식 | 비고       |
 | :--------- | :-------- | :--------- |
 | basic_date | yyyyMdd   | 년도/월/일 |
 | ...        | ...       | ...        |

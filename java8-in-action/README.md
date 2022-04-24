@@ -700,7 +700,7 @@ inventory.sort(comparing(Apple:getWeight))
 
 
 
-### 3.8.2 Pedicate 조합
+### 3.8.2 Predicate 조합
 
 Predicate 인터페이스는 복잡한 프레디케이트를 만들 수 있도록 negate, and, or 세가지 메서드를 제공한다. 예를 들어 '빨간 색이 아닌 사과' 처럼 특정 프레디케이트를 반전시킬 때 negate 메서드를 사용할 수 있다.
 
