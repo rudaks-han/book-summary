@@ -7,12 +7,19 @@ package com.example.designpattern.singleton;
  */
 public class LazyRegistryWithDCL {
 
+    /**
+     * private 생성자로 하여금 외부에서 객체 생성을 못하게 하고 서브클래싱을 불가능하게 한다.
+     */
     private LazyRegistryWithDCL() {
     }
 
     // volatile 키워드는 CPU 캐쉬값을 사용하지 않고 메모리를 접근하도록 한다.
     private static volatile LazyRegistryWithDCL INSTANCE;
 
+    /**
+     * double checking locking을 사용한다.
+     * @return
+     */
     public static LazyRegistryWithDCL getInstance() {
         if (INSTANCE == null) {
             synchronized (LazyRegistryWithDCL.class) {

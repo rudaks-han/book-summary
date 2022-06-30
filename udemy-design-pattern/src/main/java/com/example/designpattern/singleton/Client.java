@@ -18,5 +18,9 @@ public class Client {
         LazyRegistryIODH singleton3 = LazyRegistryIODH.getInstance();
         LazyRegistryIODH singleton4 = LazyRegistryIODH.getInstance();
         // In LazyRegistryIODH singleton <== 한번만 호출된다.
+
+        RegistryEnum registryEnum = RegistryEnum.INSTANCE;
+        RegistryEnum registryEnum2 = RegistryEnum.INSTANCE;
+        System.out.println(registryEnum == registryEnum2);
     }
 }
