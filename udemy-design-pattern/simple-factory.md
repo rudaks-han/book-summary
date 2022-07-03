@@ -187,7 +187,7 @@ private static NumberFormat getInstance(LocaleProviderAdapter adapter,
 
 
 
-## 잠재적인 위험
+## 위험요소
 
 * 객체 생성을 결정할 때 사용되는 심플 팩토리의 기준은 시간이 지남에 따라 더 복잡해질 수있다. 만일 여러분의 코드가 그런 경우라면 팩토리 디자인 패턴을 사용해라.
 

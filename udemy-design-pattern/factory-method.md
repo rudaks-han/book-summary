@@ -183,7 +183,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
 
 
 
-## 잠재적인 위험
+## 위험요소
 
 * 구현하기 더 복잡해진다. 더 많은 클래스가 관여되고 단위 테스트가 필요하다.
 * 처음부터 팩토리 메소드 디자인 패턴으로 시작해야 한다. 기존 코드를 팩토리 메소드 패턴으로 리팩토링 하는일은 쉽지 않다.

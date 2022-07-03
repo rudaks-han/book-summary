@@ -22,7 +22,7 @@
 ## 추상 팩토리 구현방법
 
 * 클래스의 구성 요소를 정의함으로서 시작한다.
-* * 추상 팩토리를 추상 클래스나나 인터페이스로 생성
+* * 추상 팩토리를 추상 클래스나 인터페이스로 생성
     * 추상 팩토리는 객체를 만들기 위해 추상 메소드를 정의한다.
     * 유형 별 개별 구성요소의 팩토리 구현체를 제공 
 * 추상 팩토리는 팩토리 메소드 패턴을 사용한다. 추상 팩토리를 여러 개의 팩토리 메소드를 가진 객체로 생각할 수 있다.
@@ -33,6 +33,218 @@
 
 
 ## 추상 팩토리 구현
+
+Instance의 인터페이스를 정의
+
+```java
+public interface Instance {
+
+    enum Capacity {
+        micro, small, large
+    }
+
+    void start();
+
+    void attachStorage(Storage storage);
+
+    void stop();
+}
+```
+
+Storage를 정의
+
+```java
+public interface Storage {
+
+    String getId();
+}
+```
+
+instance와 Storage를 생성하는 추상 팩토리 생성
+
+```java
+// 각 유형에 정의된 메소드의 추상 팩토리
+public interface ResourceFactory {
+
+    Instance createInstance(Instance.Capacity capacity);
+
+    Storage createStorage(int capMib);
+}
+```
+
+다음은 aws와 gcp 각각에 대한 구체클래스를 만들어보자.
+
+우선 aws이다.
+
+```java
+public class Ec2Instance implements Instance {
+
+    public Ec2Instance(Capacity capacity) {
+        // ec2 instance 유형. aws API를 사용
+        System.out.println("Created Ec2Instance");
+    }
+
+    @Override
+    public void start() {
+        System.out.println("Ec2Instance started");
+    }
+
+    @Override
+    public void attachStorage(Storage storage) {
+        System.out.println("Attched " + storage + " to Ec2Instance");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Ec2Instance stopped");
+    }
+
+    @Override
+    public String toString() {
+        return "Ec2Instance";
+    }
+}
+```
+
+```java
+public class S3Storage implements Storage {
+
+    public S3Storage(int capacityInMib) {
+        // aws s3 api 사용
+        System.out.println("Allocated " + capacityInMib + " on S3");
+    }
+
+    @Override
+    public String getId() {
+        return "S31";
+    }
+
+    @Override
+    public String toString() {
+        return "S3 Storage";
+    }
+}
+```
+
+aws의 instance와 storage를 만드는 팩토리 정의
+
+```java
+public class AwsResourceFactory implements ResourceFactory {
+
+    @Override
+    public Instance createInstance(Instance.Capacity capacity) {
+        return new Ec2Instance(capacity);
+    }
+
+    @Override
+    public Storage createStorage(int capMib) {
+        return new S3Storage(capMib);
+    }
+}
+```
+
+다음으로 gcp
+
+```java
+public class GoogleComputeEngineInstance implements Instance {
+
+    public GoogleComputeEngineInstance(Capacity capacity) {
+        // GCP 인스턴스 유형. GCP API를 사용
+        System.out.println("Created Google Compute Engine instance");
+    }
+
+    @Override
+    public void start() {
+        System.out.println("Compute Engine instance started");
+    }
+
+    @Override
+    public void attachStorage(Storage storage) {
+        System.out.println("Attched " + storage + " to Compute engine instance");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Compute engine instance stopped");
+    }
+}
+```
+
+```java
+public class GoogleCloudStorage implements Storage {
+
+    public GoogleCloudStorage(int capacityInMib) {
+        // gcp api를 사용
+        System.out.println("Allocated " + capacityInMib + " on Google Cloud Storage");
+    }
+
+    @Override
+    public String getId() {
+        return "gcpcs1";
+    }
+
+    @Override
+    public String toString() {
+        return "Google cloud storage";
+    }
+}
+```
+
+gcp의 instance와 storage를 만드는 팩토리
+
+```java
+public class GoogleResourceFactory implements ResourceFactory {
+
+    @Override
+    public Instance createInstance(Instance.Capacity capacity) {
+        return new GoogleComputeEngineInstance(capacity);
+    }
+
+    @Override
+    public Storage createStorage(int capMib) {
+        return new GoogleCloudStorage(capMib);
+    }
+}
+```
+
+
+
+이를 사용하는 클라이언트 코드를 작성해보면 아래와 같다.
+
+```java
+public class Client {
+
+    private ResourceFactory factory;
+
+    public Client(ResourceFactory factory) {
+        this.factory = factory;
+    }
+
+    public Instance createServer(Instance.Capacity capacity, int storageMib) {
+        Instance instance = factory.createInstance(capacity);
+        Storage storage = factory.createStorage(storageMib);
+        instance.attachStorage(storage);
+
+        return instance;
+    }
+
+    public static void main(String[] args) {
+        Client aws = new Client(new AwsResourceFactory());
+        Instance i1 = aws.createServer(Instance.Capacity.micro, 20480);
+        i1.start();
+        i1.stop();
+
+        System.out.println("********************************");
+
+        Client gcp = new Client(new GoogleResourceFactory());
+        i1 = gcp.createServer(Instance.Capacity.micro, 20480);
+        i1.start();
+        i1.stop();
+    }
+}
+```
+
+
 
 
 
@@ -60,7 +272,7 @@
 
 
 
-## 잠재적인 위험
+## 위험요소
 
 * 팩토리 메소드 보다 구현하기 더 복잡하다.
 * 새로운 구성요소를 추가하는 것은 팩토리의 모든 구현부와 기반 팩토리의 변경을 가져온다.
