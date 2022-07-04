@@ -33,10 +33,172 @@
 
 
 
-
 ## 어댑터 구현
 
-* 
+### 클래스 어댑터
+
+시스템에서 사용되는 기존 클래스 Employee (Adaptee)
+
+```java
+@Getter
+@Setter
+public class Employee {
+
+    private String fullName;
+
+    private String jobTitle;
+
+    private String officeLocation;
+}
+```
+
+ 새 클라이언트 코드에서 필요로 하는 타겟 인터페이스
+
+```java
+public interface Customer {
+
+    String getName();
+
+    String getDesignation();
+
+    String getAddress();
+}
+```
+
+ 클래스 어댑터, 양방향 어댑터로 동작한다.
+
+```java
+public class EmployeeClassAdapter extends Employee implements Customer {
+    @Override
+    public String getName() {
+        return this.getFullName();
+    }
+
+    @Override
+    public String getDesignation() {
+        return this.getJobTitle();
+    }
+
+    @Override
+    public String getAddress() {
+        return this.getOfficeLocation();
+    }
+}
+```
+
+Customer 인터페이스를 필요로 하는 클라이언트 코드
+
+```java
+public class BusinessCardDesigner {
+
+    public String designCard(Customer customer) {
+        String card = "";
+        card += customer.getName();
+        card += "\n" + customer.getDesignation();
+        card += "\n" + customer.getAddress();
+        return card;
+    }
+}
+```
+
+Main 코드
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        // Class/Two-way adapter 사용하기
+        EmployeeClassAdapter adapter = new EmployeeClassAdapter();
+        populateEmployeeData(adapter);
+        BusinessCardDesigner designer = new BusinessCardDesigner();
+        String card = designer.designCard(adapter);
+        System.out.println(card);
+    }
+
+    private static void populateEmployeeData(Employee employee) {
+        employee.setFullName("Elliot Alderson");
+        employee.setJobTitle("Security Engineer");
+        employee.setOfficeLocation("Allsafe Cybersecurity, New York City, New York");
+    }
+}
+```
+
+
+
+### 객체 어댑터
+
+시스템에서 사용된 기존 클래스 (Adaptee)
+
+```java
+@Getter
+@Setter
+public class Employee {
+
+    private String fullName;
+
+    private String jobTitle;
+
+    private String officeLocation;
+}
+```
+
+새 클라이언트 코드에서 필요로 하는 타겟 인터페이스
+
+```java
+public interface Customer {
+
+    String getName();
+
+    String getDesignation();
+
+    String getAddress();
+}
+```
+
+```java
+public class EmployeeObjectAdapter implements Customer {
+
+    private Employee adaptee;
+
+    public EmployeeObjectAdapter(Employee adaptee) {
+        this.adaptee = adaptee;
+    }
+
+    @Override
+    public String getName() {
+        return adaptee.getFullName();
+    }
+
+    @Override
+    public String getDesignation() {
+        return adaptee.getJobTitle();
+    }
+
+    @Override
+    public String getAddress() {
+        return adaptee.getOfficeLocation();
+    }
+}
+```
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        // Object Adapter 사용하기
+        Employee employee = new Employee();
+        populateEmployeeData(employee);
+        EmployeeObjectAdapter objectAdapter = new EmployeeObjectAdapter(employee);
+        card = designer.designCard(objectAdapter);
+        System.out.println(card);
+    }
+
+    private static void populateEmployeeData(Employee employee) {
+        employee.setFullName("Elliot Alderson");
+        employee.setJobTitle("Security Engineer");
+        employee.setOfficeLocation("Allsafe Cybersecurity, New York City, New York");
+    }
+```
 
 
 
