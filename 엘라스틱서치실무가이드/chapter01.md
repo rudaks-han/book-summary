@@ -122,7 +122,19 @@ SELECT * FROM USER WHERE Name like '%가마돈%'
 엘라스틱서치 API
 
 ```http
-GET http://localhost:9200/user/_search/q=Name:가마돈
+GET http://localhost:9200/user/_search?q=Name:가마돈
+```
+
+다음은 엘라스틱서치의 검색 결과다. 검색 결과가 JSON 문서 형태로 출력된다.
+
+```json
+{
+  "ID": 1,
+  "Name": "가마돈",
+  "Location": "서울",
+  "Gender": "남",
+  "Date": "2018-05-02"
+}
 ```
 
 
@@ -149,7 +161,7 @@ PostgreSQL, MongoDB 같은 대부분 데이터베이스는 기본적인 텍스�
 
 
 
-#### 스키마리스
+#### 스키마리스 (Schemaless)
 
 정형화되지 않은 다양한 형태의 문서도 자동으로 색인하고 검색할 수 있다.
 
@@ -161,7 +173,7 @@ HTTP 기반의 RESTFul API를 지원하고 응답에도 JSON 형식을 사용해
 
 
 
-#### 멀티테넌시
+#### 멀티테넌시 (Multi-tenancy)
 
 서로 상이한 인덱스일지라도 검색할 필드만 같으면 여러 개의 인덱스를 한번에 조회할 수 있다.
 
@@ -173,7 +185,7 @@ HTTP 기반의 RESTFul API를 지원하고 응답에도 JSON 형식을 사용해
 
 
 
-#### 역색인
+#### 역색인 (Inverted Index)
 
 엘라스틱서치는 역색인을 지원한다. 반면 MongoDB, 카산드라 같은 일반적인 NoSQL은 역색인을 지원하지 않는다.
 
