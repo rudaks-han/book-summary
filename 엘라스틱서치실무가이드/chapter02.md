@@ -36,13 +36,15 @@
 
 #### 문서
 
-문서는 엘라스틱서치에서 데이터가 저장되는 최소 단위다. 기본적으로 JSON 포맷으로 데이터가 저장된다.
+* 문서는 엘라스틱서치에서 데이터가 저장되는 최소 단위다. 기본적으로 JSON 포맷으로 데이터가 저장된다.
+* 데이터베이스와 비교하자면 테이블의 행이 엘라스틱서치의 문서에 해당한다고 볼 수 있다.
 
 
 
 #### 필드
 
-필드는 문서를 구성하기 위한 속성이라고 할 수 있다.
+* 필드는 문서를 구성하기 위한 속성이라고 할 수 있다. 
+* 일반적으로 데이터베이스의 칼럼과 비교할 수 있으나 칼럼이 정적인 데이터 타입인 데 반해 필드는 좀 더 동적인 데이터 타입이라고 할 수 있다.
 
 
 
@@ -74,7 +76,7 @@
 #### 마스터 노드
 
 * 마스터 노드는 인덱스를 생성, 삭제하는 등 클러스터와 관련된 전반적인 작업을 담당한다.
-* 다수의 노드를 마스터 노드로 설정할 수 있지만 결과적으로 하나의 노드만이 마스터 노드로 선출되어 동작한다.
+* 다수의 노드를 마스터 노드로 설정할 수 있지만 결과적으로 <u>하나의 노드만이 마스터 노드로 선출되어 동작</u>한다.
 * 노드를 마스터 노드 전용으로 설정하고자 한다면 elasticsearch.yml 파일을 열고 다음과 같이 설정하면 된다.
 
 ```yaml
@@ -250,9 +252,19 @@ GET /movie
 
 
 
+> <u>참고</u>
+>
+> 스키마리스를 사용하지 않으려면 노드 설정 파일에서 action.auto_create_index를 false로 설정할 경우 자동으로 인덱스가 생성되지 않는다.
+>
+> 또한 인덱스별로 제공되는 index.mapper.dynamic 설정을 false로 설정하면 특정 칼럼의 자동 매핑 생성을 비활성화할 수 있다.
+
+
+
 ### 2.2.1 인덱스 관리 API
 
 #### 인덱스 생성
+
+인덱스를 한번 생성해보자. 한번 생성된 매핑 정보는 변경할 수 없다. 만약 잘못 생성했거나 변경해야 하는 경우에는 데이터를 삭제하고 다시 색인하는 수밖에 없다.
 
 다음은 movie 인덱스를 생성하고 매핑 정보를 추가한 예다.
 
@@ -261,24 +273,22 @@ PUT /movie
 {
  	 "settings": {
  	 	"number_of_shards": 3,
-	       "number_of_replicas": 2
+	   "number_of_replicas": 2
 	},
  	 "mappings": {
-		"_doc": {
-			"properties": {
-				"movieCd": {"type": "integer"},
-				"movieNm": {"type": "text"},
-		        	 "movieEn": {"type": "text"},
-		         	  "prdtYear": {"type": "integer"},
-		         	  "openDt": {"type": "date"},
-		         	  "typeNm": {"type": "keyword"},
-		         	  "prdtStatNm": {"type": "keyword"},
-		        	 "nationAlt": {"type": "keyword"},
-		         	  "genreAlt": {"type": "keyword"},
-		         	  "repNationNm": {"type": "keyword"},
-		         	  "repGenreNm": {"type": "keyword"}
-			}
-		}
+         "properties": {
+             "movieCd": {"type": "integer"},
+             "movieNm": {"type": "text"},
+             "movieEn": {"type": "text"},
+             "prdtYear": {"type": "integer"},
+             "openDt": {"type": "date"},
+             "typeNm": {"type": "keyword"},
+             "prdtStatNm": {"type": "keyword"},
+             "nationAlt": {"type": "keyword"},
+             "genreAlt": {"type": "keyword"},
+             "repNationNm": {"type": "keyword"},
+             "repGenreNm": {"type": "keyword"}
+         }
 	}
 }
 ```
@@ -374,8 +384,6 @@ GET /movie/_doc/1
 
 
 
-
-
 #### 뮨서 삭제
 
 생성된 문서를 삭제해보자.
@@ -400,8 +408,6 @@ DELETE /movie/_doc/1
     }
 }
 ```
-
-
 
 
 
@@ -506,6 +512,7 @@ POST movie/_search
 	
 	filter: {
 		# 검색 결과 중 특정한 값을 다시 보여준다.
+		# 결과 내에서 재검색할 때 사용하는 기능 중 하나다.
 		# filter를 사용하면 자동으로 score 값이 정렬되지 않는다.
 	}
 }
