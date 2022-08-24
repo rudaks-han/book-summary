@@ -1,5 +1,25 @@
 # 03 데이터 모델링
 
+엘라스틱서치에서는 색인할 때 문서의 데이터 유형에 따라 필드에 적절한 데이터 타입을 지정해야 한다.
+
+이러한 과정을 매핑이라고 하며, 매핑은 색인될 문서의 데이터 모델링이라고 할 수 있다.
+
+
+
+**이번 장에서 다룰 내용**
+
+3.1 매핑 API 이해하기
+
+3.2 메타 필드
+
+3.3 필드 데이터 타입
+
+3.4 엘라스틱서치 분석기
+
+3.5 Document API 이해하기
+
+
+
 ## 3.1 매핑 API 이해하기
 
 매핑은 색인 시 데이터가 어디에 어떻게 저장될지를 결정하는 설정이다. (데이터베이스의 스키마에 대응하는 개념)
@@ -93,60 +113,58 @@ PUT movie_search
     "number_of_replicas": 1
   },
   "mappings": {
-    "_doc": {
-      "properties": {
-        "movieCd": {
-          "type": "keyword"
-        },
-        "movieNm": {
-          "type": "text",
-          "analyzer": "standard"
-        },
-        "movieNmEn": {
-          "type": "text",
-          "analyzer": "standard"
-        },
-        "prdtYear": {
-          "type": "integer"
-        },
-        "openDt": {
-          "type": "date"
-        },
-        "typeNm": {
-          "type": "keyword"
-        },
-        "prdtStatNm": {
-          "type": "keyword"
-        },
-        "nationAlt": {
-          "type": "keyword"
-        },
-        "genreAlt": {
-          "type": "keyword"
-        },
-        "repNationNm": {
-          "type": "keyword"
-        },
-        "repGenreNm": {
-          "type": "keyword"
-        },
-        "companies": {
-          "properties": {
-            "companyCd": {
-              "type": "keyword"
-            },
-            "companyNm": {
-              "type": "keyword"
-            }
+    "properties": {
+      "movieCd": {
+        "type": "keyword"
+      },
+      "movieNm": {
+        "type": "text",
+        "analyzer": "standard"
+      },
+      "movieNmEn": {
+        "type": "text",
+        "analyzer": "standard"
+      },
+      "prdtYear": {
+        "type": "integer"
+      },
+      "openDt": {
+        "type": "date"
+      },
+      "typeNm": {
+        "type": "keyword"
+      },
+      "prdtStatNm": {
+        "type": "keyword"
+      },
+      "nationAlt": {
+        "type": "keyword"
+      },
+      "genreAlt": {
+        "type": "keyword"
+      },
+      "repNationNm": {
+        "type": "keyword"
+      },
+      "repGenreNm": {
+        "type": "keyword"
+      },
+      "companies": {
+        "properties": {
+          "companyCd": {
+            "type": "keyword"
+          },
+          "companyNm": {
+            "type": "keyword"
           }
-        },
-        "directors": {
-        	"properties": {
-        		"peopleNm": {
-        			"type": "keyword"
-        		}
-        	}
         }
+      },
+      "directors": {
+      	"properties": {
+      		"peopleNm": {
+      			"type": "keyword"
+      		}
+      	}
       }
     }
   }
@@ -169,12 +187,12 @@ GET movie_search/_mapping
 
 * 해당 필드의 데이터를 형태소 분석하겠다는 의미  
 * text 타입의 필드는 analyzer 매핑 파라미터를 기본적으로 사용해야 한다.  
-* 별도의 분석기를 지정하지 않으면 Standard Analyzer로 형태로 분석을 수행한다.
+* 별도의 분석기를 지정하지 않으면 Standard Analyzer로 형태소 분석을 수행한다.
 
 ##### normalizer
 
 * normalizer 매핑 파라미터는 term query에 분석기를 사용하기 위해 사용된다.  
-* keyword 데이터 타입의 경우 원문을 기준으로 문서가 색인되기 때문에 cafe,Cafe는 서로 다른 문서로 인식된다.  
+* keyword 데이터 타입의 경우 원문을 기준으로 문서가 색인되기 때문에 cafe,Café는 서로 다른 문서로 인식된다.  
 * 하지만 normalizer를 통해 분석기에 asciifolding과 같은 필터를 사용하면 같은 데이터로 인식되게 할 수 있다.
 
 ##### boost
@@ -182,7 +200,7 @@ GET movie_search/_mapping
 * 필드에 가중치를 부여한다.  
 * 가중치에 따라 유사도 점수가 달라지기 때문에 boost 설정 시 검색 결과의 노출 순서에 영향을 준다.
 
-> 최신 엘라스틱서치는 색인 시 boost 설정을 할 수 없도록 바뀌었다.
+> 최신 엘라스틱서치는 색인 시 boost 설정을 할 수 없도록 바뀌었다. 내부적으로 사용하는 루씬에서 기능에 제거됐기 때문이다.
 
 ##### coerce
 
@@ -198,7 +216,7 @@ GET movie_search/_mapping
 ##### fielddata
 
 * 힙 공간에 생성하는 메모리 캐시다. 
-* 최신 버전의 엘라스틱서치는 doc_values라는 새로운 형태의 캐시를 제공하고 있으며 text타입의 필드를 제외한 모든 필드는 기본적으로 doc_values 캐시를 사용한다.
+* 최신 버전의 엘라스틱서치는 doc_values라는 새로운 형태의 캐시를 제공하고 있으며 <u>text타입의 필드를 제외한 모든 필드는 기본적으로 doc_values 캐시를 사용</u>한다.
 
 text타입의 필드에서 집계나 정렬을 수행하는 경우에 부득이하게 fielddata를 사용할 수 있다. 하지만 fielddata는 메모리에 생성되는 캐시이기 때문에 최소한으로 사용해야 한다는 사실에 주의해야 한다.
 fielddata는 메모리 소모가 크기 때문에 기본적으로 비활성화돼 있다.  
@@ -507,12 +525,12 @@ PUT movie_text/_mapping/_doc
 }
 ```
 
-#### 
+
 
 ### 3.3.5 Date 데이터 타입
 
 * Date 타입은 JSON 포맷에서 문자열로 처리된다. 
-* 기본 형식은 "yyyy-MM-0ddTHH:mm:ssZ"로 지정된다.
+* 기본 형식은 "yyyy-MM-ddTHH:mm:ssZ"로 지정된다.
 * Date 타입은 세 가지 형태를 제공한다. 세 가지 중 어느 것을 사용해도 내부적으로 UTC 밀리초 단위로 변환해 저장한다.
     * 문자열이 포함된 날짜 형식: "2018-04-20", "2018/04.20", "2018/04/20 10:50:00"
     * ISO_INSTANT 포맷의 날짜 형식: "2018-04-10T10:50:00Z"
@@ -599,7 +617,7 @@ PUT movie_text/_mapping/_doc
 }
 ```
 
-#### 
+
 
 ### 3.3.8 Geo-Point 데이터 타입
 
@@ -631,7 +649,7 @@ PUT movie_search_datatype/_doc/1
 }
 ```
 
-#### 
+
 
 #### 3.3.9 IP 데이터 타입
 
@@ -658,7 +676,7 @@ PUT movie_search_datatype/_doc/2
 }
 ```
 
-#### 
+
 
 #### 3.3.10 Object 데이터 타입
 
@@ -696,7 +714,7 @@ PUT movie_search_datatype/_doc/3
 }
 ```
 
-#### 
+
 
 ### 3.3.11 Nested 데이터 타입
 
@@ -980,7 +998,7 @@ Token Filter는 여러 단계가 순차적으로 이뤄지며 순서를 어떻�
 
 예를 들어, 다음과 같은 문서가 있다고 해보자.
 
-> < B >Elasticsearch</B> is cool
+> \<B>Elasticsearch\</B> is cool
 
 이 문서에서 불필요한 HTML 태그를 제거하고 문장의 대문자를 모두 소문자로 변형해서 인덱스 저장하는 프로세스를 구성해야 할 것이다.
 
@@ -1226,7 +1244,7 @@ PUT movie_html_analyzer
 ```
 
 생성한 인덱스에 HTML이 포함된 문장을 입력하여 HTML 태그가 잘 제거되는지 확인해보자.
-다음과 같이 <span> 태그와 <b>태그가 포함된 문장을 분석해 보자.
+다음과 같이 \<span> 태그와 \<b>태그가 포함된 문장을 분석해 보자.
 
 ```http
 POST movie_html_analyzer/_analyze
@@ -1238,7 +1256,7 @@ POST movie_html_analyzer/_analyze
 
 분석결과는 다음과 같다.
 
-[Harry Potter and the <b>Chamber</b> of Secrets]
+[Harry Potter and the \<b>Chamber\</b> of Secrets]
 
 전처리 필터를 활성화 하고 테스트 문장을 분석하면 span 태그는 제거되고 b태그는 유지된다.
 escaped_tags 옵션을 사용하지 않으면 기본적으로 모든 HTML 태그가 제거되지만 해당 옵션을 사용해서 제거되는 태그의 종류를 선택적으로 선택할 수 있다.
@@ -1435,7 +1453,7 @@ POST movie_analyzer/_analyze
 
 [Harry Potter and the Chamber of Secrets]
 
-##### 
+
 
 ### 3.4.6 토큰 필터
 
@@ -2029,7 +2047,7 @@ POST movie_dynamic/_doc
 
 색인된 모든 문서는 버전 값을 가지고 있다.
 최초 1을 갖게 되고 문서에 변경이 일어날 때마다 버전 값이 증가한다.
-Update API를 이용할 경우 내부적으로 스냅샷을 생성해서 문서를 수정하고 인덱스에 다시 재색인하게 되는데, 이때 버전 정보를 이용한다.
+<u>Update API를 이용할 경우 내부적으로 스냅샷을 생성</u>해서 문서를 수정하고 인덱스에 다시 재색인하게 되는데, 이때 버전 정보를 이용한다.
 스냅샷이 생성된 사이에 버전 값이 달라졌다면 실패로 처리한다.
 
 문서를 하나 생성해보자.
@@ -2224,7 +2242,6 @@ Get API는 특정 문서를 인덱스에서 조회할 때 사용하는 API이다
 PUT movie_dynamic
 {
   "mappings": {
-    "_doc": {
       "properties": {
         "movieCd": {
           "type": "text"
@@ -2236,7 +2253,6 @@ PUT movie_dynamic
           "type": "text"
         }
       }
-    }
   }
 }
 ```
@@ -2277,7 +2293,7 @@ GET movie_dynamic/_doc/1
 }
 ```
 
-#### 
+
 
 ### 3.5.4 Delete API
 
@@ -2314,6 +2330,8 @@ DELETE movie_dynamic/_doc/1
 ```http
 DELETE movie_dynamic
 ```
+
+
 
 #### 3.5.5 Delete By Query API
 
@@ -2386,7 +2404,7 @@ PUT movie_dynamic/_doc/1
 Update API를 이용해 해당 영화의 관객 수를 1만큼 증가시킬 수 있다.
 
 ```http
-POST movie_dynamic/_doc/1/_update
+POST movie_dynamic/_update/1
 {
   "script": {
     "source": "ctx._source.counter += params.count",
@@ -2509,13 +2527,8 @@ Reindex API를 이용해 특정 문서를 복사해서 새로운 인덱스를 �
 ```http
 POST /_reindex
 {
-  "size": 10000,
   "source": {
-    "index": "movie_dynamic",
-    "type": "_doc",
-    "sort": {
-      "counter": "desc"
-    }
+    "index": "movie_dynamic"
   },
   "dest": {
     "index": "movie_dynamic_new"
