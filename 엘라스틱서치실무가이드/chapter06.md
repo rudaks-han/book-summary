@@ -91,6 +91,80 @@ POST nori_analyzer/_analyze
 
 
 
+한글 형태소 분석기로 Nori를 사용하려면 다음과 같이 설정하면 된다.
+
+```
+PUT nori_full_analyzer
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "description": {
+          "type": "text",
+          "analyzer": "korean_analyzer"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "korean_analyzer": {
+            "filter": [
+              "pos_filter_speech",
+              "nori_readingform",
+              "lowercase"
+            ],
+            "tokenizer": "nori_tokenizer"
+          }
+        },
+        "filter": {
+          "pos_filter_speech": {
+            "type": "nori_part_of_speech",
+            "stoptags": [
+              "E",
+              "IC",
+              "J",
+              "MAG",
+              "MAJ",
+              "MM",
+              "NA",
+              "NR",
+              "SC",
+              "SE",
+              "SF",
+              "SH",
+              "SL",
+              "SN",
+              "SP",
+              "SSC",
+              "SSO",
+              "SY",
+              "UNA",
+              "UNKNOWN",
+              "VA",
+              "VCN",
+              "VCP",
+              "VSV",
+              "VV",
+              "VX",
+              "XPN",
+              "XR",
+              "XSA",
+              "XSN",
+              "XSV"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+
+
 
 
 ## 6.2 검색 결과 하이라이트하기
