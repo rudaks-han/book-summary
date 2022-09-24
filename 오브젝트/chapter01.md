@@ -34,7 +34,7 @@ public class Invitation {
 
 공연을 관람하기 원하는 모든 사람들은 티켓을 소지하고 있어야 한다. Ticket 클래스
 
-```Java
+```java
 public class Ticket {
     private Long fee;
 
