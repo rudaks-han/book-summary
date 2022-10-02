@@ -66,7 +66,7 @@ public class Movie {
 Pass:3 Fail:2, A:1 B:1 C:1 D:0 F:2
 ```
 
-* Pass:3 Fail:2는 강의를 이수한 학생의수와 낙제한 학생의 수를 나타낸 것이고, 뒷 부분의 "A:1 B:1 C:1 D:0 F:2"는 등급벼로 학생들의 분포 현황을 나타낸 것이다.
+* Pass:3 Fail:2는 강의를 이수한 학생의수와 낙제한 학생의 수를 나타낸 것이고, 뒷 부분의 "A:1 B:1 C:1 D:0 F:2"는 등급별로 학생들의 분포 현황을 나타낸 것이다.
 
 ```java
 public class Lecture {

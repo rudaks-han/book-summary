@@ -148,7 +148,7 @@ public class Screening {
 ```
 
 * Screening의 reserve 메서드를 보면 calculateFee라는 private 메서드를 호출해서 요금을 계산한 후 그 결과를 Reservation의 생성자에 전달하는 것을 알 수 있다.
-* Screening은 전체 얘매 요금을 구하기 위해 calculateMovieFee 메서드의 반환 값에 인원 수인 audienceCount를 곱한다.
+* Screening은 전체 예매 요금을 구하기 위해 calculateMovieFee 메서드의 반환 값에 인원 수인 audienceCount를 곱한다.
 
 ```java
 public class Screening {
@@ -161,7 +161,7 @@ public class Screening {
 * Money는 금액과 관련된 다양한 계산을 구현하는 간단한 클래스다.
 
 ```java
-ublic class Money {
+public class Money {
     public static final Money ZERO = Money.wons(0);
 
     private final BigDecimal amount;
@@ -267,7 +267,7 @@ public class Movie {
 * 이 메서드 안에는 한 가지 이상한 점이 있다.
 * 어떤 할인 정책을 사용할 것인지 결정하는 코드가 어디에도 존재하지 않는다는 것이다.
 * 단지 discountPolicy에게 메시지를 전송할 뿐이다.
-* 이 코드에는 객체지향에서 중요하다고 여거지는 두 가지 개념이 숨겨져 있다.
+* 이 코드에는 객체지향에서 중요하다고 여겨지는 두 가지 개념이 숨겨져 있다.
 * 하나는 상속(inheritance)이고 다른 하나는 다형성이다.
 
 
@@ -299,7 +299,7 @@ public abstract class DiscountPolicy {
 }
 ```
 
-* 할인 조건을 만족하는 DiscountCondition이 하나라도 존재한느 경우에는 추상 메서드인 getDiscountAmount 메서드를 호출해 할인 요금을 계산한다.
+* 할인 조건을 만족하는 DiscountCondition이 하나라도 존재하는 경우에는 추상 메서드인 getDiscountAmount 메서드를 호출해 할인 요금을 계산한다.
 
 * DiscountPolicy는 할인 여부와 요금 계산에 필요한 전체적인 흐름은 정의하지만 실제로 요금을 계산하는 부분은 추상 메서드인 getDiscountAmount 메서드에게 위임한다.
 * 실제로는 DiscountPolicy를 상속받은 자식 클래스에서 오버라이딩한 메서드가 실행될 것이다.
@@ -456,7 +456,7 @@ Movie titanic = new Movie("타이타닉",
 
 * Movie 클래스는 DiscountPolicy 클래스와 연결돼 있다는 것이다.
 * 문제는 영화 요금을 계산하기 위해서는 추상 클래스인 DiscountPolicy가 아니라 AmountDiscountPolicy와 PercentDiscountPolicy 인스턴스가 필요하다.
-* 그렇다면 Movie의 인스턴스가 코드 작성 시점에는 그 존채조차 알지 못했던 AmountDiscountPolicy와 PercentDiscountPolicy의 인스턴스와 씰행 시점에 협력 가능한 이유는 무엇일까?
+* 그렇다면 Movie의 인스턴스가 코드 작성 시점에는 그 존재조차 알지 못했던 AmountDiscountPolicy와 PercentDiscountPolicy의 인스턴스와 실행 시점에 협력 가능한 이유는 무엇일까?
 * Movie의 인스턴스를 생성할 때 인자로 AmountDiscountPolicy의 인스턴스를 전달하면 된다.
 
 ```java
@@ -501,13 +501,13 @@ Movie avatar = new Movie("아바타",
 
 * 상속이 가치 있는 이유는 부모 클래스가 제공하는 모든 인터페이스를 자식 클래스가 물려받을 수 있기 때문이다.
 * 이것은 상속을 바라보는 일반적인 인식과는 거리가 있는데 대부분의 사람들은 상속의 목적이 메서드나 인스턴스 변수를 재사용하는 것이라고 생각하기 때문이다.
-* 인터페이스는 객체가 이해할 수 있는 메시지의 목록을 정의한다. 상속을 통해 자식 클래스는 자신의인터페이스에 부모 클래스의 인터페이스를 포함하게 된다.
+* 인터페이스는 객체가 이해할 수 있는 메시지의 목록을 정의한다. 상속을 통해 자식 클래스는 자신의 인터페이스에 부모 클래스의 인터페이스를 포함하게 된다.
 * Movie가 DiscountPolicy의 인터페이스에 정의된 calculateDiscountAmount 메시지를 전송하고 있다.
 * DiscountPolicy를 상속받는 AmountDiscountPolicy와 PercentDiscountPolicy의 인터페이스에도 이 오퍼레이션이 포함돼 있다는 사실에 주목하라.
 
 * 자식 클래스가 부모 클래스를 대신하는 것을 **업캐스팅(upcasting)**이라고 부른다.
 * 업캐스팅이라고 부르는 이유는 클래스 다이어그램을 작성할 때 부모 클래스를 자식클래스의 위에 위치시키기 때문이다.
-* 아래에 위치한 자식 클래스가 위체 위치한 부모 클래스로 자동적으로 타입 캐스팅되는 것처럼 보이기 때문에 업캐스팅이라는 용어를 사용한다.
+* 아래에 위치한 자식 클래스가 위에 위치한 부모 클래스로 자동적으로 타입 캐스팅되는 것처럼 보이기 때문에 업캐스팅이라는 용어를 사용한다.
 
 
 
