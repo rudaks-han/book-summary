@@ -16,9 +16,9 @@
 
 
 
-<img src="chapter-09.assets/image-20201217165646081.png" alt="image-20201217165646081" style="zoom:67%;" />
+<img src="images/image-20221012201337610.png" alt="image-20221012201337610" style="zoom:50%;" />
 
-
+그림) License와 파생 클래스는 LSP를 준수한다.
 
 이 설계는 LSP를 준수하는데, Billing 애플리케이션의 행위가 License 하위 타입 중 무엇을 사용하는지에 전혀 의존하지 않기 때문이다. 이들 하위 타입은 모두 License 타입으로 치환할 수 있다.
 
@@ -30,9 +30,9 @@ LSP를 위반하는 전형적인 문제로는 유명한 정사각형/직사각�
 
 
 
-<img src="chapter-09.assets/image-20201217175801134.png" alt="image-20201217175801134" style="zoom:67%;" />
+<img src="images/image-20221012201447960.png" alt="image-20221012201447960" style="zoom:50%;" />
 
-
+그림) 악명 높은 정사각형/직사각형 문제
 
 이 예제에서 Square는 Rectangle의 하위 타입으로는 적합하지 않는데, Rectangle의 높이와 너비는 서로 독립적으로 변경될 수 있는 반면, Square의 높이와 너비는 반드시 함께 변경되기 때문이다. 
 
@@ -104,21 +104,6 @@ acme라는 단어를 코드에 추가하면 끔찍할 뿐만 아니라 이해할
 ## 결론
 
 LSP는 아키텍처 수준까지 확장할 수 있고, 반드시 확장해야만 한다. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

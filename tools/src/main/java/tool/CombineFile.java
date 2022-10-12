@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CombineFile {
     public static void main(String[] args) throws IOException {
-        String bookName = "오브젝트";
+        String bookName = "Clean Architecture";
         //String bookName = "Get Your Hands Dirty on Clean Architecture";
 
         String userDir = System.getProperty("user.dir");

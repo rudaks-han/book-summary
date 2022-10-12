@@ -4,9 +4,9 @@
 
 
 
-<img src="chapter-10.assets/image-20201217181757996.png" alt="image-20201217181757996" style="zoom:67%;" />
+<img src="chapter-10.assets/image-20201217181757996.png" alt="image-20201217181757996" style="zoom: 50%;" />
 
-
+그림) 인터페이스 분리 원칙
 
 다수의 사용자가 OPS 클래스에서 오퍼레이션을 사용한다.
 User1은 오직 op1을, User2는 op2만을, User3는 op3만을 사용한다.
@@ -17,9 +17,9 @@ User1에서는 op2, op3를 전혀 사용하지 않음에도 User1의 소스코�
 
 
 
-<img src="chapter-10.assets/image-20201217182712832.png" alt="image-20201217182712832" style="zoom:67%;" />
+<img src="images/image-20221012202222438.png" alt="image-20221012202222438" style="zoom:50%;" />
 
-
+그림) 분리된 오퍼레이션
 
 User1의 소스 코드는 U1Ops와 op1에는 의존하지만 OPS에는 의존하지 않게 된다. 따라서 OPS에서 발생한 변경이 User1과는 전혀 관계없는 변경이라면, User1을 다시 컴파일하고 새로 배포하는 상황은 초래되지 않는다.
 
@@ -41,7 +41,7 @@ User1의 소스 코드는 U1Ops와 op1에는 의존하지만 OPS에는 의존하
 
 <img src="chapter-10.assets/image-20201217183053098.png" alt="image-20201217183053098" style="zoom:67%;" />
 
-
+그림) 문제가 있는 아키텍처
 
 F 프레임워크는 특정 D 데이터베이스를 반드시 사용하도록 만들었다고 가정해보자. 따라서 S는 F에 의존하며, F는 다시 D에 의존하게 된다.
 
@@ -52,6 +52,8 @@ F, S와는 전혀 상관없는 기능이 D 내부에서 변경이 발생하면 F
 ## 결론
 
 여기서 배울수 있는 교훈은 불필요한 의존은 예상치 못한 문제에 빠진다는 것이다.
+
+
 
 
 

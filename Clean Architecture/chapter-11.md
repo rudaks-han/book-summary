@@ -33,13 +33,13 @@ DIP를 논의할 때 운영체제나 플랫폼 같이 안정성이 보장된 환
 
 모든 언어에서 객체를 생성하려면 해당 객체를 구체적으로 정의한 코드에 대해 소스코드 의존성이 발생한다.
 
-Application은 Service 인터페이스를 통해 ConcreteImpl의 인스턴스를 생성해야 한다. ConcreteImpl에 대해 소스코드 의존성을 만들지 않으면서 이 목적을 이루려면 Application은 ServiceFactory 인터페이스의 makeSvn 메서드를 호출한다. 이 메서드는 ServiceFactory로 부터 파생된 ServiceFactoryImpl에서 구현된다. 그리고 ServiceFactoryImpl 구현체가 ConcreteImpl의 인스턴스를 생성한 후 Service 타입으로 반환한다.
+Application은 Service 인터페이스를 통해 ConcreteImpl의 인스턴스를 생성해야 한다. ConcreteImpl에 대해 소스코드 의존성을 만들지 않으면서 이 목적을 이루려면 Application은 ServiceFactory 인터페이스의 makeSvc 메서드를 호출한다. 이 메서드는 ServiceFactory로 부터 파생된 ServiceFactoryImpl에서 구현된다. 그리고 ServiceFactoryImpl 구현체가 ConcreteImpl의 인스턴스를 생성한 후 Service 타입으로 반환한다.
 
 
 
-<img src="chapter-11.assets/image-20201217185317967.png" alt="image-20201217185317967" style="zoom:67%;" />
+<img src="images/image-20221012202505441.png" alt="image-20221012202505441" style="zoom:50%;" />
 
-
+그림) 의존성을 관리하기 위해 추상 팩토리(Abstract Factory) 패턴을 사용한다.
 
 이 곡선은 구체적인 것들로부터 추상적인 것들을 분리한다.
 
@@ -52,6 +52,8 @@ Application은 Service 인터페이스를 통해 ConcreteImpl의 인스턴스를
 ## 구체 컴포넌트
 
 위의 그림에는 구체적인 의존성이 하나(ConcreteImpl) 있고, 따라서 DIP에 위배된다. 이는 일반적인 일이다. DIP위배를 모두 없앨 수는 없다.
+
+
 
 
 
