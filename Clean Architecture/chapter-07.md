@@ -32,7 +32,7 @@ SOLID 원칙 중 그 의미가 가장 잘 전달되지 못한 원칙이 바로 �
 
 내가 선호하는 사례는 급여 애플리케이쎤의 Employee 클랫스다. 이 클래스는 세 가지 메서드 calculatePay(), reportHours(), save()를 가진다.
 
-<img src="chapter-07.assets/image-20201217081919685.png" alt="image-20201217081919685" style="zoom: 50%;" />
+<img src="images/image-20221015104917622.png" alt="image-20221015104917622" style="zoom:50%;" />
 
 그림) Employee 클래스
 
@@ -49,7 +49,7 @@ SOLID 원칙 중 그 의미가 가장 잘 전달되지 못한 원칙이 바로 �
 
 
 
-<img src="chapter-07.assets/image-20201217081909994.png" alt="image-20201217081909994" style="zoom: 50%;" />
+<img src="images/image-20221015104932493.png" alt="image-20221015104932493" style="zoom:50%;" />
 
 그림) 공유된 알고리즘
 
@@ -91,7 +91,7 @@ COO 팀 직원은 reportHours() 메서드가 생성한 보고서를 여전히 �
 
 
 
-<img src="chapter-07.assets/image-20201221201538464.png" alt="image-20201221201538464" style="zoom: 50%;" />
+<img src="images/image-20221015105005419.png" alt="image-20221015105005419" style="zoom:50%;" />
 
 그림) 세 클래스는 서로의 존재를 알지 못한다.
 
@@ -99,7 +99,7 @@ COO 팀 직원은 reportHours() 메서드가 생성한 보고서를 여전히 �
 
 
 
-<img src="chapter-07.assets/image-20201221201550463.png" alt="image-20201221201550463" style="zoom: 50%;" />
+<img src="images/image-20221015105020672.png" alt="image-20221015105020672" style="zoom:50%;" />
 
 그림) 퍼사드(Facade) 패턴
 

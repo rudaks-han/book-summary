@@ -4,7 +4,7 @@
 
 
 
-<img src="chapter-10.assets/image-20201217181757996.png" alt="image-20201217181757996" style="zoom: 50%;" />
+<img src="images/image-20221015105055244.png" alt="image-20221015105055244" style="zoom:50%;" />
 
 그림) 인터페이스 분리 원칙
 
@@ -42,7 +42,7 @@
 
 
 
-<img src="chapter-10.assets/image-20201217183053098.png" alt="image-20201217183053098" style="zoom:67%;" />
+<img src="images/image-20221015105119094.png" alt="image-20221015105119094" style="zoom:50%;" />
 
 그림) 문제가 있는 아키텍처
 

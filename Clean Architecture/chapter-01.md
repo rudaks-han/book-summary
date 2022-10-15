@@ -42,7 +42,7 @@
 
 그림은 이 비용 곡선을 개발자 관점에서 보여준다. 개발자의 생산성은 거의 100%에서 시작했지만, 출시할 때마다 하락한다. 네 번째 출시에 다다르면 확실히 생산성은 거의 바닥을 치고 결국에는 0으로 수렴한다.
 
-<img src="chapter-01.assets/image-20201217063415831.png" alt="image-20201217063415831" style="zoom:50%;" />
+<img src="images/image-20221015104809292.png" alt="image-20221015104809292" style="zoom:50%;" />
 
 그림) 출시별 생산성
 
@@ -58,7 +58,7 @@
 
 
 
-<img src="chapter-01.assets/image-20201217063425866.png" alt="image-20201217063425866" style="zoom:50%;" />
+<img src="images/image-20221015104831911.png" alt="image-20221015104831911" style="zoom:50%;" />
 
 그림) 출시별 월 인건비
 
