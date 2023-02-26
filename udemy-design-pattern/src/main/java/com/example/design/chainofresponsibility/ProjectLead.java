@@ -18,7 +18,4 @@ public class ProjectLead extends Employee{
 		}
 		return false;
 	}
-
-	
-	
 }
