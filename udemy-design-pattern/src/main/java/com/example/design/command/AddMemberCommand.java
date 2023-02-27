@@ -16,6 +16,6 @@ public class AddMemberCommand implements Command {
 
     @Override
     public void execute() {
-
+        receiver.addMember(emailAddress, listName);
     }
 }
