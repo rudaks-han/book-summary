@@ -32,7 +32,7 @@ inventory.sort(comparing(Apple::getWeight));
 
 ### 1.1.1 프로그래밍 언어 생태계에서 자바의 위치
 
-빅데이터라는 도전에 직면하기 시작하면서 멀티코어 컴퓨터나 컴퓨팅 클러스터를 이용해서 빅데이터를 효과적으로 처리하고자 하는 욕구가 강해졌다. 자ㅏ로서는 충분히 댕층하지 못하는 분야다.
+빅데이터라는 도전에 직면하기 시작하면서 멀티코어 컴퓨터나 컴퓨팅 클러스터를 이용해서 빅데이터를 효과적으로 처리하고자 하는 욕구가 강해졌다. 자바로서는 충분히 대응하지 못하는 분야다.
 
 
 
@@ -390,7 +390,7 @@ public Interface Predicate<T> {
 자원 처리에 사용하는 순환 패턴은 자원을 열고, 처리한 다음에, 자원을 닫는 순서로 이루어진다. 즉, 실제 자원을 처리하는 코드를 설정과 정리 두 과정이 둘러싸는 형태를 갖는다. 이와 같은 형식의 코드를 실행 어라운드 패턴이라고 부른다.
 
 ```java
-pubic static String processFile throws IOException {
+public static String processFile throws IOException {
   try ( BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
     return br.readLine();
   }
